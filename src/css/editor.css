@@ -1,0 +1,146 @@
+html {
+    touch-action: none;
+    -ms-touch-action: none;
+    height: 99%;
+    min-height: 99% !important;
+    overflow: hidden;
+}
+
+body {
+    font-size: 12px;
+    font-family: ubuntu, helvetica, arial;
+    /* this is important to prevent the whole page to bounce */
+    height: 100%;
+    min-height: 100% !important;
+    margin: 0;
+    padding: 0;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.float-right {
+    float: right;
+    right: 0;
+}
+
+.float-center {
+    float: center;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.no-cursor {
+    cursor: default;
+}
+
+.no-display {
+    display: none;
+}
+
+.display {
+    display: default;
+}
+
+.vertical-text {
+    transform: rotate(90deg);
+    transform-origin: left top 0;
+}
+
+.connection {
+    font-weight: bold;
+}
+
+.toolbar-button {
+    display: inline-block;
+    padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+    margin: 0.2rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    border: 1px solid #C8C8C8;
+}
+
+.toolbar-button:hover {
+    background-color: #C8C8C8;
+    /*opacity: 0.7;*/
+    /*filter: alpha(opacity=70);*/
+}
+
+.active-text:hover {
+    color: lightgray;
+}
+
+.button-modal {
+    margin: 0.1rem;
+}
+
+.modalLabel,
+.modalInput {
+    width: 20rem;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+}
+
+.unactive-icon {
+    cursor: pointer;
+    opacity: 0.3;
+    filter: alpha(opacity=30);
+}
+
+.unactive-icon:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.active-icon {
+    cursor: pointer;
+}
+
+.active-icon:hover {
+    opacity: 0.3;
+    filter: alpha(opacity=30);
+}
+
+.iScrollVerticalScrollbar {
+    position: absolute;
+    z-index: 9999;
+    width: 7px;
+    bottom: 2px;
+    top: 2px;
+    overflow: hidden;
+}
+
+.iScrollHorizontalScrollbar {
+    position: absolute;
+    z-index: 9999;
+    width: 100%;
+    bottom: 0px;
+    top: -7px;
+    height: 7px;
+    overflow: hidden;
+}
+
+.iScrollIndicator {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5) none repeat scroll 0% 0%;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+    box-sizing: border-box;
+    width: 100%;
+    transition-duration: 0ms;
+    display: block;
+    height: 7px;
+    transform: translate(0px, 0px) translateZ(0px);
+    transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1);
+}
+
+.dyn-tooltip {
+    margin: 0.1rem;
+}

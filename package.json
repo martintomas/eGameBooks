@@ -1,0 +1,40 @@
+{
+  "name": "gamemul",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "start": "webpack --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "build": "webpack"
+  },
+  "author": "Martin Tomas",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.4.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-preset-env": "^1.3.2",
+    "babel-preset-es2015": "^6.22.0",
+    "cross-env": "^4.0.0",
+    "css-loader": "^0.26.2",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.10.1",
+    "html-loader": "^0.4.5",
+    "style-loader": "^0.16.1",
+    "url-loader": "^0.5.8",
+    "vue-loader": "^11.1.4",
+    "vue-template-compiler": "^2.2.1",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
+  },
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "iscroll": "^5.2.0",
+    "markdown-it": "^8.3.1",
+    "vue": "^2.2.1",
+    "vue-router": "^2.4.0",
+    "vuex": "^2.2.1"
+  }
+}
