@@ -1,5 +1,6 @@
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import { generateHash } from 'defaults.js'
+import {busEditor} from 'editor/defaults.js'
 
 //expect that page and connectionText variables are defined
 export default {
@@ -123,6 +124,13 @@ export default {
                     this.showTooltip(this.tooltipTextMiniPage)
                 }, 350)
             }
+        },
+        showPageDetail(event) {
+            console.log('Mini pages - showing detail of page number: ' + this.pageId)
+
+            if (event) event.stopPropagation()
+
+            busEditor.$emit('show-page-detail',this.pageId)
         },
         showTooltip(tooltip) {
             if (tooltip) { //show tooltip only when tooltip is defined

@@ -26,6 +26,14 @@ body {
     text-align: center;
 }
 
+.float-left {
+    float: left;
+}
+
+.float-left:after {
+    clear:both;
+}
+
 .float-right {
     float: right;
 }

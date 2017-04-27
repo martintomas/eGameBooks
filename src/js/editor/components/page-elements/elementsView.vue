@@ -8,6 +8,7 @@
 
 <script>
 import {bus} from 'app.js'
+import {busEditor} from 'editor/defaults.js'
 import * as mutationTypes from 'editor/store/mutation-types'
 import {waitForResizeEnd,setCss3Style} from 'defaults.js'
 
@@ -17,7 +18,7 @@ export default {
         }
     },
     created() {
-        bus.$on('editor-panel-shown-fast', source => {
+        busEditor.$on('editor-panel-shown-fast', source => {
             if(this.$refs.elementsViewRoot) { //this element have to be created and mounted
                  if(source != this.$refs.elementsViewRoot) { //some other list changed its status (probably element list)
                     if(this.editorStore.editorStatus.elementsListShow) { //if this list is show --> check if this should be automaticaly hidden
@@ -74,13 +75,13 @@ export default {
             this.$refs.elementsViewRoot.classList.remove('elements-hide-root')
             this.$refs.elementsViewMain.classList.remove('elements-hide-main')
             this.$store.commit('editor/'+mutationTypes.CHANGE_ELEMENTS_LIST_STATUS,true)
-            bus.$emit('editor-panel-shown-fast', this.$refs.elementsViewRoot)
+            busEditor.$emit('editor-panel-shown-fast', this.$refs.elementsViewRoot)
             this.updateWindowResize()
         },
         updateWindowResize() {
             setTimeout(() => {
                 waitForResizeEnd(() => {
-                    bus.$emit('editor-panel-resize', this.$refs.elementsViewRoot)
+                    busEditor.$emit('editor-panel-resize', this.$refs.elementsViewRoot)
                 },this.$refs.elementsViewRoot,true)
             },50)
         }

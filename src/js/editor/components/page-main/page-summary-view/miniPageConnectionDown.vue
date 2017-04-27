@@ -30,7 +30,7 @@
                             <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
                         </dyn-tooltip>
                         <dyn-tooltip class='dyn-tooltip'>
-                            <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                            <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='showPageDetail'></i>
                             <span slot='tooltipText'>{{String.doTranslationEditor('zoom-mini-page')}}</span>
                         </dyn-tooltip>
                         <dyn-tooltip class='dyn-tooltip'>

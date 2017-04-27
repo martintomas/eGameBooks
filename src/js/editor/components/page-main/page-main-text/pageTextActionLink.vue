@@ -11,6 +11,14 @@
                 </template> 
                 <br>
                 condition: {{linkData.condition}}
+                <br>
+
+                <template v-if="renderType === 'pageDetail' && linkData.pageId != null">
+                    <dyn-tooltip class='dyn-tooltip'>
+                        <i class="fa fa-hand-o-right unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='showPageDetail'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('continue-to-page')}}</span>
+                    </dyn-tooltip>
+                </template>
             </template>
             <template v-else>
                 {{String.doTranslationEditor('missing-link')}}
@@ -23,6 +31,7 @@
 
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import { generateHash } from 'defaults.js'
+import {busEditor} from 'editor/defaults.js'
 
 export default {
     components: {
@@ -30,6 +39,7 @@ export default {
     },
     props: {
         pageData: null,
+        renderType: '',
         actionId: {
             default: 0,
             type: Number
@@ -48,7 +58,14 @@ export default {
     mounted() {
     },
     methods: {
-        generateHash
+        generateHash,
+        showPageDetail(events) {
+            console.log('Continuing reading to page: ' + this.linkData.pageId)
+
+            if (event) event.stopPropagation()
+
+            busEditor.$emit('show-page-detail',this.linkData.pageId)
+        }
     }
 }
 </script>

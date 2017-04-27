@@ -5,7 +5,7 @@ class EditorTextActions {
     getActionHtmlString(action,args) {
         switch (action) {
             case 'link':
-                return "<page-text-action-link :page-data='pageData' :actionId='{0}' text='{1}'></page-text-action-link>".format(args)
+                return "<page-text-action-link :page-data='pageData' :render-type='renderType' :actionId='{0}' text='{1}'></page-text-action-link>".format(args)
         }
         return ''
     }

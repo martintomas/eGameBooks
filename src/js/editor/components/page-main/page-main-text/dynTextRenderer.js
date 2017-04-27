@@ -5,6 +5,10 @@ import PageTextActionLink from 'editor/components/page-main/page-main-text/pageT
 export default {
     props: {
         pageData: null,
+        renderType: {
+            default: 'main', //can have values main and pageDetail
+            type: String
+        }
     },
     data() {
         return {
@@ -29,7 +33,8 @@ export default {
             },
             data() {
                 return {
-                    pageData: self.pageData
+                    pageData: self.pageData,
+                    renderType: self.renderType,
                 }
             },
         }

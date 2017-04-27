@@ -13,7 +13,7 @@
                                 <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
                             </dyn-tooltip>
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                                <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='showPageDetail'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('zoom-mini-page')}}</span>
                             </dyn-tooltip>
                             <dyn-tooltip class='dyn-tooltip'>
@@ -39,6 +39,7 @@
     import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
     import * as mutationTypes from 'editor/store/mutation-types'
     import {generateHash,getCompStyle} from 'defaults.js'
+    import {busEditor} from 'editor/defaults.js'
     
     export default {
         components: {
@@ -136,6 +137,13 @@
 
                 //this.$store.commit(mutationTypes.EDIT_PAGE,this.pageId) //set new edited page --> is done by reading url
                 this.$router.push({ name: 'page-view', params: { pageId: this.pageId }})
+            },
+            showPageDetail(event) {
+                console.log('Mini pages - showing detail of page number: ' + this.pageId)
+
+                if (event) event.stopPropagation()
+
+                busEditor.$emit('show-page-detail',this.pageId)
             },
             showTooltip() {
                 setTimeout(() => {

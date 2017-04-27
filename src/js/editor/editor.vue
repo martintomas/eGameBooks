@@ -7,6 +7,8 @@
             <router-view name='page-view-container'></router-view>
             <router-view name='elements-view'></router-view>
         </div>
+
+        <dyn-page-detail></dyn-page-detail>
     </div>
 </template>
 
@@ -17,10 +19,14 @@ import appCss from '../../css/editor.css'
 import * as prot from 'editor/prototypes.js'
 
 import EditorToolbar from 'editor/components/editor-toolbar/editorToolbar.vue'
+import DynPageDetail from 'editor/components/page-main/page-main-text/dynPageDetail.vue'
 
 export default {
     components: {
-        EditorToolbar
+        EditorToolbar,
+        DynPageDetail
+    },
+    mounted() {
     },
     install(Vue,options) {
         if(!('store' in options)) {

@@ -37,6 +37,7 @@
     import MiniPage from 'editor/components/page-list/miniPage.vue'
     import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
     import {bus} from 'app.js'
+    import {busEditor} from 'editor/defaults.js'
     import {generateHash, waitForResizeEnd, setCss3Style} from 'defaults.js'
     import * as mutationTypes from 'editor/store/mutation-types'
 
@@ -78,7 +79,7 @@
             }
         },
         created() {
-            bus.$on('editor-panel-shown-fast', source => {
+            busEditor.$on('editor-panel-shown-fast', source => {
                 if(this.$refs.pageMiniContainer) { //this element have to be created and mounted
                     if(source != this.$refs.pageMiniContainer) { //some other list changed its status (probably element list)
                         if(this.editorStore.editorStatus.miniPageListShown) { //if this list is show --> check if this should be automaticaly hidden
@@ -225,13 +226,13 @@
                 this.$refs.pageMiniContainer.classList.remove('page-hide-root')
                 this.$refs.pageMiniMain.classList.remove('page-hide-main')
                 this.$store.commit('editor/'+mutationTypes.CHANGE_MINI_PAGE_LIST_STATUS,true)
-                bus.$emit('editor-panel-shown-fast', this.$refs.pageMiniContainer)
+                busEditor.$emit('editor-panel-shown-fast', this.$refs.pageMiniContainer)
                 this.updateWindowResize()
             },
             updateWindowResize() {
                 setTimeout(() => {
                     waitForResizeEnd(() => {
-                        bus.$emit('editor-panel-resize', this.$refs.pageMiniContainer)
+                        busEditor.$emit('editor-panel-resize', this.$refs.pageMiniContainer)
                     },this.$refs.pageMiniContainer,true)
                 },50)
             }

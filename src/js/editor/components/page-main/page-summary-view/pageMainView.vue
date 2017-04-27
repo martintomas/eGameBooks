@@ -22,7 +22,7 @@
 <script>
 
 import IScroll from 'iscroll'
-import {bus} from 'app.js'
+import {busEditor} from 'editor/defaults.js'
 
 import PageMainText from 'editor/components/page-main/page-main-text/pageMainText.vue'
 
@@ -42,7 +42,7 @@ export default {
         }
     },
     created() {
-        bus.$on('editor-panel-resize', source => {
+        busEditor.$on('editor-panel-resize', source => {
             if(this.scroller != null) {
                 this.scroller.refresh()
             }

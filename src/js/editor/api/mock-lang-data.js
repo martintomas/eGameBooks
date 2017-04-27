@@ -24,5 +24,7 @@ module.exports = {
     'save':'Save',
     'close':'Close',
     'undo':'Undo',
-    'redo':'Redo'
+    'redo':'Redo',
+    'page-zoom-modal-header':'Detail of page number {0}',
+    'continue-to-page':'Continue\xa0to next\xa0page',
 }
