@@ -78,6 +78,7 @@ export default {
         markdownItAllowedActions: markdownItAllowedActions, //to be sure that other part of system can access it
         markdownCompDefault: new MarkdownComp(markdownItAllowedActions),
         pages: {},
+        pagesOrder: [], //array that describes which pages exists
         selectedPage: null,
         editedPage: null
     },
@@ -105,7 +106,11 @@ export default {
                     else if (page.actions.link[i].pageId != null) Vue.set(state.pages, page.actions.link[i].pageId, { 'reverseLink': [{ 'pageId': page.id, 'actionId': page.actions.link[i].id }] })
                 }
 
+                state.pagesOrder.push(page.id) //remmember all existing pages
+
             })
+
+            state.pagesOrder = state.pagesOrder.sort() //sort pages
 
             if (state.editedPage === null || !(state.editedPage in state.pages)) { //be sure that edited page is set up and exists
                 console.log('STORE: changed edited page by force')
@@ -134,7 +139,9 @@ export default {
             }
 
         },
-        [mutationTypes.GET_ALL_PAGES](state, initData) {}
+        [mutationTypes.GET_ALL_PAGES](state, initData) {
+            
+        }
     },
     getters: {
         fullPageText: (state, getters) => (pageModel) => {}
