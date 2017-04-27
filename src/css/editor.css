@@ -1,17 +1,19 @@
 html {
     touch-action: none;
     -ms-touch-action: none;
-    height: 99%;
-    min-height: 99% !important;
-    overflow: hidden;
+    /*height: 99%;*/
+    /*min-height: 99% !important*/
+    padding:0;
+    margin:0;
+    overflow-x: hidden;
 }
 
 body {
     font-size: 12px;
     font-family: ubuntu, helvetica, arial;
     /* this is important to prevent the whole page to bounce */
-    height: 100%;
-    min-height: 100% !important;
+    /*height: 100%;*/
+    /*min-height: 100% !important;*/
     margin: 0;
     padding: 0;
 }
@@ -26,7 +28,10 @@ body {
 
 .float-right {
     float: right;
-    right: 0;
+}
+
+.float-right:after {
+    clear:both;
 }
 
 .float-center {

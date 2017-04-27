@@ -5,7 +5,7 @@
                 <div class="page-connection-scroller" ref="page-mini-main-scroller">
                     <ul>
                         <li is="mini-page-connection-down" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="index" :model="model" :index='index' :model-length='pages.length' :page-edited-id='pageId'
-                            :page-mini-width="miniPageWidth" :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxDistance">
+                            :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
                         </li>
                     </ul>
                 </div>
@@ -22,7 +22,7 @@ import PageConnectionsView from 'editor/components/page-main/page-summary-view/p
 export default {
     mixins: [PageConnectionsView],
     components: {
-        MiniPageConnectionDown
+        MiniPageConnectionDown,
     },
     computed: {
          pages() {
@@ -37,13 +37,12 @@ export default {
     .page-connection-down-view {
         position:relative;
         width: 80%;
+        min-width:15rem;
         margin: 0% auto;
         min-height: 10rem;
         height:21%;
         border: black solid 1px;
         border-radius:1rem;
-        display:block;
-        top: 6%;
     }
     .page-connection-down-box {
         position:absolute;

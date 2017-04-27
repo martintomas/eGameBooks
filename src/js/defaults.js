@@ -56,6 +56,21 @@ export function setCss3Style(el, prop, val) {
     });
 }
 
+export function getCompStyle(el, prop) {
+    return window.getComputedStyle(el, null).getPropertyValue(prop)
+}
+
+// inspired by http://stackoverflow.com/questions/18953144/how-do-i-get-the-offset-top-value-of-an-element-without-using-jquery
+// get elements global offset
+export function getElementOffset(element)
+{
+    let de = window.document.body || window.document.documentElement
+    let box = element.getBoundingClientRect();
+    let top = box.top + window.pageYOffset - de.clientTop;
+    let left = box.left + window.pageXOffset - de.clientLeft;
+    return { top: top, left: left };
+}
+
 // interval function that call provided function after window resize is finished --> window has stable size for defined time period
 var windowResizeEndIntervalItems = {} //use global variable to remmember states
 var numResizeEndAttempsDefault = 10 //number to attemps before it is forced to end

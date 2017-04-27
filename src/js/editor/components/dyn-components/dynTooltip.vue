@@ -18,10 +18,12 @@
 
 import {bus} from 'app.js'
 
+import {getElementOffset,getCompStyle} from 'defaults.js'
+
 export default {
     props: {
         tooltipId: {
-            default:'0',
+            default:null,
             type:String
         },
         tooltipBox: {
@@ -51,6 +53,10 @@ export default {
         reactToClick: {
             default:false,
             type:Boolean
+        },
+        inline: {
+            default: false,
+            type: Boolean
         },
         reactToHover: {
             default:true,
@@ -91,62 +97,87 @@ export default {
         this.tooltip = this.$refs.tooltip
 
         bus.$on('hide-tooltip',source => {
-            if(this.allowAutomaticHidding) { //automatically hide tooltip
+            if(this.allowAutomaticHidding && this.reactToClick) { //automatically hide tooltip
                 if (!source.target.matches('.tooltip')) {
-                    if (this.tooltiptext.classList.contains('show-tooltip')) {
-                        this.hide()
-                    }
-                    if(this.tooltiptext2 != null) {
-                        if(this.tooltiptext2.classList.contains('show-tooltip')) this.hide()
+                    if(!this.tooltip.contains(source.target)) { //check if tooltip inner element was not clicked
+                        if(this.isTooltipShow()) this.hide()
+                        if(this.isSecondTooltipShown()) this.hide()
                     }
                 } else {
                     let componentId = source.target.getAttribute('component-id')
                     if(componentId && this.tooltipId != null) {
                         if(componentId != this.tooltipId) {
-                            if (this.tooltiptext.classList.contains('show-tooltip')) {
-                                this.hide()
-                            }
-                            if(this.tooltiptext2 != null) {
-                                if(this.tooltiptext2.classList.contains('show-tooltip')) this.hide()
-                            }
+                            if(this.isTooltipShow()) this.hide()
+                            if(this.isSecondTooltipShown()) this.hide()
                         }
                     }
                 }
             }
         })
+
+        if(this.inline) {
+            this.tooltip.style.display = 'inline'
+            this.tooltiptext.style.position = 'absolute'
+        }
     },
     methods: {
-        tooltipWasClicked() {
+        offsetLeftRelativeToPage(element) { //get relative left position even for inline elements (they can go across multiple lines)
+            var offset = element.offsetLeft;
+            var offsetParent = element.offsetParent;
+            if (offsetParent != null) {
+                offset += this.offsetLeftRelativeToPage(offsetParent);
+            }
+            return offset
+            
+        },
+        isTooltipShow() {
+            return this.tooltiptext.classList.contains('show-tooltip')
+        },
+        isSecondTooltipShown() {
+            if(this.tooltiptext2 != null) {
+                if(this.tooltiptext2.classList.contains('show-tooltip')) return true
+            }
+            return false
+        },
+        tooltipWasClicked(event) {
             if(this.reactToClick && !this.ignoreDefaultBehavior) {
-                this.show(false)
+                if(this.inline) {
+                    if(this.tooltiptext.contains(event.target)) { //inside tooltiptext was clicked
+                        if(this.allowAutomaticHidding) this.hide() //hide when atomatic allowed
+                        //otherwise ignore
+                    }
+                    else {
+                        this.showInline(event.pageY - getElementOffset(event.target).top + event.target.offsetTop ,event.pageX - this.offsetLeftRelativeToPage(event.target) + event.target.offsetLeft)
+                    }
+                }
+                else this.show(false)
             }
         },
         tooltipMouseEnter() {
             if(this.reactToHover && !this.ignoreDefaultBehavior) {
-                if(!this.tooltiptext.classList.contains('show-tooltip')) {
+                if(!this.isTooltipShow()) {
                     this.show(false)
                 }
             }
         },
         tooltipMouseLeave() {
             if(this.reactToHover && !this.ignoreDefaultBehavior) {
-                if(this.tooltiptext.classList.contains('show-tooltip')) {
+                if(this.isTooltipShow()) {
                     this.hide()
                 }
             }
         },
         toogle(showSecond) {
-            if (this.tooltiptext.classList.contains('show-tooltip')) { //check if first tooltip is shown
+            if (this.isTooltipShow()) { //check if first tooltip is shown
                 this.hide() //hide it
                 if(!(showSecond || this.showSecond)) return //end only if second tooltip shouldn be imidiatelly shown
             }
 
-            if(this.tooltiptext2 != null) {
-                if(this.tooltiptext2.classList.contains('show-tooltip')) { //check if second tooltip is shown
-                    this.hide() //hide it
-                    if(showSecond || this.showSecond) return //end only if first tooltip shouldn be imidiatelly shown
-                }
+            if(this.isSecondTooltipShown()) { //check if second tooltip is shown
+                this.hide() //hide it
+                if(showSecond || this.showSecond) return //end only if first tooltip shouldn be imidiatelly shown
             }
+
             this.show(showSecond)
         },
         show(itemBorder = null,showSecond=false) {
@@ -159,6 +190,13 @@ export default {
             } else {
                 this.showTopBottom(itemBorder,showSecond)
             }
+        },
+        showInline(posTop=null,posLeft=null,itemBorder = null) {
+            if(itemBorder === null || !itemBorder) {
+                if(this.tooltipBox != null) itemBorder = this.tooltipBox
+                else itemBorder = window
+            }
+            this.showTopBottomInline(itemBorder,posTop,posLeft)
         },
         showRightLeft(itemBorder=window,showSecond,iterations = 4) {
             var tooltiptext = this.tooltiptext
@@ -249,8 +287,8 @@ export default {
             //take care of max-width & max-height
             tooltiptext.style.maxHeight = tooltiptext.clientWidth/2 //set up height and width( = 2x height)
             if(this.forceWidth === 0) {
-                if(itemWidth < tooltiptext.clientWidth * 1.5 )
-                    tooltiptext.style.maxWidth = itemWidth/2 + 'px'
+                if(itemWidth < tooltiptext.clientWidth + 10 )
+                    tooltiptext.style.maxWidth = tooltiptext.clientWidth - 10 + 'px'
                 else
                     tooltiptext.style.maxWidth = '340px'
             } else {
@@ -300,6 +338,70 @@ export default {
                 tooltiptext.classList.add('show-tooltip');
             }
             
+        },
+        showTopBottomInline(itemBorder=window,posTop,posLeft,iterations = 4) {
+            var tooltiptext = this.tooltiptext
+
+            let itemWidth = itemBorder.innerWidth
+            if(!itemWidth) itemWidth = itemBorder.clientWidth
+            let clientHeightTemp = tooltiptext.clientHeight
+            let clientWidthTemp = tooltiptext.clientWidth
+
+            //take care of max-width & max-height
+            tooltiptext.style.maxHeight = tooltiptext.clientWidth/2 //set up height and width( = 2x height)
+            if(this.forceWidth === 0) {
+                if(itemWidth < tooltiptext.clientWidth + 10 )
+                    tooltiptext.style.maxWidth = tooltiptext.clientWidth - 10 + 'px'
+                else
+                    tooltiptext.style.maxWidth = '340px'
+            } else {
+                tooltiptext.style.maxWidth = this.forceWidth + 'rem'
+            }
+
+            //set left position
+            let pos_left = posLeft - tooltiptext.clientWidth/2 //try to keep it in middle
+            if( pos_left < 0 ) {
+                pos_left = posLeft - 10;
+                tooltiptext.classList.add('move-left')
+            } else {
+                if (tooltiptext.classList.contains('move-left')) {
+				    tooltiptext.classList.remove('move-left')
+                }
+            }
+
+            //set right position
+            if( pos_left + tooltiptext.clientWidth > itemWidth ) { //we can check whenever item is inside provided boundaries
+                pos_left = posLeft - tooltiptext.clientWidth + 10;
+                tooltiptext.classList.add('move-right')
+            } else {
+                if (tooltiptext.classList.contains('move-right')) {
+                    tooltiptext.classList.remove('move-right')
+                }
+            }
+
+            let pos_top = posTop - tooltiptext.clientHeight - 10
+            //position up or down
+            if( pos_top < 0 && !this.forceTop) {
+                pos_top = posTop + 5
+                tooltiptext.classList.add('top') //arrow is at top -> text is at bottom
+            } else {
+                if (tooltiptext.classList.contains('top')) {
+				    tooltiptext.classList.remove('top')
+                }
+            }
+
+            //set up position fo tooltip
+            tooltiptext.style.top = pos_top + 'px'
+            tooltiptext.style.left = pos_left + 'px'
+
+            //show tooltip
+            if((clientHeightTemp !=tooltiptext.clientHeight || clientWidthTemp != tooltiptext.clientWidth) && iterations > 0) { //parameters can be sometimes changed during procesing --> try to position tooltip one more time to obtain more stable position
+                setTimeout(() => {
+                    this.showTopBottomInline(itemBorder,posTop,posLeft,iterations-=1) //do recalculation one more time (change iteration attr)
+                },50)
+            } else {
+                tooltiptext.classList.add('show-tooltip');
+            }
         },
         hide() {
             console.log('Hide tooltip')

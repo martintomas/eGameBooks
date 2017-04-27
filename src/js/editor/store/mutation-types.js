@@ -16,3 +16,4 @@ export const GET_EDITOR_LANG_TEXT = 'GET_LANG_TEXT'
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'
 export const CHANGE_ELEMENTS_LIST_STATUS = 'CHANGE_ELEMENTS_LIST_STATUS'
+export const CHANGE_MINI_PAGE_SHOWN_METHOD = 'CHANGE_MINI_PAGE_SHOWN_METHOD'

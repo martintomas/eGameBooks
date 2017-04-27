@@ -28,6 +28,16 @@ export default {
                  }
             }
         })
+
+        bus.$on('window-resize-end', source => {
+            if(this.$refs.elementsViewRoot) {
+                if(this.editorStore.editorStatus.elementsListShow) {
+                    if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.editorStore.appConf.listsAutomaticHide) { //keep hidden by default (when widht si too small)
+                        this.hideElementList()
+                    }
+                }
+            }
+        })
     },
     mounted() {
         if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.editorStore.appConf.miniElementListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
@@ -81,11 +91,12 @@ export default {
 
 <style>
     .elements-view-root {
-        display: flex;
         flex: 0 0 auto;
         /*background-color: green;*/
         height: 100%;
+        min-height:35rem;
         width: 20rem;
+        background-color:white;
 
         transition: width 0.3s;
     }
@@ -93,11 +104,14 @@ export default {
     .elements-view-main {
         position:absolute;
         width: 19rem;
-        height: 95%;
+        height: 100%;
+        min-height:35rem;
         /*border: 0.05rem solid black;*/
-        margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+        /*margin: 0.2rem 0.2rem 0.2rem 0.2rem;*/
         background: url('/img/editor/page-elements-without-text.svg') no-repeat top left;
         right:0rem;
+        z-index:10000;
+        background-color:white;
 
         transition: right 0.3s;
     }

@@ -4,15 +4,15 @@
         <p class="page-mini-summary-text active-text" @click="showHidePageList">{{String.doTranslationEditor('page-summary')}}</p>
         <div class="page-mini-main-header">
             <dyn-tooltip class='dyn-tooltip'>
-                <i class="fa fa-file-text-o active-icon" aria-hidden="true" slot='tooltip'></i>
+                <i class="fa fa-file-text-o active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('new-page')}}</span>
             </dyn-tooltip>
             <dyn-tooltip class='dyn-tooltip'>
-                <i class="fa fa-files-o active-icon" aria-hidden="true" @click="multiPageShow" slot='tooltip'></i>
+                <i class="fa fa-files-o active-icon tooltip" aria-hidden="true" @click="multiPageShow" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('multi-pages')}}</span>
             </dyn-tooltip>
             <dyn-tooltip class='dyn-tooltip'>
-                <i class="fa fa-file-o active-icon" aria-hidden="true" @click="onePageShow" slot='tooltip'></i>
+                <i class="fa fa-file-o active-icon tooltip" aria-hidden="true" @click="onePageShow" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('one-pages')}}</span>
             </dyn-tooltip>
         </div>
@@ -21,8 +21,8 @@
 
             <div class="page-mini-main-scroller" ref="page-mini-main-scroller">
                 <ul>
-                    <li is="mini-page" v-for="(model,key,index) in pageMiniData" ref="mini-pages-box" :key="key" v-bind:model="model" v-bind:index="index" :page-mini-height="pageMiniHeight" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
-                        v-on:show-mini-page="showMiniPage" v-on:hide-mini-page="hideMiniPage">
+                    <li is="mini-page" v-for="(model,key,index) in pageMiniData" ref="miniPagesBox" :key="key" v-bind:model="model" v-bind:index="index" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
+                        v-on:show-mini-page="showMiniPage" v-on:hide-mini-page="hideMiniPage" v-on:mini-page-update-height='miniPageUpdateHeight'>
                     </li>
                 </ul>
             </div>
@@ -44,12 +44,11 @@
         data() {
             return {
                 miniPagesHistory: null,
-                pageDistanceDefault: 0,
-                multiPage: true,
                 activatedPage: null, //remmember last active page
                 scrollWrapper: 'page-mini-main-wrapper',
                 scrollContainer: 'page-mini-main-scroller',
                 scroller: null,
+                pageMiniHeight: 240,
             };
         },
         components: {
@@ -64,8 +63,8 @@
                 }
                 return this.editorStore.pages.pages
             },
-            pageMiniHeight() {
-                return this.editorStore.appConf.miniPageHeight
+            multiPage() {
+                return this.editorStore.editorStatus.miniPageMultiPages
             },
             pageMiniDistance() {
                 return Math.ceil(this.pageMiniHeight * this.editorStore.appConf.miniPageMiniDistance); //mini distance is 20%
@@ -73,10 +72,12 @@
             pageMaxDistance() {
                 return Math.ceil(this.pageMiniHeight * this.editorStore.appConf.miniPageMaxDistance); //max distance is 115%
             },
+            pageDistanceDefault() {
+                if(this.multiPage) return this.pageMiniDistance;
+                else return this.pageMaxDistance
+            }
         },
         created() {
-            this.pageDistanceDefault = this.pageMiniDistance;
-
             bus.$on('editor-panel-shown-fast', source => {
                 if(this.$refs.pageMiniContainer) { //this element have to be created and mounted
                     if(source != this.$refs.pageMiniContainer) { //some other list changed its status (probably element list)
@@ -88,8 +89,19 @@
                     }
                 }
             })
+
+            bus.$on('window-resize-end', source => {
+                if(this.$refs.pageMiniContainer) {
+                    if(this.editorStore.editorStatus.miniPageListShown) {
+                        if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.editorStore.appConf.listsAutomaticHide) { //keep hidden by default (when widht si too small)
+                            this.hideMiniPageList()
+                        }
+                    }
+                }
+            })
         },
         mounted() {
+            //set up scroller
             this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
                 mouseWheel: true,
                 bounce: false,
@@ -98,14 +110,19 @@
                 scrollbars: 'custom',
             });
 
+            //check if lists should be automaticaly hidden
             if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.editorStore.appConf.miniPageListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
                 this.hideImmidiatellyMiniPageList()
             }
 
+            //update scroller
             this.updateScroller()
         },
         methods: {
             generateHash,
+            miniPageUpdateHeight(height) {
+                this.pageMiniHeight = height
+            },
             miniPageLength() {
                 return Object.keys(this.pageMiniData).length
             },
@@ -135,15 +152,14 @@
                 if (updateScroller) this.updateScroller();
             },
             moveMiniPagesY(fromPage, distance) {
-                for (var i = fromPage.index +1 ; i < this.$refs['mini-pages-box'].length; i++) {
-                    this.$refs['mini-pages-box'][i].moveDistanceTop(distance);
+                for (var i = fromPage.index +1 ; i < this.$refs.miniPagesBox.length; i++) {
+                    this.$refs.miniPagesBox[i].moveDistanceTop(distance);
                 }
             },
             onePageShow(event) {
-                console.log('Mini pages - one page show');
+                //console.log('Mini pages - one page show');
 
-                this.pageDistanceDefault = this.pageMaxDistance;
-                this.multiPage = false;
+                this.$store.commit('editor/'+mutationTypes.CHANGE_MINI_PAGE_SHOWN_METHOD,false)
 
                 if (this.activatedPage != null) { //keep activated page shown
                     this.showMiniPage(this.activatedPage) //updates scroller itself
@@ -152,10 +168,9 @@
                 }
             },
             multiPageShow(event) {
-                console.log('Mini pages - multi page show');
+                //console.log('Mini pages - multi page show');
 
-                this.pageDistanceDefault = this.pageMiniDistance;
-                this.multiPage = true
+                this.$store.commit('editor/'+mutationTypes.CHANGE_MINI_PAGE_SHOWN_METHOD,true)
 
                 if (this.activatedPage != null) { //keep activated page shown
                     this.showMiniPage(this.activatedPage) //updates scroller itself
@@ -168,13 +183,13 @@
 
                 if(!overTop) overTop=0
 
-                var scrollBarHeight = this.miniPageLength() * this.pageDistanceDefault + (this.pageMiniHeight - this.pageDistanceDefault + 1 + overTop);
+                var scrollBarHeight = this.miniPageLength() * this.pageDistanceDefault + (this.pageMiniHeight - this.pageDistanceDefault + 10 + overTop);
                 if (this.activatedPage != null && !this.isLastPage(this.activatedPage)) {
                     scrollBarHeight += this.pageMaxDistance - this.pageDistanceDefault;
                 }
 
                 if (this.scrollContainer in this.$refs) {
-                    this.$refs[this.scrollContainer].style.height = scrollBarHeight + 'rem'; //recompute height of scrollbar container
+                    this.$refs[this.scrollContainer].style.height = scrollBarHeight + 'px'; //recompute height of scrollbar container
 
                     setTimeout(() => {
                         this.scroller.refresh(); //actualize scroller based on new height
@@ -228,20 +243,24 @@
     .page-mini-container {
         flex: 0 0 auto;
         height: 100%;
+        min-height:35rem;
         /*background-color: red;*/
         width: 16.5rem;
+        background-color:white;
 
         transition: width 0.3s;
     }
     
     .page-mini-main {
-        position:fixed;
+        position:absolute;
         width: 16rem;
         height: 100%;
+        min-height:35rem;
         /*border: 0.05rem solid black;*/
-        margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+        /*margin: 0.2rem 0.2rem 0.2rem 0.2rem;*/
         background: url('/img/editor/mini-page-list-up-without-text.svg') no-repeat top left;
         left:0rem;
+        z-index:10001;
 
         transition: left 0.3s;
 

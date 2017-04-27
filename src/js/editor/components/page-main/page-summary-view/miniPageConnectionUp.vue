@@ -1,7 +1,7 @@
 <template>
     <li class='mini-page-connection-up-box' ref='miniPageBox' :style="styleMiniPageBox" @click="activeConnectionPage">
         <dyn-tooltip ref='tooltipMiniPage' class='mini-page-connection-tooltip' :tooltip-id="generateHash('mini-page-up',index)" :allow-automatic-hidding="false" :left-right-orientation='true' :react-to-hover='false'>
-            <div class="mini-page-connection" ref='miniPage' slot='tooltip' :style="styleMiniPage">
+            <div class="mini-page-connection" ref='miniPage' slot='tooltip'>
                 <div class="mini-page-connection-tittle">
                     {{String.doTranslationEditor('page-num',(pageNumber))}}
                 </div>
@@ -11,24 +11,25 @@
             <span slot='tooltipText'>
                 <template v-if='active'>
                     <dyn-tooltip class='dyn-tooltip'>
-                        <i class="fa fa-edit unactive-icon" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
+                        <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
                         <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
                     </dyn-tooltip>
+                    <br>
                     <dyn-tooltip class='dyn-tooltip'>
-                        <i class="fa fa-search unactive-icon" aria-hidden="true" slot='tooltip'></i>
+                        <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                         <span slot='tooltipText'>{{String.doTranslationEditor('zoom-mini-page')}}</span>
                     </dyn-tooltip>
                 </template>
             </span>
         </dyn-tooltip>
-        <div class='connetion-icon' :style='styleMiniPageTextBox' @click='showConnectionText'>
+        <div class='connection-icon' :style='styleMiniPageTextBox' @click='showConnectionText'>
             <dyn-tooltip class='dyn-tooltip' ref='tooltipTextMiniPage' :tooltip-id="generateHash('mini-page-up-text',index)" :allow-automatic-hidding="false" :react-to-hover='false' :left-right-orientation='true'>
                 <template v-if='existsInText'>
-                    <i class="fa fa-square unactive-icon used" aria-hidden="true" slot='tooltip'></i>
+                    <i class="fa fa-square unactive-icon used tooltip" aria-hidden="true" slot='tooltip'></i>
                     <span slot='tooltipText' v-html='connectionText'></span>
                 </template>
                 <template v-else>
-                    <i class="fa fa-square unactive-icon missing" aria-hidden="true" slot='tooltip'></i>
+                    <i class="fa fa-square unactive-icon missing tooltip" aria-hidden="true" slot='tooltip'></i>
                     <span slot='tooltipText'>{{String.doTranslationEditor('unused-link')}}</span>
                 </template>
             </dyn-tooltip>
@@ -48,7 +49,7 @@ export default {
                 return this.editorStore.pages.pages[this.model.pageId]
             } else {
                 console.log('Reverse connection up error!!! Missing reverse page')
-                return null
+                return null 
             }
         },
         linkAction() {
@@ -60,8 +61,8 @@ export default {
         },
         connectionText() {
             if(this.existsInText) { //should be possible to find this info in rendered info
-                let text = document.getElementById('link-'+this.model.pageId+'-'+this.model.actionId)
-                if(text) return String.shaveHTML(text.innerHTML,100)
+                let text = document.getElementsByName('link-'+this.model.pageId+'-'+this.model.actionId)
+                if(text.length > 0) return String.shaveHTML(text[0].innerHTML,this.editorStore.appConf.commentShaveHTMLPageConnection)
             }
             return ''
         },
@@ -90,6 +91,9 @@ export default {
     -moz-border-radius: 0.25rem;
     background-color: white;
     overflow:hidden;
+
+    width: 10rem;
+    min-width:10rem;
 }
 .mini-page-connection-up-box .active-page {
     border-color: blue;
@@ -105,16 +109,16 @@ export default {
     padding: 0.2rem 0.2rem 0.2rem 0.2rem;
     background-color: white;
 }
-.connetion-icon {
+.connection-icon {
     text-align:center;
     font-size:130%;
 
     transition: width 0.5s;
 }
-.connetion-icon .missing {
+.connection-icon .missing {
     color:red;
 }
-.connetion-icon .used {
+.connection-icon .used {
     color:blue;
 }
 </style>

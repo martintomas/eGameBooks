@@ -16,13 +16,9 @@ export const editorStore = {
     },
     mutations: {},
     actions: {
-        load({ commit }) {
-            api.getLangData(langData => {
-                commit(mutationTypes.GET_EDITOR_LANG_TEXT, langData)
-            }, 'en')
-            api.getInitialPageData(initData => {
-                commit(mutationTypes.LOAD_INITIAL_DATA, initData)
-            })
+        load({ dispatch, commit }, args) {
+            dispatch('loadLanguage', args.lang)
+            dispatch('loadBook', args.book)
         }
     },
 }

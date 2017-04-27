@@ -102,7 +102,7 @@ export default {
                 //update reverse links
                 for (let i = 0; i < page.actions.link.length; i++) {
                     if (page.actions.link[i].pageId in state.pages) state.pages[page.actions.link[i].pageId].reverseLink.push({ 'pageId': page.id, 'actionId': page.actions.link[i].id })
-                    else Vue.set(state.pages, page.actions.link[i].pageId, { 'reverseLink': [{ 'pageId': page.id, 'actionId': page.actions.link[i].id }] })
+                    else if (page.actions.link[i].pageId != null) Vue.set(state.pages, page.actions.link[i].pageId, { 'reverseLink': [{ 'pageId': page.id, 'actionId': page.actions.link[i].id }] })
                 }
 
             })
@@ -140,6 +140,10 @@ export default {
         fullPageText: (state, getters) => (pageModel) => {}
     },
     actions: {
-        load({ dispatch }) {},
+        loadBook({ commit, state }, bookName) {
+            api.getInitialPageData(initData => {
+                commit(mutationTypes.LOAD_INITIAL_DATA, initData)
+            }, bookName)
+        }
     }
 }

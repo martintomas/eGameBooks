@@ -3,8 +3,8 @@ var truncate = require('truncate-html')
 
 //Format string
 if (!String.prototype.format) { // First, checks if it isn't implemented yet.
-    String.prototype.format = function() {
-        var args = arguments;
+    String.prototype.format = function(args) {
+        if(!Array.isArray(args)) args = [args]
         return this.replace(/{(\d+)}/g, function(match, number) {
             return typeof args[number] != 'undefined' ?
                 args[number] :

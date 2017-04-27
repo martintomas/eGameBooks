@@ -2,6 +2,8 @@
 //
 'use strict';
 
+var ActionString = require('editor/components/markdown-it/actionStrings')
+
 function getActionValues(actionData, pageId) {
     var actionValues = { 'actionType': null, 'actionId': null, 'actionText': null }
 
@@ -32,21 +34,15 @@ function validateAction(actionData, allowedActionsRef, actionsRef) {
 }
 
 function renderActionOpen(tokens, idx, options, env, slf) {
-    switch (tokens[idx].meta.actionType) {
-        case 'link':
-            return "<span type='link' class='link' action-ref='" + tokens[idx].meta.actionId + "' id='link-" + tokens[idx].meta.pageId + "-" + tokens[idx].meta.actionId + "' >"
-            break
-    }
-    return ''
+    return ActionString.getMarkdownString('open',tokens[idx].meta.actionType, [
+        tokens[idx].meta.actionId,
+        tokens[idx].meta.pageId,
+        tokens[idx].meta.actionId
+    ])
 }
 
 function renderActionClose(tokens, idx, options, env, slf) {
-    switch (tokens[idx].meta.actionType) {
-        case 'link':
-            return '</span>'
-            break
-    }
-    return ''
+    return ActionString.getMarkdownString('close',tokens[idx].meta.actionType, null)
 }
 
 module.exports = function actionPlugin(md, options) {
@@ -113,7 +109,6 @@ module.exports = function actionPlugin(md, options) {
 
         token = state.push('actionClose', '', -1); //close action
         token.meta = actionData
-
 
         //move state position
         state.pos = posEnd + 1;

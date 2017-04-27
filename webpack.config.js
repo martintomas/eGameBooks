@@ -6,6 +6,9 @@ module.exports = {
     devtool: '#eval-source-map',
     resolve: {
         modules: [path.resolve(__dirname, 'src/js/'), "node_modules"],
+        alias: {
+             'vue$': 'vue/dist/vue.esm.js'
+        }
     },
     module: {
         rules: [{

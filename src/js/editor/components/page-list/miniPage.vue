@@ -1,30 +1,33 @@
 <template>
-    <li class="page-mini-box" ref="page-mini-box" v-bind:style="styleMiniPageBox" @click="activeMiniPage">
+    <li class="page-mini-box" ref="pageMiniBox" v-bind:style="styleMiniPageBox" @click="activeMiniPage">
         <div class="page-mini" ref='pageMini'>
             <div class="page-mini-title">
                 <dyn-tooltip ref='tooltipMiniPage' :tooltip-id="generateHash('mini-page',index)" :allow-automatic-hidding="false" :force-top='true' :react-to-hover='false'>
-                    <span class="page-mini-title-text text-center" slot='tooltip'>{{String.doTranslationEditor('page-num',(pageNumber))}}</span>
+                    <span class="page-mini-title-text text-center" slot='tooltip'>
+                        {{String.doTranslationEditor('page-num',(pageNumber))}}
+                    </span>
                     <span slot='tooltipText'>
                         <template v-if='active'> <!-- render tooltip only when page is active -->
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-edit unactive-icon" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
+                                <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
                             </dyn-tooltip>
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-search unactive-icon" aria-hidden="true" slot='tooltip'></i>
+                                <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('zoom-mini-page')}}</span>
                             </dyn-tooltip>
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-close unactive-icon" aria-hidden="true" slot='tooltip' @click='hideMiniPage'></i>
+                                <i class="fa fa-close unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='hideMiniPage'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('deactive-page')}}</span>
                             </dyn-tooltip>
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-trash unactive-icon" aria-hidden="true" slot='tooltip'></i>
+                                <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('delete-page')}}</span>
                             </dyn-tooltip>
                         </template>
                     </span>
-                </dyn-tooltip>       
+                </dyn-tooltip> 
+                <span class='float-right'>{{numLinks}}/{{numReverseLinks}}</span>      
             </div>
             <div class="page-mini-content" v-html="simpleText">
             </div>
@@ -35,7 +38,7 @@
 <script>
     import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
     import * as mutationTypes from 'editor/store/mutation-types'
-    import {generateHash} from 'defaults.js'
+    import {generateHash,getCompStyle} from 'defaults.js'
     
     export default {
         components: {
@@ -44,7 +47,6 @@
         props: {
             model: Object,
             index: 0,
-            pageMiniHeight: 0,
             pageMiniDistance: 0,
             multiPage: true,
         },
@@ -52,15 +54,13 @@
             return {
                 pageMiniDistanceMove: 0,
                 pageMini: null,
-                tooltipMiniPage: null
+                tooltipMiniPage: null,
             }
         },
         computed: {
             styleMiniPageBox() {
                 return {
-                    top: ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'rem',
-                    height: this.pageMiniHeight + 'rem',
-                    minHeight: this.pageMiniHeight + 'rem',
+                    top: ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'px',
                 }
             },
             simpleText() {
@@ -74,6 +74,12 @@
             },
             active() { //is this mini page selected?
                 return this.model.data.id === this.editorStore.pages.selectedPage
+            },
+            numLinks() {
+                return this.model.actions.link.length
+            },
+            numReverseLinks() {
+                return this.model.reverseLink.length
             }
         },
         watch: {
@@ -85,6 +91,8 @@
         mounted() {
             this.pageMini = this.$refs.pageMini
             this.tooltipMiniPage = this.$refs.tooltipMiniPage
+
+            if(this.index === 0) this.$emit('mini-page-update-height',this.$el.clientHeight) //send only once
         },
         methods: {
             generateHash,
@@ -145,6 +153,8 @@
 <style>
     .page-mini-box {
         position: absolute;
+        height: 15rem;
+        min-height: 15rem;
 
         transition: top 0.5s;
     }
@@ -159,7 +169,6 @@
         background-color: white;
         overflow:hidden;
     }
-
     .page-mini-box .active-page {
         border-color: blue;
     }

@@ -4,7 +4,7 @@ module.exports = {
         id: 1,
         pageNumber: 1,
         tittlePage: null,
-        text: "This is text for *testing* purposes. Pokračujte na :::link:1:další stránku:::. Tohle je :::link:3:nikam nevedouci link:::.",
+        text: "This is text for *testing* pur<span>poses</span>. Pokračujte na :::link:1:další stránku:::. Tohle je :::link:5:nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link::: :::link:3:chybejici stranka:::.",
         actions: {
             'link': [{
                 'id': 1,
@@ -13,6 +13,14 @@ module.exports = {
             }, {
                 'id': 2,
                 'pageId': 2,
+                'condition': ''
+            }, {
+                'id': 3,
+                'pageId': null,
+                'condition': ''
+            }, {
+                'id': 4,
+                'pageId': null,
                 'condition': ''
             }]
         }

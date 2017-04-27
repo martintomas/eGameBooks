@@ -4,9 +4,10 @@
             <div class='page-main-view'>
                 <div class='scroller-wrapper' ref="page-mini-main-wrapper">
                     <div class='scroller-box' ref="page-mini-main-scroller">
-                        <div v-html='pageText' class='page-main-text'></div>
+                        <page-main-text class='page-main-text' :page-data='pageData'></page-main-text>
                     </div>
                 </div>
+                <span class='page-main-page-number'>{{String.doTranslationEditor('page-num',(pageNumber))}}</span>
             </div>
             <div class='page-main-buttons text-center'>
                 <ul>
@@ -23,7 +24,12 @@
 import IScroll from 'iscroll'
 import {bus} from 'app.js'
 
+import PageMainText from 'editor/components/page-main/page-main-text/pageMainText.vue'
+
 export default {
+    components: {
+        PageMainText
+    },
     props: {
         pageId: 0,
         pageData: null,
@@ -57,7 +63,12 @@ export default {
     computed: {
         pageText() {
             return this.pageData.data.renderedText
+        },
+        pageNumber() {
+            return this.pageData.data.pageNumber
         }
+    },
+    methods: {
     }
 }
 </script>
@@ -68,11 +79,9 @@ export default {
         width: 80%;
         margin: 0% auto;
         height: 50%;
-        min-height:13rem;
+        min-height:15rem;
         border: black solid 1px;
         border-radius:1rem;
-        display:block;
-        top: 4%;
         min-width:15rem;
     }
     .page-main-container {
@@ -94,12 +103,9 @@ export default {
     }
     .page-main-text {
         position:relative;
-        top:2%;
-        left:5%;
-        right:2%;
-        bottom:2;
+        left:4%;
         height:96%;
-        width:93%;
+        width:92%;
     }
     .scroller-wrapper {
         height: 100%;
@@ -109,6 +115,22 @@ export default {
         transform: translateZ(0);
         user-select: none;
         text-size-adjust: none;
+        position: relative;
+        top:2%;
+    }
+    .page-main-page-number {
+        display:block;
+        width:100%;
+        height:1.7rem;
+        position:absolute;
+        bottom:0;
+        background-color:rgb(128,128,128);
+        background-color:rgba(128,128,128,0.95);
+        line-height:1.7rem;
+        vertical-align:middle;
+        text-align:center;
+        font-size:150%;
+        font-weight: bold;
     }
     .page-main-buttons {
         position:relative;

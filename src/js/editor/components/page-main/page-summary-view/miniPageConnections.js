@@ -10,7 +10,6 @@ export default {
         model: null,
         modelLength: 0,
         index: 0,
-        pageMiniWidth: 0,
         pageMiniDistance: 0,
         activeDistance: 0,
     },
@@ -22,38 +21,34 @@ export default {
             tooltipTextMiniPage: null,
             tooltipTextMiniPageActive: false,
             pageMiniDistanceMove: 0,
+            pageMiniWidth: 200,
         }
     },
     computed: {
         styleMiniPageBox() {
-            let max = this.pageMiniWidth
-            if (this.active) max = this.activeDistance - 0.2 //left some mini space between active and other component
-            return {
-                left: ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'rem',
-                width: max + 'rem',
-                minWidth: max + 'rem',
+            let style = {}
+            style.left = ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'px'
+            if (this.active && this.tooltipMiniPage != null) { //make area bigger only when there is tooltip to be shown
+                style.width = this.activeDistance - 5 + 'px'
+                style.minWidth = this.activeDistance - 5 + 'px'
             }
-        },
-        styleMiniPage() {
-            return {
-                width: this.pageMiniWidth + 'rem',
-                minWidth: this.pageMiniWidth + 'rem',
-            }
+            return style
         },
         styleMiniPageTextBox() { //keep area under mini page centered
             if (this.active || this.modelLength - 1 === this.index) {
                 return {
-                    width: this.pageMiniWidth + 'rem',
+                    width: this.pageMiniWidth + 'px',
                 }
             } else {
                 let max = this.pageMiniWidth
                 if (this.pageMiniDistance < max) max = this.pageMiniDistance
                 return {
-                    width: max + 'rem',
+                    width: max + 'px',
                 }
             }
         },
         pageId() {
+            if (this.page === null) return null
             return this.page.data.id
         },
         pageNumber() {
@@ -72,6 +67,9 @@ export default {
         this.miniPageRef = this.$refs.miniPage
         this.tooltipMiniPage = this.$refs.tooltipMiniPage
         this.tooltipTextMiniPage = this.$refs.tooltipTextMiniPage
+        this.pageMiniWidth = this.$refs.miniPage.clientWidth
+
+        if (this.index === 0) this.$emit('mini-page-update-width', this.pageMiniWidth)
     },
     methods: {
         generateHash,
@@ -127,13 +125,17 @@ export default {
             }
         },
         showTooltip(tooltip) {
-            setTimeout(() => {
-                tooltip.show(this.$refs.miniPageBox)
-            }, 50)
+            if (tooltip) { //show tooltip only when tooltip is defined
+                setTimeout(() => {
+                    tooltip.show(this.$refs.miniPageBox)
+                }, 50)
+            }
 
         },
         hideTooltip(tooltip) {
-            tooltip.hide()
+            if (tooltip) {
+                tooltip.hide()
+            }
         }
     }
 
