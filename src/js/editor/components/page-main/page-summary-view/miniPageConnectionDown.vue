@@ -87,9 +87,6 @@ export default {
                 return this.editorStore.pages.pages[this.model.pageId]
             } else {
                 //console.log('Page connection down warn: Page definition is missing')
-                this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'warn',level:'internal',debug:false,
-                    message:'Page connection down warn: Page definition is missing'
-                })
                 return null
             }
         },
@@ -103,7 +100,7 @@ export default {
         existsInText() {
             return this.model.existsInText
         }
-    }
+    },
 }
 
 

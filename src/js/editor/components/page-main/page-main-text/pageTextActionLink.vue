@@ -53,9 +53,6 @@ export default {
                 if(this.pageData.actions.link[i].id === this.actionId) return this.pageData.actions.link[i]
             }
             //console.log('TEXT MAIN LINK WARN: link is missing')
-            this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'warn',level:'internal',debug:false,
-                message:'text action link warn: link is missing'
-            })
             return null
         }
     },
