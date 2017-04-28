@@ -112,7 +112,7 @@ export default {
 
             })
 
-            state.pagesOrder = state.pagesOrder.sort() //sort pages
+            state.pagesOrder = state.pagesOrder.sort((a,b) => a - b) //sort pages
 
             if (state.editedPage === null || !(state.editedPage in state.pages)) { //be sure that edited page is set up and exists
                 //console.log('STORE: changed edited page by force')
