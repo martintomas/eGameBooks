@@ -132,7 +132,7 @@
                 return false;
             },
             showMiniPage(page) {
-                console.log('Mini pages main -- show mini page');
+                //console.log('Mini pages main -- show mini page');
 
                 if (this.activatedPage != null && this.activatedPage != page) { //hide previously active page
                     this.hideMiniPage(this.activatedPage, false);
@@ -180,7 +180,7 @@
                 }
             },
             updateScroller(overTop) {
-                console.log('Mini pages - updating scroll height');
+                //console.log('Mini pages - updating scroll height');
 
                 if(!overTop) overTop=0
 

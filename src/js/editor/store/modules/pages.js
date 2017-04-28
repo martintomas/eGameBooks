@@ -2,6 +2,7 @@ import * as mutationTypes from 'editor/store/mutation-types'
 import * as api from 'editor/api'
 import { MarkdownComp } from 'editor/components/markdown-it/markdownComp.js'
 import Vue from 'vue' //use Vue.set for manipulation with dict/array --> it is reactive
+import {notification} from 'editor/store/modules/notification.js'
 
 /*
 Structure of one page
@@ -84,7 +85,8 @@ export default {
     },
     mutations: {
         [mutationTypes.LOAD_INITIAL_DATA](state, initData) {
-            console.log('STORE: loading initial data')
+            //console.log('STORE: loading initial data')
+            notification.newInternalInfo('Starting processing initial data of book',true)
 
             initData.pages.forEach(page => {
                 if (!(page.id in state.pages)) Vue.set(state.pages, page.id, { 'data': null, 'actions': null, 'renderInfo': null, 'reverseLink': [] }) //create emty dict if it is not existing
@@ -113,27 +115,36 @@ export default {
             state.pagesOrder = state.pagesOrder.sort() //sort pages
 
             if (state.editedPage === null || !(state.editedPage in state.pages)) { //be sure that edited page is set up and exists
-                console.log('STORE: changed edited page by force')
+                //console.log('STORE: changed edited page by force')
+                notification.newInternalWarn('Edited page was changed by force',true)
                 for (let key in state.pages) {
                     state.editedPage = key //set up first suitable pages as edited
                     break
                 }
             }
+
+            notification.newInternalInfo('Initial data of book have been processed',true)
         },
         [mutationTypes.RENDER_PAGE](state, page) {
-            console.log('STORE: rendering text for page number ' + page.id)
+            //console.log('STORE: rendering text for page number ' + page.id)
+            notification.newInternalInfo('Rendering text for page number ' + page.id,true)
         },
         [mutationTypes.SELECT_PAGE](state, pageId) {
-            console.log('STORE: selecting new page ' + pageId)
+            //console.log('STORE: selecting new page ' + pageId)
+            notification.newInternalInfo('Selecting new page ' + pageId,true)
 
             if (pageId in state.pages) state.selectedPage = pageId
             else state.selectedPage = null
         },
         [mutationTypes.EDIT_PAGE](state, pageId) {
-            console.log('STORE: editing new page ' + pageId)
+            //console.log('STORE: editing new page ' + pageId)
+            notification.newInternalInfo('Editing new page ' + pageId,true)
 
             if (Object.keys(state.pages).length > 0) { //check if pages data are already loaded
-                if (pageId in state.pages) state.editedPage = pageId //change only edited page in case that page id is valid one
+                if (pageId in state.pages) {
+                    state.editedPage = pageId //change only edited page in case that page id is valid one
+                    notification.newExternalInfo('Page number ' + state.pages[pageId].data.pageNumber + ' is edited now.')
+                }
             } else {
                 state.editedPage = pageId
             }
@@ -148,9 +159,14 @@ export default {
     },
     actions: {
         loadBook({ commit, state }, bookName) {
+            notification.newInternalInfo('Starting loading initial data of book',true)
             api.getInitialPageData(initData => {
                 commit(mutationTypes.LOAD_INITIAL_DATA, initData)
-            }, bookName)
-        }
+            }, bookName).then(() => {
+                notification.newInternalInfo('Initial data of book have been loaded',true)
+            }).catch((reason) => {
+                notification.newInternalError('Initial data of book have been not loaded. Reason is: '+reason,true)
+            })
+        },
     }
 }

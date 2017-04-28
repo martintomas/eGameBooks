@@ -110,20 +110,20 @@
                 }
             },
             showMiniPageEvent() {
-                console.log('Mini pages - showing page number: ' + this.pageId);
+                //console.log('Mini pages - showing page number: ' + this.pageId);
 
                 this.pageMini.classList.add('active-page')
                 this.showTooltip()
             },
             hideMiniPageEvent() {
-                console.log('Mini pages - hiding page number: ' + this.pageId)
+                //console.log('Mini pages - hiding page number: ' + this.pageId)
 
                 this.pageMini.classList.remove('active-page')
                 this.hideTooltip()
 
             },
             hideMiniPage(event) {
-                console.log('Mini pages - manualy hiding page number: ' + this.pageId);
+                //console.log('Mini pages - manualy hiding page number: ' + this.pageId);
 
                 if (event) event.stopPropagation() //be sure that page is not actived again by click
                 this.$store.commit('editor/'+mutationTypes.SELECT_PAGE,null) //no page is selected
@@ -131,7 +131,7 @@
                 this.$emit('hide-mini-page', this) //let othet components know     
             },
             editMiniPage(event) {
-                console.log('Mini pages - editing page number: ' + this.pageId)
+                //console.log('Mini pages - editing page number: ' + this.pageId)
 
                 if (event) event.stopPropagation()
 
@@ -139,7 +139,7 @@
                 this.$router.push({ name: 'page-view', params: { pageId: this.pageId }})
             },
             showPageDetail(event) {
-                console.log('Mini pages - showing detail of page number: ' + this.pageId)
+                //console.log('Mini pages - showing detail of page number: ' + this.pageId)
 
                 if (event) event.stopPropagation()
 

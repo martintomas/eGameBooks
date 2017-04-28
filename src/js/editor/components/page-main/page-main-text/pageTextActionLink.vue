@@ -32,6 +32,7 @@
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import { generateHash } from 'defaults.js'
 import {busEditor} from 'editor/defaults.js'
+import * as mutationTypes from 'editor/store/mutation-types'
 
 export default {
     components: {
@@ -51,7 +52,10 @@ export default {
             for(let i=0;i<this.pageData.actions.link.length;i++) {
                 if(this.pageData.actions.link[i].id === this.actionId) return this.pageData.actions.link[i]
             }
-            console.log('TEXT MAIN LINK WARN: link is missing')
+            //console.log('TEXT MAIN LINK WARN: link is missing')
+            this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'warn',level:'internal',debug:false,
+                message:'text action link warn: link is missing'
+            })
             return null
         }
     },
@@ -60,7 +64,10 @@ export default {
     methods: {
         generateHash,
         showPageDetail(events) {
-            console.log('Continuing reading to page: ' + this.linkData.pageId)
+            //console.log('Continuing reading to page: ' + this.linkData.pageId)
+            this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'info',level:'internal',debug:false,
+                message:'Continuing reading to page: ' + this.linkData.pageId
+            })
 
             if (event) event.stopPropagation()
 

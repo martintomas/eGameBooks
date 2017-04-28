@@ -87,14 +87,14 @@ export default {
             }
         },
         showMiniPageEvent() {
-            console.log('Mini pages - showing page number: ' + this.pageId);
+            //console.log('Mini pages - showing page number: ' + this.pageId);
 
             this.active = true
             this.miniPageRef.classList.add('active-page')
             this.showTooltip(this.tooltipMiniPage)
         },
         hideMiniPageEvent() {
-            console.log('Mini pages - hiding page number: ' + this.pageId)
+            //console.log('Mini pages - hiding page number: ' + this.pageId)
 
             this.active = false
             this.miniPageRef.classList.remove('active-page')
@@ -126,7 +126,7 @@ export default {
             }
         },
         showPageDetail(event) {
-            console.log('Mini pages - showing detail of page number: ' + this.pageId)
+            //console.log('Mini pages - showing detail of page number: ' + this.pageId)
 
             if (event) event.stopPropagation()
 

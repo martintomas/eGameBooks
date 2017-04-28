@@ -82,7 +82,7 @@ export default {
             })
         },
         showConnectionPage(page) {
-            console.log('Connection pages main -- show connection reverse page');
+            //console.log('Connection pages main -- show connection reverse page');
 
             if (this.activatedPage != null && this.activatedPage != page) { //hide previously active page
                 this.hideConnectionPage(this.activatedPage, false);
@@ -142,7 +142,7 @@ export default {
             return this.pageMaxDistance
         },
         updateScroller() {
-            console.log('Mini pages connections - updating scroll width')
+            //console.log('Mini pages connections - updating scroll width')
 
             var scrollBarWidth = this.miniPageWidth + ((this.pages.length - 1) * this.pageDistanceDefault)
             if (this.activatedPage != null) {

@@ -204,7 +204,7 @@ export default {
                  tooltiptext = this.tooltiptext2
             }
 
-            console.log('Showing tooltip')
+            //console.log('Showing tooltip')
 
             let posLeft = this.tooltip.offsetLeft + this.tooltip.clientWidth + 5
             let posTop = this.tooltip.offsetTop + ( this.tooltip.clientHeight / 2 ) - ( tooltiptext.clientHeight / 2 )
@@ -274,7 +274,7 @@ export default {
                  tooltiptext = this.tooltiptext2
             }
 
-            console.log('Showing tooltip')
+            //console.log('Showing tooltip')
             //compute position of tooltip
             //inspired by https://osvaldas.info/elegant-css-and-jquery-tooltip-responsive-mobile-friendly
             var pos_left = this.tooltip.offsetLeft + ( this.tooltip.clientWidth / 2 ) - ( tooltiptext.clientWidth / 2 )
@@ -404,7 +404,7 @@ export default {
             }
         },
         hide() {
-            console.log('Hide tooltip')
+            //console.log('Hide tooltip')
             if (this.tooltiptext.classList.contains('show-tooltip')) {
                 this.tooltiptext.classList.remove('show-tooltip');
             }

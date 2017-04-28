@@ -74,6 +74,7 @@
 <script>
 
 import MiniPageConnections from 'editor/components/page-main/page-summary-view/miniPageConnections'
+import * as mutationTypes from 'editor/store/mutation-types'
 
 export default {
     mixins: [MiniPageConnections],
@@ -85,7 +86,10 @@ export default {
             if(this.model.pageId in this.editorStore.pages.pages) {
                 return this.editorStore.pages.pages[this.model.pageId]
             } else {
-                console.log('Page connection down warn: Page definition is missing')
+                //console.log('Page connection down warn: Page definition is missing')
+                this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'warn',level:'internal',debug:false,
+                    message:'Page connection down warn: Page definition is missing'
+                })
                 return null
             }
         },
