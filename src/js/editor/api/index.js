@@ -1,13 +1,13 @@
 const pageData = require('./mock-page-data')
 const langData = require('./mock-lang-data')
-const LATENCY = 500
+const LATENCY = 300
 
 export function getInitialPageData(cb, bookName) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             cb(pageData)
+            resolve()
         }, LATENCY)
-        resolve()
     })
 }
 
@@ -17,8 +17,8 @@ export function getLangData(cb, lang) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             cb(langData)
-        }, LATENCY)
-        resolve()
+            resolve()
+        }, 150)
     })
 
     //}

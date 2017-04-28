@@ -3,6 +3,7 @@ import * as api from 'editor/api'
 import { MarkdownComp } from 'editor/components/markdown-it/markdownComp.js'
 import Vue from 'vue' //use Vue.set for manipulation with dict/array --> it is reactive
 import {notification} from 'editor/store/modules/notification.js'
+import * as mutationTypesMain from 'store/mutationTypes'
 
 /*
 Structure of one page
@@ -160,12 +161,19 @@ export default {
     actions: {
         loadBook({ commit, state }, bookName) {
             notification.newInternalInfo('Starting loading initial data of book',true)
+
+            commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:true,id:'page-load',text:String.doTranslationEditor('loader-loading-editor-book')},{ root: true })
+
             api.getInitialPageData(initData => {
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:true,id:'page-process',text:String.doTranslationEditor('loader-processing-editor-book')},{ root: true })
                 commit(mutationTypes.LOAD_INITIAL_DATA, initData)
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:false,id:'page-process'},{ root: true })
             }, bookName).then(() => {
                 notification.newInternalInfo('Initial data of book have been loaded',true)
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:false,id:'page-load'},{ root: true })
             }).catch((reason) => {
                 notification.newInternalError('Initial data of book have been not loaded. Reason is: '+reason,true)
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:false,id:'page-load'},{ root: true })
             })
         },
     }

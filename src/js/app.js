@@ -3,10 +3,10 @@ import Vue from 'vue'
 import { router } from 'router/'
 import { store } from 'store/'
 import { waitForResizeEnd } from 'defaults.js'
-import Editor from 'editor/editor.vue'
+
+import App from 'app.vue'
 
 Vue.config.debug = true
-Vue.use(Editor, { 'store': store })
 
 export const bus = new Vue() //used for indirect communication
 
@@ -22,8 +22,8 @@ window.onresize = function(e) {
 
 const root = new Vue({
     el: '#app',
-    components: { Editor },
+    components: { App },
     store,
     router,
-    render: h => h(Editor)
+    render: h => h(App)
 })

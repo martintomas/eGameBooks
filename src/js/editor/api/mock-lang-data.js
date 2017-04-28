@@ -31,4 +31,9 @@ module.exports = {
     'no-reverse-pages':'No reverse pages',
     'no-forward-pages':'No forward pages',
     'notification-loaded-page':'page number {0} has been loaded',
+    'loader-loading-editor-language':'Loading editor language',
+    'loader-loading-editor-book':'Loading book initial data',
+    'loader-processing-editor-language':'Processing editor language',
+    'loader-processing-editor-book':'Processing book data',
+    'missing-page-error':'Selected page is missing. Please select another page.'
 }

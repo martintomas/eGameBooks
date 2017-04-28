@@ -2,6 +2,7 @@ import * as mutationTypes from 'editor/store/mutation-types'
 import * as api from 'editor/api'
 import Vue from 'vue'
 import {notification} from 'editor/store/modules/notification.js'
+import * as mutationTypesMain from 'store/mutationTypes'
 
 let warnInformed = false
 export default {
@@ -25,12 +26,19 @@ export default {
     actions: {
         loadLanguage({ commit, state }, lang) {
             notification.newInternalInfo('Starting loading editor language',true)
+
+            commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:true,id:'lang-load',text:String.doTranslationEditor('loader-loading-editor-language')},{ root: true })
+
             return api.getLangData(langData => {
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:true,id:'lang-process',text:String.doTranslationEditor('loader-processing-editor-language')},{ root: true })
                 commit(mutationTypes.GET_EDITOR_LANG_TEXT, langData)
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:false,id:'lang-process'},{ root: true })
             }, lang).then(() => {
                 notification.newInternalInfo('Editor language have been loaded',true)
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:false,id:'lang-load'},{ root: true })
             }).catch((reason) => {
                 notification.newInternalError('Editor language have been not loaded. Reason is: '+reason,true)
+                commit('loader/'+mutationTypesMain.MODIFY_LOADER_QUEUE, {start:false,id:'lang-load'},{ root: true })
             })
         }
     },
