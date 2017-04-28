@@ -59,7 +59,7 @@ class Notification {
                 this.notifications.push(args)
             }
         } else {
-            console.log('EDITOR WARN: notification type is missing')
+            console.log(constructInternalMessage({type:'error',message:'Notification type '+args.type+' doesnt exists.'}))
         }
     }
 }
