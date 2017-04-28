@@ -3,11 +3,18 @@
         <div class='page-connection-view' ref='pageConnectionView'>
             <div class="page-connection-wrapper" ref="page-mini-main-wrapper">
                 <div class="page-connection-scroller" ref="page-mini-main-scroller">
-                    <ul>
-                        <li is="mini-page-connection-up" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="index" :model="model" :index='index' :model-length='pages.length'
-                            :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
-                        </li>
-                    </ul>
+                    <template v-if="pages.length === 0">
+                        <div class='page-connection-no-pages'>
+                            {{String.doTranslationEditor('no-reverse-pages')}}
+                        </div>
+                    </template>
+                    <template v-else>
+                        <ul>
+                            <li is="mini-page-connection-up" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="index" :model="model" :index='index' :model-length='pages.length'
+                                :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
+                            </li>
+                        </ul>
+                    </template>
                 </div>
             </div>
         </div>
@@ -65,5 +72,12 @@ export default {
         padding: 0;
         margin: 0 0.5rem 0 1rem;
         height: 100%;
+    }
+    .page-connection-no-pages {
+        font-weight:bold;
+        font-size:200%;
+        text-align: center;
+        position: relative;
+        top: 20%;
     }
 </style>

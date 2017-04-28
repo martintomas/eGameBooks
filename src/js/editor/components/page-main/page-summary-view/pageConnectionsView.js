@@ -160,6 +160,7 @@ export default {
             if (this.scrollContainerRef != null) {
                 if (this.pageDistanceDefault === this.pageMiniDistance) scrollBarWidth += 6 //scrollbar is shown --> be sure that some place is free behind it
 
+                if(scrollBarWidth < 0) scrollBarWidth = this.pageConnectionView.clientWidth - 10 //in case that this.pages.length is zero
                 this.scrollContainerRef.style.width = Math.ceil(scrollBarWidth * 10) / 10 + 'px'; //recompute width of scrollbar container
                 setTimeout(() => {
                     this.scroller.refresh(); //actualize scroller based on new width

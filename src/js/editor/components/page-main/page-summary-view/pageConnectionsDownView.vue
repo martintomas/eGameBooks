@@ -3,11 +3,18 @@
         <div class='page-connection-down-box' ref='pageConnectionView'>
             <div class="page-connection-wrapper scroller-bottom" ref="page-mini-main-wrapper">
                 <div class="page-connection-scroller" ref="page-mini-main-scroller">
-                    <ul>
-                        <li is="mini-page-connection-down" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="index" :model="model" :index='index' :model-length='pages.length' :page-edited-id='pageId'
-                            :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
-                        </li>
-                    </ul>
+                    <template v-if="pages.length === 0">
+                        <div class='page-connection-no-pages'>
+                            {{String.doTranslationEditor('no-forward-pages')}}
+                        </div>
+                    </template>
+                    <template v-else>
+                        <ul>
+                            <li is="mini-page-connection-down" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="index" :model="model" :index='index' :model-length='pages.length' :page-edited-id='pageId'
+                                :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
+                            </li>
+                        </ul>
+                    </template>
                 </div>
             </div>
         </div>

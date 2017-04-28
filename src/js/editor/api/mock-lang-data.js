@@ -27,4 +27,6 @@ module.exports = {
     'redo':'Redo',
     'page-zoom-modal-header':'Detail of page number {0}',
     'continue-to-page':'Continue\xa0to next\xa0page',
+    'no-reverse-pages':'No reverse pages',
+    'no-forward-pages':'No forward pages',
 }
