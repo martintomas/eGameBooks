@@ -1,5 +1,6 @@
 import IScroll from 'iscroll'
 import { bus } from 'app.js'
+import {busEditor} from 'editor/defaults.js'
 
 
 //expects that page variable will be defined in childrens
@@ -67,10 +68,11 @@ export default {
         this.pageDistanceDefault = this.pageOptimalDistance() //update page distance based on window size --> use optimaly width of box
         this.updateScroller()
 
-        bus.$on(['window-resize-end', 'editor-panel-resize'], source => {
-            this.pageDistanceDefault = this.pageOptimalDistance() //be sure to update distance between elements when window is resized
-            if (this.activatedPage != null) this.moveMiniPagesX(this.activatedPage, this.pageMaxActivationDistance - this.pageDistanceDefault) //update distance of moved pages (behind active one)
-            this.updateScroller()
+        bus.$on('window-resize-end', source => {
+            this.updateWidthChange()
+        })
+        busEditor.$on('editor-panel-resize', source => {
+            this.updateWidthChange()
         })
     },
     methods: {
@@ -105,6 +107,11 @@ export default {
             for (var i = fromPage.index + 1; i < this.$refs['pageConnectionsBox'].length; i++) {
                 this.$refs['pageConnectionsBox'][i].moveDistanceLeft(distance);
             }
+        },
+        updateWidthChange() {
+            this.pageDistanceDefault = this.pageOptimalDistance() //be sure to update distance between elements when window is resized
+            if (this.activatedPage != null) this.moveMiniPagesX(this.activatedPage, this.pageMaxActivationDistance - this.pageDistanceDefault) //update distance of moved pages (behind active one)
+            this.updateScroller()
         },
         pageOptimalDistance() {
             if (this.pageConnectionView != null && this.pages.length > 0) {
