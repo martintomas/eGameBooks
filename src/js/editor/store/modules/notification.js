@@ -5,12 +5,15 @@ const debug = process.env.NODE_ENV !== 'production'
 function constructInternalMessage(args) {
     switch(args.type) {
         case 'info':
+            if(args.debug) return 'EDITOR INFO (debug): ' + args.message
             return 'EDITOR INFO: ' + args.message
             break
         case 'warn':
+            if(args.debug) return 'EDITOR WARN (debug): ' + args.message
             return 'EDITOR WARN: ' + args.message
             break
         case 'error':
+            if(args.debug) return 'EDITOR ERROR (debug): ' + args.message
             return 'EDITOR ERROR: ' + args.message
             break
     }
