@@ -11,10 +11,7 @@ Vue.use(Editor, { 'store': store })
 export const bus = new Vue() //used for indirect communication
 
 window.onclick = function(e) {
-    bus.$emit('hide-dropdown', e)
-    bus.$emit('hide-modal', e)
-    bus.$emit('hide-tooltip', e)
-    bus.$emit('hide-whisperer', e)
+    bus.$emit('automatic-hide', e)
 }
 
 window.onresize = function(e) {

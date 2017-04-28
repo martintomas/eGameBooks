@@ -21,7 +21,7 @@ import {bus} from './app.js'
 
 export default {
     created() {
-        bus.$on('hide-modal',source => { //listen for indirect event for hidding modal
+        bus.$on('automatic-hide',source => { //listen for indirect event for hidding modal
             if(source.target == this.$refs.dynModal) {
                 this.close()
             }
