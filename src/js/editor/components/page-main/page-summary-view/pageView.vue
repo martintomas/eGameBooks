@@ -6,7 +6,7 @@
             <page-connections-down-view :page-id='editedPageId' :page-data='pageData'></page-connections-down-view>
         </template>
         <template v-else>
-            <p>Edited page is missing</p>
+            <div class='page-view-missing-page'>{{String.doTranslationEditor('missing-page-error')}}</div>
         </template>
     </div>
 </template>
@@ -71,5 +71,10 @@ export default {
         min-height:35rem;
         flex-direction: column;
         justify-content: space-around;
+    }
+    .page-view-missing-page {
+        font-size:200%;
+        text-align:center;
+        font-weight:bold;
     }
 </style>
