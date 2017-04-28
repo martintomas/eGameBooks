@@ -3,10 +3,12 @@
     <div class="page-mini-main" ref='pageMiniMain'>
         <p class="page-mini-summary-text active-text" @click="showHidePageList">{{String.doTranslationEditor('page-summary')}}</p>
         <div class="page-mini-main-header">
+            <!--
             <dyn-tooltip class='dyn-tooltip'>
                 <i class="fa fa-file-text-o active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('new-page')}}</span>
             </dyn-tooltip>
+            -->
             <dyn-tooltip class='dyn-tooltip'>
                 <i class="fa fa-files-o active-icon tooltip" aria-hidden="true" @click="multiPageShow" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('multi-pages')}}</span>
@@ -14,6 +16,10 @@
             <dyn-tooltip class='dyn-tooltip'>
                 <i class="fa fa-file-o active-icon tooltip" aria-hidden="true" @click="onePageShow" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('one-pages')}}</span>
+            </dyn-tooltip>
+            <dyn-tooltip class='dyn-tooltip'>
+                <i class="fa fa-exclamation-circle active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                <span slot='tooltipText'>{{String.doTranslationEditor('wrong-pages')}}</span>
             </dyn-tooltip>
         </div>
         <!--<p class="vertical-text float-right page-mini-vertical-text">Page summary</p>-->
