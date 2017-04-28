@@ -75,5 +75,14 @@ export default {
         [mutationTypes.NEW_NOTIFICATION](state, args) {
             state.notif.addNew(args)
         }
+    },
+    getters: {
+        getNotification : (state, getters) => (notificationId) => {
+            if(notificationId >= state.notifications.length || notificationId < 0) {
+                return null
+            } else {
+                return state.notifications[notificationId]
+            }
+        }
     }
 }

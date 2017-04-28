@@ -7,6 +7,7 @@ module.exports = {
     'page-num': "{0}. page",
     'multi-pages': 'Show minified page list',
     'one-pages': 'Show full page list',
+    'wrong-pages':'Show only wrong pages',
     'edit-page': 'Edit\xa0page',
     'deactive-page': 'Deactivate\xa0page',
     'zoom-mini-page': 'See\xa0detail of mini\xa0page',
@@ -29,4 +30,5 @@ module.exports = {
     'continue-to-page':'Continue\xa0to next\xa0page',
     'no-reverse-pages':'No reverse pages',
     'no-forward-pages':'No forward pages',
+    'notification-loaded-page':'page number {0} has been loaded',
 }

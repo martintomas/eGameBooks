@@ -121,6 +121,16 @@ body {
     filter: alpha(opacity=30);
 }
 
+.fade {
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.no-fade {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
 .iScrollVerticalScrollbar {
     position: absolute;
     z-index: 9999;

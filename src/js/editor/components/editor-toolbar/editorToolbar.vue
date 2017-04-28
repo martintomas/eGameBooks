@@ -1,19 +1,24 @@
 <template>
     <div class='editor-toolbar-root'>
-        <span class='editor-toolbar-button'>{{String.doTranslationEditor('save')}}</span>
-        <span class='editor-toolbar-button'>{{String.doTranslationEditor('new-page-simple')}}</span>
-        <span class='editor-toolbar-button'>{{String.doTranslationEditor('undo')}}</span>
-        <span class='editor-toolbar-button'>{{String.doTranslationEditor('redo')}}</span>
-        <span class='float-right'>
+        <div class='editor-toolbars-buttons'>
+            <span class='editor-toolbar-button'>{{String.doTranslationEditor('save')}}</span>
             <span class='editor-toolbar-button'>{{String.doTranslationEditor('close')}}</span>
-        </span>
+            <span class='editor-toolbar-button'>{{String.doTranslationEditor('new-page-simple')}}</span>
+            <span class='editor-toolbar-button'>{{String.doTranslationEditor('undo')}}</span>
+            <span class='editor-toolbar-button'>{{String.doTranslationEditor('redo')}}</span>
+        </div>
+        <notification-line class='notification-line'></notification-line>
     </div>
 </template>
 
 <script>
 
-export default {
+import NotificationLine from 'editor/components/editor-toolbar/notificationLine.vue'
 
+export default {
+    components: {
+        NotificationLine
+    }
 
 }
 
@@ -24,6 +29,11 @@ export default {
     min-height:2rem;
     width:100%;
     flex: 0 0 auto;
+    display:flex;
+    flex-direction:row;
+}
+.editor-toolbars-buttons {
+    flex-grow:2;
 }
 .editor-toolbar-button {
     padding: 0.25rem 1rem 0.25rem 1rem;

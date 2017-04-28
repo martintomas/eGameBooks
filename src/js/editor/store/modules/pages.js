@@ -143,7 +143,7 @@ export default {
             if (Object.keys(state.pages).length > 0) { //check if pages data are already loaded
                 if (pageId in state.pages) {
                     state.editedPage = pageId //change only edited page in case that page id is valid one
-                    notification.newExternalInfo('Page number ' + state.pages[pageId].data.pageNumber + ' is edited now.')
+                    notification.newExternalInfo(String.doTranslationEditor('notification-loaded-page',state.pages[pageId].data.pageNumber))
                 }
             } else {
                 state.editedPage = pageId
