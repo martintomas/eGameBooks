@@ -77,8 +77,7 @@ export default {
             tooltiptext: null,
             tooltiptext2: null,
             tooltip: null,
-            hideTimeLimit: 100,
-            hideFunction: null,
+            mouseLeave: true,
         }
     },
     computed: {
@@ -96,7 +95,7 @@ export default {
         if(this.hasSecondTooltip)this.tooltiptext2 = this.$refs.tooltiptext2
         this.tooltip = this.$refs.tooltip
 
-        bus.$on('hide-tooltip',source => {
+        bus.$on('automatic-hide',source => {
             if(this.allowAutomaticHidding && this.reactToClick) { //automatically hide tooltip
                 if (!source.target.matches('.tooltip')) {
                     if(!this.tooltip.contains(source.target)) { //check if tooltip inner element was not clicked
@@ -155,6 +154,7 @@ export default {
         },
         tooltipMouseEnter() {
             if(this.reactToHover && !this.ignoreDefaultBehavior) {
+                this.mouseLeave = false
                 if(!this.isTooltipShow()) {
                     this.show(false)
                 }
@@ -162,6 +162,7 @@ export default {
         },
         tooltipMouseLeave() {
             if(this.reactToHover && !this.ignoreDefaultBehavior) {
+                this.mouseLeave = true
                 if(this.isTooltipShow()) {
                     this.hide()
                 }
@@ -264,7 +265,8 @@ export default {
                     this.showRightLeft(itemBorder,showSecond,iterations-=1) //do recalculation one more time (change iteration attr)
                 },50)
             } else {
-                tooltiptext.classList.add('show-tooltip');
+                if(this.reactToHover && !this.ignoreDefaultBehavior && this.mouseLeave) this.hide() //hide when mouse leave region before tooltip is stabilized
+                else tooltiptext.classList.add('show-tooltip');
             }
             
         },
@@ -335,7 +337,8 @@ export default {
                     this.showTopBottom(itemBorder,showSecond,iterations-=1) //do recalculation one more time (change iteration attr)
                 },50)
             } else {
-                tooltiptext.classList.add('show-tooltip');
+                if(this.reactToHover && !this.ignoreDefaultBehavior && this.mouseLeave) this.hide() //hide when mouse leave region before tooltip is stabilized
+                else tooltiptext.classList.add('show-tooltip');
             }
             
         },
@@ -400,7 +403,8 @@ export default {
                     this.showTopBottomInline(itemBorder,posTop,posLeft,iterations-=1) //do recalculation one more time (change iteration attr)
                 },50)
             } else {
-                tooltiptext.classList.add('show-tooltip');
+                if(this.reactToHover && !this.ignoreDefaultBehavior && this.mouseLeave) this.hide() //hide when mouse leave region before tooltip is stabilized
+                else tooltiptext.classList.add('show-tooltip');
             }
         },
         hide() {
