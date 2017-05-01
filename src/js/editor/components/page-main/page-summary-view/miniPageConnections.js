@@ -92,6 +92,7 @@ export default {
             this.active = true
             this.miniPageRef.classList.add('active-page')
             this.showTooltip(this.tooltipMiniPage)
+
         },
         hideMiniPageEvent() {
             //console.log('Mini pages - hiding page number: ' + this.pageId)

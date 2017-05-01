@@ -86,7 +86,7 @@ export default {
             if(this.model.pageId in this.$store.state.editor.bookData.pages) {
                 return this.$store.state.editor.bookData.pages[this.model.pageId]
             } else {
-                console.log('Page connection down warn: Page definition is missing')
+                //console.log('Page connection down warn: Page definition is missing')
                 return null
             }
         },

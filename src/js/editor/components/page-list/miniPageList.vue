@@ -27,7 +27,7 @@
 
             <div class="page-mini-main-scroller" ref="page-mini-main-scroller">
                 <ul>
-                    <li is="mini-page" v-for="(model,index) in pagesList" ref="miniPagesBox" :key="index" v-bind:model="pages[model]" v-bind:index="index" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
+                    <li is="mini-page" v-for="(model,index) in pagesList" ref="miniPagesBox" :key="model" v-bind:model="pages[model]" v-bind:index="index" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
                         v-on:show-mini-page="showMiniPage" v-on:hide-mini-page="hideMiniPage" v-on:mini-page-update-height='miniPageUpdateHeight'>
                     </li>
                 </ul>
