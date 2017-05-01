@@ -1,5 +1,5 @@
-import * as mutationTypes from 'editor/store/mutation-types'
-import {notification} from 'editor/store/modules/notification.js'
+import * as mutationTypes from 'editor/store/mutationTypes'
+import {editorNotification,editorNotificationWrapper} from 'editor/services/defaults.js'
 
 export default {
     state: {
@@ -12,11 +12,11 @@ export default {
         [mutationTypes.CHANGE_MINI_PAGE_LIST_STATUS](state, status) {
             if (status) {
                 //console.log('STORE: mini page list is shown')
-                notification.newInternalInfo('Mini page list is shown',true)
+                editorNotification.newInternalInfo('Mini page list is shown',true)
             }
             else {
                 //console.log('STORE: mini page list is hidden')
-                notification.newInternalInfo('Mini page list is hidden',true)
+                editorNotification.newInternalInfo('Mini page list is hidden',true)
             }
 
             state.miniPageListShown = status
@@ -24,11 +24,11 @@ export default {
         [mutationTypes.CHANGE_MINI_PAGE_SHOWN_METHOD](state, status) {
             if (status) {
                 //console.log('STORE: mini page list is showing more compact mini pages')
-                notification.newInternalInfo('Mini page list is showing more compact mini pages',true)
+                editorNotification.newInternalInfo('Mini page list is showing more compact mini pages',true)
             }
             else {
                 //console.log('STORE: mini page list is showing complete mini pages')
-                notification.newInternalInfo('Mini page list is showing complete mini pages',true)
+                editorNotification.newInternalInfo('Mini page list is showing complete mini pages',true)
             }
 
             state.miniPageMultiPages = status
@@ -36,11 +36,11 @@ export default {
         [mutationTypes.CHANGE_ELEMENTS_LIST_STATUS](state, status) {
             if (status) {
                 //console.log('STORE: elements list is shown')
-                notification.newInternalInfo('Elements list is shown',true)
+                editorNotification.newInternalInfo('Elements list is shown',true)
             }
             else {
                 //console.log('STORE: elements list is hidden')
-                notification.newInternalInfo('Elements list is hidden',true)
+                editorNotification.newInternalInfo('Elements list is hidden',true)
             }
 
             state.elementsListShow = status

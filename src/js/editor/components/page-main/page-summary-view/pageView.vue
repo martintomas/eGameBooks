@@ -5,7 +5,7 @@
             <page-main-view :page-id='editedPageId' :page-data='pageData'></page-main-view>
             <page-connections-down-view :page-id='editedPageId' :page-data='pageData'></page-connections-down-view>
         </template>
-        <template v-else>
+        <template v-else-if="pagesExists">
             <div class='page-view-missing-page'>{{String.doTranslationEditor('missing-page-error')}}</div>
         </template>
     </div>
@@ -16,7 +16,7 @@ import {bus} from 'app.js'
 import PageMainView from 'editor/components/page-main/page-summary-view/pageMainView.vue'
 import PageConnectionsUpView from 'editor/components/page-main/page-summary-view/pageConnectionsUpView.vue'
 import PageConnectionsDownView from 'editor/components/page-main/page-summary-view/pageConnectionsDownView.vue'
-import * as mutationTypes from 'editor/store/mutation-types'
+import * as mutationTypes from 'editor/store/mutationTypes'
 
 export default {
     components: {
@@ -28,14 +28,17 @@ export default {
         pageId: null,
     },
     computed: {
+        pagesExists() {
+            return this.$store.state.editor.bookData.pagesOrder.length > 0
+        },
         editedPageExists() {
-            return this.editorStore.pages.editedPage in this.editorStore.pages.pages
+            return this.$store.state.editor.bookData.editedPage in this.$store.state.editor.bookData.pages
         },
         editedPageId() {
-            return this.editorStore.pages.editedPage
+            return this.$store.state.editor.bookData.editedPage
         },
         pageData() {
-            return this.editorStore.pages.pages[this.editedPageId]
+            return this.$store.state.editor.bookData.pages[this.editedPageId]
         }
     },
     created() {
@@ -50,7 +53,7 @@ export default {
     methods: {
         setUpNewEditedPage(value) {
             if(value != null && Number.isInteger(Number(value))) {
-                if(this.editorStore.pages.editedPage != value) {
+                if(this.$store.state.editor.bookData.editedPage != value) {
                     this.$store.commit('editor/'+mutationTypes.EDIT_PAGE,value)
                 }
             }

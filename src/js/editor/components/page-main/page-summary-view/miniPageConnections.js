@@ -1,6 +1,6 @@
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import { generateHash } from 'defaults.js'
-import {busEditor} from 'editor/defaults.js'
+import {busEditor} from 'editor/services/defaults.js'
 
 //expect that page and connectionText variables are defined
 export default {
@@ -105,7 +105,7 @@ export default {
         editMiniPage(event) {
             if (event) event.stopPropagation()
 
-            this.$router.push({ name: 'page-view', params: { pageId: this.pageId } })
+            this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId } })
         },
         showConnectionText(event) {
             if (this.active) {

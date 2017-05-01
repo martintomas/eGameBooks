@@ -1,4 +1,4 @@
-import PageHtmlEditorParser from 'editor/components/page-main/page-main-text/pageHtmlEditorParser.js'
+import PageHtmlEditorParser from 'editor/services/pageHtmlEditorParser.js'
 
 import PageTextActionLink from 'editor/components/page-main/page-main-text/pageTextActionLink.vue'
 

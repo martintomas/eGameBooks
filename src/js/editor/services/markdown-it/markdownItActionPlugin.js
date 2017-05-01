@@ -2,7 +2,7 @@
 //
 'use strict';
 
-var ActionString = require('editor/components/markdown-it/actionStrings')
+var ActionString = require('editor/services/markdown-it/actionStrings')
 
 function getActionValues(actionData, pageId) {
     var actionValues = { 'actionType': null, 'actionId': null, 'actionText': null }

@@ -1,6 +1,6 @@
 import IScroll from 'iscroll'
 import { bus } from 'app.js'
-import {busEditor} from 'editor/defaults.js'
+import {busEditor} from 'editor/services/defaults.js'
 
 
 //expects that page variable will be defined in childrens
@@ -24,14 +24,14 @@ export default {
     },
     computed: {
         pageMiniDistance() {
-            return Math.ceil(this.miniPageWidth * this.editorStore.appConf.miniPageMiniDistanceLeft * 10) / 10;
+            return Math.ceil(this.miniPageWidth * this.$store.state.editor.editorConfig.miniPageMiniDistanceLeft * 10) / 10;
         },
         pageMaxDistance() {
-            return Math.ceil(this.miniPageWidth * this.editorStore.appConf.miniPageMaxDistanceLeft * 10) / 10;
+            return Math.ceil(this.miniPageWidth * this.$store.state.editor.editorConfig.miniPageMaxDistanceLeft * 10) / 10;
         },
         pageMaxActivationDistance() { //how much should activated mini page move to left
             if (this.activatedPage != null) {
-                if (!this.activatedPage.tooltipMiniPage) { //tooltip is missing --> not needed to create special space next to mini page!!
+                if (this.activatedPage.page === null) { //tooltip is missing --> not needed to create special space next to mini page!!
                     if (this.activatedPage.index === this.pages.length - 1 || this.pageDistanceDefault < this.miniPageWidth) return this.miniPageWidth
                     return this.pageDistanceDefault
                 }

@@ -1,5 +1,5 @@
 <template>
-    <div class='modal' ref='loader'>
+    <div class='modal' ref='loader' style="z-index:1000000">
         <div class='modal-middle-center'>
             <template v-if='numLoaderActions > 0'>
                 <div class='loader-root'>
@@ -13,13 +13,16 @@
 </template>
 
 <script>
+import {editorLoaderWrapper} from 'editor/services/defaults.js'
+
 export default {
     computed: {
         numLoaderActions() {
-            return this.$store.state.loader.loaderQueue.length
+            //return this.$store.state.loader.loaderQueue.length
+            return editorLoaderWrapper.getLoaders(this.$store).length
         },
         lastLoader() {
-            return this.$store.state.loader.loaderQueue[this.numLoaderActions-1] //show only last one
+            return editorLoaderWrapper.getLoaders(this.$store)[this.numLoaderActions-1] //show only last one
         }
     },
     watch: {
@@ -48,7 +51,7 @@ export default {
 <style>
 .loader-root {
     margin:auto;
-    font-size:250%;
+    font-size:180%;
     text-align:center;
 }
 </style>

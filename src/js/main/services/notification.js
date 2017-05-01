@@ -1,27 +1,26 @@
-import * as mutationTypes from 'editor/store/mutation-types'
-
 const debug = process.env.NODE_ENV !== 'production'
 
-function constructInternalMessage(args) {
+function constructInternalMessage(notificationType,args) {
     switch(args.type) {
         case 'info':
-            if(args.debug) return 'EDITOR INFO (debug): ' + args.message
-            return 'EDITOR INFO: ' + args.message
+            if(args.debug) return notificationType+' INFO (debug): ' + args.message
+            return notificationType+' INFO: ' + args.message
             break
         case 'warn':
-            if(args.debug) return 'EDITOR WARN (debug): ' + args.message
-            return 'EDITOR WARN: ' + args.message
+            if(args.debug) return notificationType+' WARN (debug): ' + args.message
+            return notificationType+' WARN: ' + args.message
             break
         case 'error':
-            if(args.debug) return 'EDITOR ERROR (debug): ' + args.message
-            return 'EDITOR ERROR: ' + args.message
+            if(args.debug) return notificationType+' ERROR (debug): ' + args.message
+            return notificationType+' ERROR: ' + args.message
             break
     }
 }
 
 class Notification {
-    constructor() {
-        this.remmemberLastNotifications = 15, //how much notifications should be remmembered
+    constructor(notificationType,remmemberLastNotifications=15) {
+        this.notificationType = notificationType
+        this.remmemberLastNotifications = remmemberLastNotifications, //how much notifications should be remmembered
         this.notifications = []
     }
     newInternalInfo(message,debug=false) {
@@ -50,39 +49,18 @@ class Notification {
         if(!debug && args.debug) return //show debug messages only in case that debug is allowed
 
         if(args.level === 'internal') {
-            console.log(constructInternalMessage(args))
+            console.log(constructInternalMessage(this.notificationType,args))
         } else if(args.level === 'external') { //only external notifications are remmembered
-            console.log(constructInternalMessage(args))
+            console.log(constructInternalMessage(this.notificationType,args))
             if(this.notifications.length < this.remmemberLastNotifications) this.notifications.push(args)
             else {
                 this.notifications = this.notifications.splice(0,1) //remove first element
                 this.notifications.push(args)
             }
         } else {
-            console.log(constructInternalMessage({type:'error',message:'Notification type '+args.type+' doesnt exists.'}))
+            console.log(constructInternalMessage(this.notificationType,{type:'error',message:'Notification type '+args.type+' doesnt exists.'}))
         }
     }
 }
 
-export const notification = new Notification()
-
-export default {
-    state: {
-        notif: notification,
-        notifications: notification.notifications //shortcut that lead to real notifications messages
-    },
-    mutations: {
-        [mutationTypes.NEW_NOTIFICATION](state, args) {
-            state.notif.addNew(args)
-        }
-    },
-    getters: {
-        getNotification : (state, getters) => (notificationId) => {
-            if(notificationId >= state.notifications.length || notificationId < 0) {
-                return null
-            } else {
-                return state.notifications[notificationId]
-            }
-        }
-    }
-}
+export default Notification

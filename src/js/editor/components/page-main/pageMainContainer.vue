@@ -1,5 +1,5 @@
 <template>
-    <router-view name='page-view'></router-view>
+    <router-view name='editor-page-view'></router-view>
 </template>
 
 <script>

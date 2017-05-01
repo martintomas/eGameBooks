@@ -33,7 +33,7 @@
 <script>
 import DynTextRenderer from 'editor/components/page-main/page-main-text/dynTextRenderer.js'
 import {bus} from 'app.js'
-import {busEditor} from 'editor/defaults.js'
+import {busEditor} from 'editor/services/defaults.js'
 
 export default {
     components: {
@@ -48,20 +48,20 @@ export default {
     },
     computed: {
         pageData() {
-            if(this.pageId in this.editorStore.pages.pages) return this.editorStore.pages.pages[this.pageId]
+            if(this.pageId in this.$store.state.editor.bookData.pages) return this.$store.state.editor.bookData.pages[this.pageId]
             else return null
         },
         closestSmallerPage() {
             if(this.pageId != null) {
-                let indexActual = this.editorStore.pages.pagesOrder.indexOf(this.pageId)
-                if(indexActual > 0) return this.editorStore.pages.pages[this.editorStore.pages.pagesOrder[indexActual-1]]
+                let indexActual = this.$store.state.editor.bookData.pagesOrder.indexOf(this.pageId)
+                if(indexActual > 0) return this.$store.state.editor.bookData.pages[this.$store.state.editor.bookData.pagesOrder[indexActual-1]]
             }
             return null
         },
         closestBiggerPage() {
             if(this.pageId != null) {
-                let indexActual = this.editorStore.pages.pagesOrder.indexOf(this.pageId)
-                if(indexActual < this.editorStore.pages.pagesOrder.length - 1 && indexActual != -1) return this.editorStore.pages.pages[this.editorStore.pages.pagesOrder[indexActual+1]]
+                let indexActual = this.$store.state.editor.bookData.pagesOrder.indexOf(this.pageId)
+                if(indexActual < this.$store.state.editor.bookData.pagesOrder.length - 1 && indexActual != -1) return this.$store.state.editor.bookData.pages[this.$store.state.editor.bookData.pagesOrder[indexActual+1]]
             }
             return null
         }

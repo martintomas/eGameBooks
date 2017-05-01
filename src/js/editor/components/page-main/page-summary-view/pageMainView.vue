@@ -22,7 +22,7 @@
 <script>
 
 import IScroll from 'iscroll'
-import {busEditor} from 'editor/defaults.js'
+import {busEditor} from 'editor/services/defaults.js'
 
 import PageMainText from 'editor/components/page-main/page-main-text/pageMainText.vue'
 

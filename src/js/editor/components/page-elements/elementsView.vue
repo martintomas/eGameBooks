@@ -8,8 +8,8 @@
 
 <script>
 import {bus} from 'app.js'
-import {busEditor} from 'editor/defaults.js'
-import * as mutationTypes from 'editor/store/mutation-types'
+import {busEditor} from 'editor/services/defaults.js'
+import * as mutationTypes from 'editor/store/mutationTypes'
 import {waitForResizeEnd,setCss3Style} from 'defaults.js'
 
 export default {
@@ -21,8 +21,8 @@ export default {
         busEditor.$on('editor-panel-shown-fast', source => {
             if(this.$refs.elementsViewRoot) { //this element have to be created and mounted
                  if(source != this.$refs.elementsViewRoot) { //some other list changed its status (probably element list)
-                    if(this.editorStore.editorStatus.elementsListShow) { //if this list is show --> check if this should be automaticaly hidden
-                        if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.editorStore.appConf.listsShownTogetherLimit) { //keep hidden by default (when widht si too small)
+                    if(this.$store.state.editor.editorStatus.elementsListShow) { //if this list is show --> check if this should be automaticaly hidden
+                        if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.$store.state.editor.editorConfig.listsShownTogetherLimit) { //keep hidden by default (when widht si too small)
                             this.hideImmidiatelyElementList()
                         }
                     }
@@ -32,8 +32,8 @@ export default {
 
         bus.$on('window-resize-end', source => {
             if(this.$refs.elementsViewRoot) {
-                if(this.editorStore.editorStatus.elementsListShow) {
-                    if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.editorStore.appConf.listsAutomaticHide) { //keep hidden by default (when widht si too small)
+                if(this.$store.state.editor.editorStatus.elementsListShow) {
+                    if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.$store.state.editor.editorConfig.listsAutomaticHide) { //keep hidden by default (when widht si too small)
                         this.hideElementList()
                     }
                 }
@@ -41,14 +41,14 @@ export default {
         })
     },
     mounted() {
-        if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.editorStore.appConf.miniElementListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
+        if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.$store.state.editor.editorConfig.miniElementListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
             this.hideImmidiatelyElementList()
         }
     },
     methods: {
         showHideElementsList() {
             //console.log('Changing page elements show')
-            if(!this.editorStore.editorStatus.elementsListShow) {
+            if(!this.$store.state.editor.editorStatus.elementsListShow) {
                 this.showElementList()
             } else {
                 this.hideElementList()                

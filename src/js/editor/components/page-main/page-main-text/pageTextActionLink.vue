@@ -31,8 +31,8 @@
 
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import { generateHash } from 'defaults.js'
-import {busEditor} from 'editor/defaults.js'
-import * as mutationTypes from 'editor/store/mutation-types'
+import {busEditor,editorNotificationWrapper} from 'editor/services/defaults.js'
+import * as mutationTypes from 'editor/store/mutationTypes'
 
 export default {
     components: {
@@ -62,9 +62,10 @@ export default {
         generateHash,
         showPageDetail(events) {
             //console.log('Continuing reading to page: ' + this.linkData.pageId)
-            this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'info',level:'internal',debug:false,
-                message:'Continuing reading to page: ' + this.linkData.pageId
-            })
+            editorNotificationWrapper.newInternalInfo(this.$store.commit,'Continuing reading to page: ' + this.linkData.pageId,false)
+            // this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'info',level:'internal',debug:false,
+            //     message:'Continuing reading to page: ' + this.linkData.pageId
+            // })
 
             if (event) event.stopPropagation()
 

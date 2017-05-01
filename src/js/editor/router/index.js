@@ -6,33 +6,33 @@ import PageEditorMain from 'editor/components/page-main/page-editor-view/pageEdi
 
 
 export const editorRoutes = [{
-    path: '/',
+    path: '',
     components: {
-        'mini-page': MiniPageList,
-        'page-view-container': PageMainContainer,
-        'elements-view': ElementsView
+        'editor-mini-page': MiniPageList,
+        'editor-page-view-container': PageMainContainer,
+        'editor-elements-view': ElementsView
     },
-    props: { 'mini-page': true, 'page-view-container': true, 'elements-view': true },
+    props: { 'editor-mini-page': true, 'editor-page-view-container': true, 'editor-elements-view': true },
     children: [{
         path: 'page/:pageId/edit',
-        name: 'page-view-edit',
+        name: 'editor-page-view-edit',
         components: {
-            'page-view': PageEditorMain
+            'editor-page-view': PageEditorMain
         },
-        props: { 'page-view': true }
+        props: { 'editor-page-view': true }
     }, {
         path: 'page/:pageId',
-        name: 'page-view',
+        name: 'editor-page-view',
         components: {
-            'page-view': PageView
+            'editor-page-view': PageView
         },
-        props: { 'page-view': true }
+        props: { 'editor-page-view': true }
     }, {
         path: '',
-        name: 'page-view',
+        name: 'editor-page-view-default',
         components: {
-            'page-view': PageView
+            'editor-page-view': PageView
         },
-        props: { 'page-view': true }
+        props: { 'editor-page-view': true }
     }]
 }]

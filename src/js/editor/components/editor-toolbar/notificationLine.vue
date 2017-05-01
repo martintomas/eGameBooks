@@ -15,6 +15,8 @@
 
 <script>
 
+import {editorNotificationWrapper} from 'editor/services/defaults.js'
+
 export default {
     data() {
         return {
@@ -24,7 +26,7 @@ export default {
     },
     computed: {
         numNotification() {
-            return this.editorStore.notification.notifications.length
+            return editorNotificationWrapper.getNotifications(this.$store).length
         },
     },
     watch: {
@@ -32,7 +34,7 @@ export default {
             //console.log('New number of notifications is: '+value)
 
             //let previousText = this.$store.getters['editor/getNotification'](this.numNotification-2)
-            let lastText = this.$store.getters['editor/getNotification'](this.numNotification-1)
+            let lastText = editorNotificationWrapper.getNotifications(this.$store,this.numNotification-1)
 
             if('notificationRoot' in this.$refs) {
                 this.$refs.notificationRoot.classList.remove('no-fade')

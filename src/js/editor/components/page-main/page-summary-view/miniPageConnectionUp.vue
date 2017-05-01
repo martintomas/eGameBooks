@@ -45,8 +45,8 @@ export default {
     mixins: [MiniPageConnections],
     computed: {
         page() {
-            if(this.model.pageId in this.editorStore.pages.pages) {
-                return this.editorStore.pages.pages[this.model.pageId]
+            if(this.model.pageId in this.$store.state.editor.bookData.pages) {
+                return this.$store.state.editor.bookData.pages[this.model.pageId]
             } else {
                 console.log('Reverse connection up error!!! Missing reverse page')
                 return null 
@@ -62,7 +62,7 @@ export default {
         connectionText() {
             if(this.existsInText) { //should be possible to find this info in rendered info
                 let text = document.getElementsByName('link-'+this.model.pageId+'-'+this.model.actionId)
-                if(text.length > 0) return String.shaveHTML(text[0].innerHTML,this.editorStore.appConf.commentShaveHTMLPageConnection)
+                if(text.length > 0) return String.shaveHTML(text[0].innerHTML,this.$store.state.editor.editorConfig.commentShaveHTMLPageConnection)
             }
             return ''
         },

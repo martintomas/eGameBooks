@@ -17,7 +17,7 @@
 
 <script>
 
-import {bus} from './app.js'
+import {bus} from 'app.js'
 
 export default {
     created() {

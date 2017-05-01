@@ -27,7 +27,7 @@
 
             <div class="page-mini-main-scroller" ref="page-mini-main-scroller">
                 <ul>
-                    <li is="mini-page" v-for="(model,key,index) in pageMiniData" ref="miniPagesBox" :key="key" v-bind:model="model" v-bind:index="index" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
+                    <li is="mini-page" v-for="(model,index) in pagesList" ref="miniPagesBox" :key="index" v-bind:model="pages[model]" v-bind:index="index" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
                         v-on:show-mini-page="showMiniPage" v-on:hide-mini-page="hideMiniPage" v-on:mini-page-update-height='miniPageUpdateHeight'>
                     </li>
                 </ul>
@@ -43,14 +43,14 @@
     import MiniPage from 'editor/components/page-list/miniPage.vue'
     import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
     import {bus} from 'app.js'
-    import {busEditor} from 'editor/defaults.js'
+    import {busEditor} from 'editor/services/defaults.js'
     import {generateHash, waitForResizeEnd, setCss3Style} from 'defaults.js'
-    import * as mutationTypes from 'editor/store/mutation-types'
+    import * as mutationTypes from 'editor/store/mutationTypes'
 
     export default {
         data() {
             return {
-                miniPagesHistory: null,
+                pagesListHistory: null,
                 activatedPage: null, //remmember last active page
                 scrollWrapper: 'page-mini-main-wrapper',
                 scrollContainer: 'page-mini-main-scroller',
@@ -63,21 +63,24 @@
             DynTooltip
         },
         computed: {
-            pageMiniData() {
-                if (this.miniPagesHistory != Object.keys(this.editorStore.pages.pages).length) { //be sure to update scroll when number of pages changes
-                    this.miniPagesHistory = Object.keys(this.editorStore.pages.pages).length
+            pagesList() {
+                if (this.pagesListHistory !=  this.$store.state.editor.bookData.pagesOrder.length) { //be sure to update scroll when number of pages changes
+                    this.pagesListHistory =  this.$store.state.editor.bookData.pagesOrder.length
                     this.updateScroller()
                 }
-                return this.editorStore.pages.pages
+                return this.$store.state.editor.bookData.pagesOrder
+            },
+            pages() {
+                return this.$store.state.editor.bookData.pages
             },
             multiPage() {
-                return this.editorStore.editorStatus.miniPageMultiPages
+                return this.$store.state.editor.editorStatus.miniPageMultiPages
             },
             pageMiniDistance() {
-                return Math.ceil(this.pageMiniHeight * this.editorStore.appConf.miniPageMiniDistance); //mini distance is 20%
+                return Math.ceil(this.pageMiniHeight * this.$store.state.editor.editorConfig.miniPageMiniDistance); //mini distance is 20%
             },
             pageMaxDistance() {
-                return Math.ceil(this.pageMiniHeight * this.editorStore.appConf.miniPageMaxDistance); //max distance is 115%
+                return Math.ceil(this.pageMiniHeight * this.$store.state.editor.editorConfig.miniPageMaxDistance); //max distance is 115%
             },
             pageDistanceDefault() {
                 if(this.multiPage) return this.pageMiniDistance;
@@ -88,8 +91,8 @@
             busEditor.$on('editor-panel-shown-fast', source => {
                 if(this.$refs.pageMiniContainer) { //this element have to be created and mounted
                     if(source != this.$refs.pageMiniContainer) { //some other list changed its status (probably element list)
-                        if(this.editorStore.editorStatus.miniPageListShown) { //if this list is show --> check if this should be automaticaly hidden
-                            if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.editorStore.appConf.listsShownTogetherLimit) { //keep hidden by default (when widht si too small)
+                        if(this.$store.state.editor.editorStatus.miniPageListShown) { //if this list is show --> check if this should be automaticaly hidden
+                            if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.$store.state.editor.editorConfig.listsShownTogetherLimit) { //keep hidden by default (when widht si too small)
                                 this.hideImmidiatellyMiniPageList()
                             }
                         }
@@ -99,8 +102,8 @@
 
             bus.$on('window-resize-end', source => {
                 if(this.$refs.pageMiniContainer) {
-                    if(this.editorStore.editorStatus.miniPageListShown) {
-                        if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.editorStore.appConf.listsAutomaticHide) { //keep hidden by default (when widht si too small)
+                    if(this.$store.state.editor.editorStatus.miniPageListShown) {
+                        if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.$store.state.editor.editorConfig.listsAutomaticHide) { //keep hidden by default (when widht si too small)
                             this.hideMiniPageList()
                         }
                     }
@@ -118,7 +121,7 @@
             });
 
             //check if lists should be automaticaly hidden
-            if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.editorStore.appConf.miniPageListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
+            if(window.innerWidth/this.$refs.pageMiniContainer.clientWidth < this.$store.state.editor.editorConfig.miniPageListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
                 this.hideImmidiatellyMiniPageList()
             }
 
@@ -130,11 +133,8 @@
             miniPageUpdateHeight(height) {
                 this.pageMiniHeight = height
             },
-            miniPageLength() {
-                return Object.keys(this.pageMiniData).length
-            },
             isLastPage(page) {
-                if (page.index + 1 === this.miniPageLength()) return true;
+                if (page.index + 1 === this.pagesList.length) return true;
                 return false;
             },
             showMiniPage(page) {
@@ -190,7 +190,7 @@
 
                 if(!overTop) overTop=0
 
-                var scrollBarHeight = this.miniPageLength() * this.pageDistanceDefault + (this.pageMiniHeight - this.pageDistanceDefault + 10 + overTop);
+                var scrollBarHeight = this.pagesList.length * this.pageDistanceDefault + (this.pageMiniHeight - this.pageDistanceDefault + 10 + overTop);
                 if (this.activatedPage != null && !this.isLastPage(this.activatedPage)) {
                     scrollBarHeight += this.pageMaxDistance - this.pageDistanceDefault;
                 }
@@ -205,7 +205,7 @@
             },
             showHidePageList() {
                 //console.log('Changing page list show')
-                if(!this.editorStore.editorStatus.miniPageListShown) {
+                if(!this.$store.state.editor.editorStatus.miniPageListShown) {
                     this.showMiniPageList()
                 } else {
                     this.hideMiniPageList()

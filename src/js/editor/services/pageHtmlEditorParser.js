@@ -1,4 +1,4 @@
-var ActionString = require('editor/components/markdown-it/actionStrings')
+var ActionString = require('editor/services/markdown-it/actionStrings')
 
 class EditorTextActions {
     constructor() {}

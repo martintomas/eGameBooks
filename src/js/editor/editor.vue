@@ -3,12 +3,13 @@
         <editor-toolbar></editor-toolbar>
 
         <div class="editor-main-root">
-            <router-view name='mini-page'></router-view>
-            <router-view name='page-view-container'></router-view>
-            <router-view name='elements-view'></router-view>
+            <router-view name='editor-mini-page'></router-view>
+            <router-view name='editor-page-view-container'></router-view>
+            <router-view name='editor-elements-view'></router-view>
         </div>
 
         <dyn-page-detail></dyn-page-detail>
+        <loader></loader>
     </div>
 </template>
 
@@ -16,31 +17,78 @@
 
 import fontAwesomeCss from 'font-awesome/css/font-awesome.css'
 import appCss from '../../css/editor.css'
+import * as defaults from 'editor/services/defaults'
+import * as constants from 'editor/constants'
 import * as prot from 'editor/prototypes.js'
+import { store } from 'store/'
 
 import EditorToolbar from 'editor/components/editor-toolbar/editorToolbar.vue'
 import DynPageDetail from 'editor/components/page-main/page-main-text/dynPageDetail.vue'
+import Loader from 'editor/components/dyn-components/loader.vue'
 
 export default {
+    props: {
+        book: {
+            default: '',
+            type: String,
+        }
+    },
     components: {
         EditorToolbar,
-        DynPageDetail
+        DynPageDetail,
+        Loader
+    },
+    beforeRouteEnter (to, from, next) {
+        //prepare loader and notification
+        defaults.editorNotificationWrapper.initializeNotification(store.commit)
+        defaults.editorLoaderWrapper.initializeLoader(store.commit)
+
+        //load language
+        if(!store.getters['main/languageExists'](constants.editorLangType)) {
+            let prom1 = store.dispatch('main/loadEditorLanguage').then(() => { //load editor language
+                defaults.editorNotificationWrapper.newInternalInfo(store.commit,'Editor is shown',true)
+                next() //confirm hook when language have been loaded
+            }).catch((reason) => {
+
+            })
+        } else {
+            defaults.editorNotificationWrapper.newInternalInfo(store.commit,'Language already loaded. Editor is shown immidatelly',true)
+            next()
+        }
+
+        //load book
+        let prom2 = store.dispatch('editor/load', { //load book
+            book: to.params.book
+        }).then(() => {
+            
+        }).catch((reason) => {
+
+        })
+
+        // Promise.all([prom1,prom2]).then(() => {
+        //     next()
+        // })
+
+    },
+    beforeRouteUpdate (to, from, next) {
+        next()
     },
     mounted() {
     },
-    install(Vue,options) {
-        if(!('store' in options)) {
-            console.log('Editor registration error --> store was not provided')
-        }
+    // install(Vue,options) {
+    //     Vue.use(Editor, { 'store': this.$store })
+    //     if(!('store' in options)) {
+    //         console.log('Editor registration error --> store was not provided')
+    //     }
         
-        Vue.mixin({ //globaly register editor store variable
-            data() {
-                return {
-                    editorStore: options.store.state.editor
-                }
-            }
-        })
-    }
+    //     Vue.mixin({ //globaly register editor store variable
+    //         data() {
+    //             return {
+    //                 editorStore: options.store.state.editor
+    //             }
+    //         }
+    //     })
+    // }
 }
 
 </script>

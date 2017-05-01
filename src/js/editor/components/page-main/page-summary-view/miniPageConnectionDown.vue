@@ -74,7 +74,7 @@
 <script>
 
 import MiniPageConnections from 'editor/components/page-main/page-summary-view/miniPageConnections'
-import * as mutationTypes from 'editor/store/mutation-types'
+import * as mutationTypes from 'editor/store/mutationTypes'
 
 export default {
     mixins: [MiniPageConnections],
@@ -83,17 +83,17 @@ export default {
     },
     computed: {
         page() {
-            if(this.model.pageId in this.editorStore.pages.pages) {
-                return this.editorStore.pages.pages[this.model.pageId]
+            if(this.model.pageId in this.$store.state.editor.bookData.pages) {
+                return this.$store.state.editor.bookData.pages[this.model.pageId]
             } else {
-                //console.log('Page connection down warn: Page definition is missing')
+                console.log('Page connection down warn: Page definition is missing')
                 return null
             }
         },
         connectionText() {
             if(this.model.existsInText) { //should be possible to find this info in rendered info
                 let text = document.getElementsByName('link-'+this.pageEditedId+'-'+this.model.id)
-                if(text.length > 0) return String.shaveHTML(text[0].innerHTML,this.editorStore.appConf.commentShaveHTMLPageConnection)
+                if(text.length > 0) return String.shaveHTML(text[0].innerHTML,this.$store.state.editor.editorConfig.commentShaveHTMLPageConnection)
             }
             return ''
         },

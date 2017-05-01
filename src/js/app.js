@@ -1,10 +1,11 @@
 import fontAwesomeCss from 'font-awesome/css/font-awesome.css'
 import Vue from 'vue'
+import * as prot from 'prototypes.js'
 import { router } from 'router/'
 import { store } from 'store/'
 import { waitForResizeEnd } from 'defaults.js'
 
-import App from 'app.vue'
+import Index from 'main/index.vue'
 
 Vue.config.debug = true
 
@@ -22,8 +23,8 @@ window.onresize = function(e) {
 
 const root = new Vue({
     el: '#app',
-    components: { App },
+    components: { Index },
     store,
     router,
-    render: h => h(App)
+    render: h => h(Index)
 })

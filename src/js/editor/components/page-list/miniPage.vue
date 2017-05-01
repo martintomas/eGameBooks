@@ -37,9 +37,9 @@
 
 <script>
     import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
-    import * as mutationTypes from 'editor/store/mutation-types'
+    import * as mutationTypes from 'editor/store/mutationTypes'
     import {generateHash,getCompStyle} from 'defaults.js'
-    import {busEditor} from 'editor/defaults.js'
+    import {busEditor} from 'editor/services/defaults.js'
     
     export default {
         components: {
@@ -74,7 +74,7 @@
                 return this.model.data.id
             },
             active() { //is this mini page selected?
-                return this.model.data.id === this.editorStore.pages.selectedPage
+                return this.model.data.id === this.$store.state.editor.bookData.selectedPage
             },
             numLinks() {
                 return this.model.actions.link.length
@@ -136,7 +136,7 @@
                 if (event) event.stopPropagation()
 
                 //this.$store.commit(mutationTypes.EDIT_PAGE,this.pageId) //set new edited page --> is done by reading url
-                this.$router.push({ name: 'page-view', params: { pageId: this.pageId }})
+                this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
             },
             showPageDetail(event) {
                 //console.log('Mini pages - showing detail of page number: ' + this.pageId)

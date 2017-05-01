@@ -1,5 +1,3 @@
-import * as mutationTypes from 'editor/store/mutation-types'
-
 export default {
     state: {
         miniPageDefaultWidth: 180, //px
