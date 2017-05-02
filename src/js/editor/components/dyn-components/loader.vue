@@ -3,7 +3,7 @@
         <div class='modal-middle-center'>
             <template v-if='numLoaderActions > 0'>
                 <div class='loader-root'>
-                    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                    <i class="fa fa-spinner fa-spin fa-3x" aria-hidden="true"></i>
                     <br>
                     {{lastLoader.message}}
                 </div>
