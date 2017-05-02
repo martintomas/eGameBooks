@@ -4,7 +4,8 @@ import { MarkdownComp } from 'editor/services/markdown-it/markdownComp.js'
 import Vue from 'vue' //use Vue.set for manipulation with dict/array --> it is reactive
 
 import {editorNotification,editorNotificationWrapper,editorLoaderWrapper} from 'editor/services/defaults.js'
-import {buildRenderInfo} from 'editor/services/bookFuncs'
+import {buildRenderInfo,isPageCorrect,isPageCorrectComplete} from 'editor/services/bookFuncs'
+import {AllowedActions,ErrorImportance} from 'editor/constants'
 
 /*
 Structure of one page
@@ -46,15 +47,27 @@ function actionDoesntExistByDefault(actionInfo) { //set up by default for all ac
     return actionInfo
 }
 
-var markdownItAllowedActions = ['link']
-var markdownItAnalysisTemp = { 'link': [] }
+export function actualizeValidation(pageId,original, res) {
+    if(res.length > 0) {
+        if(pageId in original) for(let i=0;i<res.length;i++) original[pageId].push(res[i])
+        else Vue.set(original,pageId,res)
+    }
+}
+
+var markdownItAllowedActions = []
+for(let key in AllowedActions) markdownItAllowedActions.push(AllowedActions[key]) //provide array of allowed actions
+
+var markdownItAnalysis = {}
+markdownItAnalysis[AllowedActions.LINK] = []
 
 export default {
     state: {
-        markdownItAllowedActions: markdownItAllowedActions, //to be sure that other part of system can access it
         markdownCompDefault: new MarkdownComp(markdownItAllowedActions),
         pages: {},
         pagesOrder: [], //array that describes which pages exists
+        startPage: 1, //page that is first one
+        pagesSevereError: {}, //page can have severe and minor error --> can be at both arrays
+        pagesMinorError:{},
         selectedPage: null,
         editedPage: null
     },
@@ -63,6 +76,7 @@ export default {
             //console.log('STORE: loading initial data')
             editorNotification.newInternalInfo('Starting processing initial data of book',true)
 
+            //prepare page data
             initData.pages.forEach(page => {
                 if (!(page.id in state.pages)) Vue.set(state.pages, page.id, { 'data': null, 'actions': null, 'renderInfo': null, 'reverseLink': [] }) //create emty dict if it is not existing
                 Vue.set(state.pages[page.id], 'data', {
@@ -72,7 +86,7 @@ export default {
                     'renderedText': ''
                 })
 
-                let analysis = JSON.parse(JSON.stringify(markdownItAnalysisTemp)) //deep copy of markdownItAnalysisTemp
+                let analysis = JSON.parse(JSON.stringify(markdownItAnalysis)) //deep copy of markdownItAnalysis
                 Vue.set(state.pages[page.id].data, 'renderedText', state.markdownCompDefault.render(page.text, { 'analysis': analysis, 'pageId': page.id })) //render text
                 Vue.set(state.pages[page.id], 'actions', actionDoesntExistByDefault(page.actions))
                 Vue.set(state.pages[page.id], 'renderInfo', buildRenderInfo(analysis, page.actions)) //build complete render info
@@ -85,7 +99,19 @@ export default {
 
                 state.pagesOrder.push(page.id) //remmember all existing pages
 
+                //do page validation
+                let res = isPageCorrect(state,state.pages[page.id])
+                if(res[ErrorImportance.MINOR].length > 0) Vue.set(state.pagesMinorError,page.id,res[ErrorImportance.MINOR])
+                if(res[ErrorImportance.SEVERE].length > 0) Vue.set(state.pagesSevereError,page.id,res[ErrorImportance.SEVERE])
+
             })
+            
+            //do page validation after all data have been build
+            for(let pageKey in state.pages) {
+                let res = isPageCorrectComplete(state,state.pages[pageKey])
+                actualizeValidation(pageKey,state.pagesMinorError,res[ErrorImportance.MINOR])
+                actualizeValidation(pageKey,state.pagesSevereError,res[ErrorImportance.SEVERE])
+            }
 
             state.pagesOrder = state.pagesOrder.sort((a,b) => a - b) //sort pages
 
