@@ -2,12 +2,34 @@
     <div class="page-main-root">
         <div class='page-main-container'>
             <div class='page-main-view'>
-                <div class='scroller-wrapper' ref="page-mini-main-wrapper">
-                    <div class='scroller-box' ref="page-mini-main-scroller">
+                <div class='scroller-wrapper' ref="pageMiniMainWrapper">
+                    <div class='scroller-box'>
                         <page-main-text class='page-main-text' :page-data='pageData'></page-main-text>
                     </div>
                 </div>
-                <span class='page-main-page-number'>{{String.doTranslationEditor('page-num',(pageNumber))}}</span>
+                <span class='page-main-errors-box' :style='errorBoxStyle'>
+                    <div class='scroller-wrapper' ref="pageMiniMainErrorsWrapper">
+                        <div class='scroller-error-box' >
+                            <ul v-if='isSevereError'>
+                                <li v-for="(model,index) in severeErrors" :key='index'>
+                                    <i class="fa fa-exclamation-circle error-color" aria-hidden="true"></i>&nbsp;{{String.doTranslationEditor(model.text,model.args)}}
+                                </li>
+                            </ul>
+                            <ul v-if='isMinorError'>
+                                <li v-for="(model,index) in minorErrors" :key='index'>
+                                    <i class="fa fa-warning warning-color" aria-hidden="true"></i>&nbsp;{{String.doTranslationEditor(model.text,model.args)}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </span>
+                <span class='page-main-page-number'>
+                    {{String.doTranslationEditor('page-num',(pageNumber))}}
+                    <span class='float-right page-main-page-icons'>
+                        <span class='unactive-icon' v-if='isSevereError' @click='toogleErrors'>{{severeErrors.length}}x&nbsp;<i class="fa fa-exclamation-circle error-color" aria-hidden="true"></i>&nbsp;</span>  
+                        <span class='unactive-icon' v-if='isMinorError' @click='toogleErrors'>{{minorErrors.length}}x&nbsp;<i class="fa fa-warning warning-color" aria-hidden="true"></i></span>
+                    </span>
+                </span>
             </div>
             <div class='page-main-buttons text-center'>
                 <ul>
@@ -37,14 +59,56 @@ export default {
     data() {
         return {
             scroller: null,
-            scrollWrapper: 'page-mini-main-wrapper',
-            scrollContainer: 'page-mini-main-scroller',
+            scrollerErrors: null,
+            scrollWrapper: 'pageMiniMainWrapper',
+            scrollErrorsWrapper:'pageMiniMainErrorsWrapper',
+            showErrorsData: false,
+            maxHeight: 10
         }
+    },
+    computed: {
+        errorBoxStyle() {
+            if((this.isSevereError || this.isMinorError) && this.showErrorsData) {
+                let height = 0
+                if(this.isSevereError) height += this.severeErrors.length * 1
+                if(this.isMinorError) height += this.minorErrors.length * 1
+
+                setTimeout(() => { //update scroller when height changes
+                    if(this.scrollerErrors != null) this.scrollerErrors.refresh();
+                },800) //wait for transition animation to end
+
+                if(height > this.maxHeight) height = this.maxHeight //keep height reasonable
+                return {height:height+'rem'}
+            } else {
+                return {height:'0%'}
+            }
+        },
+        pageText() {
+            return this.pageData.data.renderedText
+        },
+        pageNumber() {
+            return this.pageData.data.pageNumber
+        },
+        isSevereError() {
+            return this.pageId in this.$store.state.editor.bookData.pagesSevereError
+        },
+        severeErrors() {
+            if(this.isSevereError) return this.$store.state.editor.bookData.pagesSevereError[this.pageId]
+        },
+        isMinorError() {
+            return this.pageId in this.$store.state.editor.bookData.pagesMinorError
+        },
+        minorErrors() {
+            if(this.isMinorError) return this.$store.state.editor.bookData.pagesMinorError[this.pageId]
+        },
     },
     created() {
         busEditor.$on('editor-panel-resize', source => {
             if(this.scroller != null) {
                 this.scroller.refresh()
+            }
+            if(this.scrollerErrors != null) {
+                this.scrollerErrors.refresh()
             }
         })
     },
@@ -59,16 +123,23 @@ export default {
         setTimeout(() => {
             this.scroller.refresh();
         }, 200);
-    },
-    computed: {
-        pageText() {
-            return this.pageData.data.renderedText
-        },
-        pageNumber() {
-            return this.pageData.data.pageNumber
-        }
+
+        this.scrollerErrors = new IScroll(this.$refs[this.scrollErrorsWrapper], {
+            mouseWheel: true,
+            bounce: false,
+            interactiveScrollbars: true,
+            shrinkScrollbars: 'clip',
+            scrollbars: 'custom',
+        })
+        setTimeout(() => {
+            this.scrollerErrors.refresh();
+        }, 200);
     },
     methods: {
+        toogleErrors(event) {
+            if(this.showErrorsData) this.showErrorsData = false
+            else this.showErrorsData = true
+        }
     }
 }
 </script>
@@ -118,6 +189,28 @@ export default {
         position: relative;
         top:2%;
     }
+    .scroller-error-box {
+        transform: translateZ(0);
+        user-select: none;
+        text-size-adjust: none;
+    }
+    .page-main-errors-box {
+        display:block;
+        width:100%;
+        position:absolute;
+        bottom: 1.7rem; /*same as page-main-page-number height */
+        background-color:white;
+
+        transition: height 0.1s ease-out;
+    }
+    .page-main-errors-box ul {
+        list-style:none;
+        padding:0.2rem 0.5rem 0 0.5rem;
+        margin:0;
+    }
+    .page-main-errors-box li {
+        padding:0.2rem 0 0.2 0;
+    }
     .page-main-page-number {
         display:block;
         width:100%;
@@ -131,6 +224,10 @@ export default {
         text-align:center;
         font-size:150%;
         font-weight: bold;
+    }
+    .page-main-page-icons {
+        font-weight:normal;
+        padding: 0 0.5rem 0 0.5rem;
     }
     .page-main-buttons {
         position:relative;

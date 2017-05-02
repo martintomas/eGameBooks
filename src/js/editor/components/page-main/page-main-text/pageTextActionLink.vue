@@ -2,17 +2,23 @@
     <dyn-tooltip :inline='true' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('main-text','link'+actionId)">
         <span v-html='text' slot='tooltip' class='link-text tooltip' :component-id="generateHash('main-text','link'+actionId)"></span>
         <span slot='tooltipText'>
+            <template v-if="renderType === 'main'">
+                {{String.doTranslationEditor('action-id')}}: {{actionId}}<br>
+            </template>
+
             <template v-if="linkData != null">
                 <template v-if="linkData.pageId != null">
-                Page number: {{linkData.pageId}}
+                    {{String.doTranslationEditor('page-number')}}: {{linkData.pageId}}
                 </template>
                 <template v-else>
                     {{String.doTranslationEditor('missing-page')}}
                 </template> 
                 <br>
-                condition: {{linkData.condition}}
-                <br>
 
+                <template v-if="linkData.condition != ''">
+                    {{String.doTranslationEditor('condition')}}: {{linkData.condition}}<br>
+                </template>
+                
                 <template v-if="renderType === 'pageDetail' && linkData.pageId != null">
                     <dyn-tooltip class='dyn-tooltip'>
                         <i class="fa fa-hand-o-right unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='showPageDetail'></i>

@@ -185,8 +185,12 @@ body {
     vertical-align:middle;
 }
 
+.icon-color {
+    color: black;
+}
+
 .error-color {
-    color:red;
+    color:#e63900;
 }
 .warning-color {
     color:yellow

@@ -1,6 +1,6 @@
 <template>
     <div class='main-text-edited'>
-        <dyn-text-renderer :page-data='pageData' ></dyn-text-renderer>
+        <dyn-text-renderer :page-data='pageData' render-type='main'></dyn-text-renderer>
     </div>
 </template>
 

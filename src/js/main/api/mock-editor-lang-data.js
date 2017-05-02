@@ -35,5 +35,11 @@ module.exports = {
     'loader-loading-editor-book':'Loading book initial data',
     'loader-processing-editor-language':'Processing editor language',
     'loader-processing-editor-book':'Processing book data',
-    'missing-page-error':'Selected page is missing. Please select another page.'
+    'missing-page-error':'Selected page is missing. Please select another page.',
+    'no-reverse-pages-validation':'Page has not reverse connections, but It is not starting one.',
+    'missing-action-validation':'Action of {0} type and id: {1} is missing. Please, create one and edit text appropriately.',
+    'missing-link-pageid-validation':'Link action of id: {0} is missing destination page.',
+    'page-number':'Page number',
+    'condition':'Condition',
+    'action-id':'Action ID'
 }

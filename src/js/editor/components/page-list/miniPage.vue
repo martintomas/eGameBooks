@@ -5,7 +5,7 @@
                 <dyn-tooltip ref='tooltipMiniPage' :tooltip-id="generateHash('mini-page',index)" :allow-automatic-hidding="false" :force-top='true' :react-to-hover='false'>
                     <span class="page-mini-title-text text-center" slot='tooltip'>
                         {{String.doTranslationEditor('page-num',(pageNumber))}}&nbsp;
-                        <i v-if='isSevereError' class="fa fa-times-circle error-color" aria-hidden="true"></i>&nbsp;
+                        <i v-if='isSevereError' class="fa fa-exclamation-circle error-color" aria-hidden="true"></i>&nbsp;
                         <i v-if='isMinorError' class="fa fa-warning warning-color" aria-hidden="true"></i>
                     </span>
                     <span slot='tooltipText'>
