@@ -4,10 +4,10 @@
             <i class="fa fa-info" aria-hidden="true"></i>&nbsp;
         </template>
         <template v-if="lineText.type === 'warn'">
-            <i class="fa fa-warning" aria-hidden="true"></i>&nbsp;
+            <i class="fa fa-warning warning-color" aria-hidden="true"></i>&nbsp;
         </template>
         <template v-if="lineText.type === 'error'">
-            <i class="fa fa-time-circle" aria-hidden="true"></i>&nbsp;
+            <i class="fa fa-times-circle error-color" aria-hidden="true"></i>&nbsp;
         </template>
         {{lineText.message}}
     </span>

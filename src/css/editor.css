@@ -184,3 +184,10 @@ body {
     display:table-cell;
     vertical-align:middle;
 }
+
+.error-color {
+    color:red;
+}
+.warning-color {
+    color:yellow
+}

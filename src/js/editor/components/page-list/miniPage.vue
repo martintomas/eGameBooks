@@ -1,10 +1,12 @@
 <template>
     <li class="page-mini-box" ref="pageMiniBox" v-bind:style="styleMiniPageBox" @click="activeMiniPage">
-        <div class="page-mini" ref='pageMini'>
+        <div class="page-mini" :style="styleMiniPage">
             <div class="page-mini-title">
                 <dyn-tooltip ref='tooltipMiniPage' :tooltip-id="generateHash('mini-page',index)" :allow-automatic-hidding="false" :force-top='true' :react-to-hover='false'>
                     <span class="page-mini-title-text text-center" slot='tooltip'>
-                        {{String.doTranslationEditor('page-num',(pageNumber))}}
+                        {{String.doTranslationEditor('page-num',(pageNumber))}}&nbsp;
+                        <i v-if='isSevereError' class="fa fa-times-circle error-color" aria-hidden="true"></i>&nbsp;
+                        <i v-if='isMinorError' class="fa fa-warning warning-color" aria-hidden="true"></i>
                     </span>
                     <span slot='tooltipText'>
                         <template v-if='active'> <!-- render tooltip only when page is active -->
@@ -54,7 +56,6 @@
         data() {
             return {
                 pageMiniDistanceMove: 0,
-                pageMini: null,
                 tooltipMiniPage: null,
             }
         },
@@ -63,6 +64,17 @@
                 return {
                     top: ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'px',
                 }
+            },
+            styleMiniPage() {
+                if(this.isSevereError) return {borderColor: '#ff9999'}
+                else if(this.isMinorError) return {borderColor: '#e6e600'}
+                else if(this.active) return {borderColor: '#6699ff'}
+            },
+            isSevereError() {
+                return this.model.data.id in this.$store.state.editor.bookData.pagesSevereError
+            },
+            isMinorError() {
+                return this.model.data.id in this.$store.state.editor.bookData.pagesMinorError
             },
             simpleText() {
                 return this.model.data.renderedText
@@ -90,7 +102,6 @@
             }
         },
         mounted() {
-            this.pageMini = this.$refs.pageMini
             this.tooltipMiniPage = this.$refs.tooltipMiniPage
 
             if(this.index === 0) this.$emit('mini-page-update-height',this.$el.clientHeight) //send only once
@@ -112,15 +123,12 @@
             showMiniPageEvent() {
                 //console.log('Mini pages - showing page number: ' + this.pageId);
 
-                this.pageMini.classList.add('active-page')
                 this.showTooltip()
             },
             hideMiniPageEvent() {
                 //console.log('Mini pages - hiding page number: ' + this.pageId)
 
-                this.pageMini.classList.remove('active-page')
                 this.hideTooltip()
-
             },
             hideMiniPage(event) {
                 //console.log('Mini pages - manualy hiding page number: ' + this.pageId);
@@ -170,21 +178,18 @@
     .page-mini {
         width: 12rem;
         height: 100%;
-        border: solid 0.1rem black;
+        border: solid 1px black;
         border-radius: 0.25rem;
         -webkit-border-radius: 0.25rem;
         -moz-border-radius: 0.25rem;
         background-color: white;
         overflow:hidden;
     }
-    .page-mini-box .active-page {
-        border-color: blue;
-    }
     
     .page-mini .page-mini-title {
         text-align: center;
         background-color: lightgray;
-        border-bottom: solid 0.1rem black;
+        border-bottom: solid 1px black;
         font-weight: bold;
         padding: 0.2rem 0.2rem 0.2rem 0.2rem;
     }
