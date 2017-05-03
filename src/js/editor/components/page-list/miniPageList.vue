@@ -62,11 +62,6 @@
             DynTooltip
         },
         computed: {
-            onlyErrorPagesClass() {
-                return {
-                    'active-icon': this.onlyErrorMiniPages
-                } 
-            },
             pagesList() {
                 if(!this.onlyErrorMiniPages) {
                     return this.$store.state.editor.bookData.pagesOrder
