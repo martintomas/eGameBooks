@@ -158,7 +158,7 @@ export default {
     getters: {
         fullPageText: (state, getters) => (pageModel) => {},
         getOnlyErrorPagesArray: (state,getter) => () => {
-            return Object.keys(state.pagesSevereError)
+            return Object.keys(state.pagesSevereError).sort((a,b) => a - b)
         },
     },
     actions: {
