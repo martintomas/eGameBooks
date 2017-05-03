@@ -6,7 +6,7 @@ export default {
         miniPageListShown: true,
         miniPageMultiPages: false,
         elementsListShow: true,
-
+        onlyErrorMiniPageList: false,
     },
     mutations: {
         [mutationTypes.CHANGE_MINI_PAGE_LIST_STATUS](state, status) {
@@ -44,6 +44,18 @@ export default {
             }
 
             state.elementsListShow = status
-        }
+        },
+        [mutationTypes.ONLY_ERROR_MINI_PAGE_SHOWN_METHOD](state, status) {
+            if (status) {
+                //console.log('STORE: elements list is shown')
+                editorNotification.newInternalInfo('Only error pages in mini page list are shown',true)
+            }
+            else {
+                //console.log('STORE: elements list is hidden')
+                editorNotification.newInternalInfo('All pages in mini page list are shown',true)
+            }
+
+            state.onlyErrorMiniPageList = status
+        },
     }
 }

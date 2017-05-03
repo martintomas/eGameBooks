@@ -156,7 +156,10 @@ export default {
         }
     },
     getters: {
-        fullPageText: (state, getters) => (pageModel) => {}
+        fullPageText: (state, getters) => (pageModel) => {},
+        getOnlyErrorPagesArray: (state,getter) => () => {
+            return Object.keys(state.pagesSevereError)
+        },
     },
     actions: {
         loadBook({ commit, state }, bookName) {

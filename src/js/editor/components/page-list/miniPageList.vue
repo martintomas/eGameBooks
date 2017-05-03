@@ -10,15 +10,15 @@
             </dyn-tooltip>
             -->
             <dyn-tooltip class='dyn-tooltip'>
-                <i class="fa fa-files-o active-icon tooltip" aria-hidden="true" @click="multiPageShow" slot='tooltip'></i>
+                <i :class="[multiPage ? 'active-icon' : 'unactive-icon', 'fa','fa-files-o','tooltip']" aria-hidden="true" @click="multiPageShow" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('multi-pages')}}</span>
             </dyn-tooltip>
             <dyn-tooltip class='dyn-tooltip'>
-                <i class="fa fa-file-o active-icon tooltip" aria-hidden="true" @click="onePageShow" slot='tooltip'></i>
+                <i :class="[!multiPage ? 'active-icon' : 'unactive-icon', 'fa','fa-file-o','tooltip']" aria-hidden="true" @click="onePageShow" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('one-pages')}}</span>
             </dyn-tooltip>
             <dyn-tooltip class='dyn-tooltip'>
-                <i class="fa fa-exclamation-circle active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                <i :class="[onlyErrorMiniPages ? 'active-icon' : 'unactive-icon', 'fa','fa-exclamation-circle','tooltip']" aria-hidden="true" @click="onlyErrorPages" slot='tooltip'></i>
                 <span slot='tooltipText'>{{String.doTranslationEditor('wrong-pages')}}</span>
             </dyn-tooltip>
         </div>
@@ -50,7 +50,6 @@
     export default {
         data() {
             return {
-                pagesListHistory: null,
                 activatedPage: null, //remmember last active page
                 scrollWrapper: 'page-mini-main-wrapper',
                 scrollContainer: 'page-mini-main-scroller',
@@ -63,15 +62,23 @@
             DynTooltip
         },
         computed: {
+            onlyErrorPagesClass() {
+                return {
+                    'active-icon': this.onlyErrorMiniPages
+                } 
+            },
             pagesList() {
-                if (this.pagesListHistory !=  this.$store.state.editor.bookData.pagesOrder.length) { //be sure to update scroll when number of pages changes
-                    this.pagesListHistory =  this.$store.state.editor.bookData.pagesOrder.length
-                    this.updateScroller()
+                if(!this.onlyErrorMiniPages) {
+                    return this.$store.state.editor.bookData.pagesOrder
+                } else {
+                    return this.$store.getters['editor/getOnlyErrorPagesArray']()
                 }
-                return this.$store.state.editor.bookData.pagesOrder
             },
             pages() {
                 return this.$store.state.editor.bookData.pages
+            },
+            activePage() {
+                return this.$store.state.editor.bookData.selectedPage
             },
             multiPage() {
                 return this.$store.state.editor.editorStatus.miniPageMultiPages
@@ -85,6 +92,14 @@
             pageDistanceDefault() {
                 if(this.multiPage) return this.pageMiniDistance;
                 else return this.pageMaxDistance
+            },
+            onlyErrorMiniPages() {
+                return this.$store.state.editor.editorStatus.onlyErrorMiniPageList
+            }
+        },
+        watch: {
+            pagesList(value) {
+                this.updateScroller()
             }
         },
         created() {
@@ -184,6 +199,10 @@
                 } else {
                     this.updateScroller();
                 }
+            },
+            onlyErrorPages(event) {
+                if(this.onlyErrorMiniPages) this.$store.commit('editor/'+mutationTypes.ONLY_ERROR_MINI_PAGE_SHOWN_METHOD,false)
+                else this.$store.commit('editor/'+mutationTypes.ONLY_ERROR_MINI_PAGE_SHOWN_METHOD,true)
             },
             updateScroller(overTop) {
                 //console.log('Mini pages - updating scroll height');

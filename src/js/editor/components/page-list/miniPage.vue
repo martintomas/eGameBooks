@@ -105,6 +105,11 @@
             this.tooltipMiniPage = this.$refs.tooltipMiniPage
 
             if(this.index === 0) this.$emit('mini-page-update-height',this.$el.clientHeight) //send only once
+
+            if(this.active) { //show mini page by default when it is active after start
+                this.$emit('show-mini-page', this)
+                this.showMiniPageEvent() 
+            }
         },
         methods: {
             generateHash,
@@ -117,12 +122,12 @@
                     //this.$store.commit(mutationTypes.SELECT_PAGE,this.pageId)
                 } else {
                     this.$store.commit('editor/'+mutationTypes.SELECT_PAGE,this.pageId) //set new selected page
-                    this.$emit('show-mini-page', this) //let know others components that this one is shown
                 }
             },
             showMiniPageEvent() {
                 //console.log('Mini pages - showing page number: ' + this.pageId);
 
+                this.$emit('show-mini-page', this) //let know others components that this one is shown
                 this.showTooltip()
             },
             hideMiniPageEvent() {

@@ -107,7 +107,7 @@ export default {
             if(this.scroller != null) {
                 this.scroller.refresh()
             }
-            if(this.scrollerErrors != null) {
+            if(this.scrollerErrors != null && this.showErrorsData && (this.isSevereError || this.isMinorError)) {
                 this.scrollerErrors.refresh()
             }
         })
