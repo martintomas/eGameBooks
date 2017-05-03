@@ -9,3 +9,7 @@ export const REMOVE_LOADER = 'REMOVE_LOADER'
 //Notification status mutations
 export const ADD_NEW_NOTIFICATION_SOURCE = "ADD_NEW_NOTIFICATION_SOURCE"
 export const ADD_NOTIFICATION = 'ADD_NOTIFICATION'
+
+//Message box status mutations
+export const NEW_MESSAGE = 'NEW_MESSAGE'
+export const DELETE_MESSAGE = 'DELETE_MESSAGE'
