@@ -41,5 +41,6 @@ module.exports = {
     'missing-link-pageid-validation':'Link action of id: {0} is missing destination page.',
     'page-number':'Page number',
     'condition':'Condition',
-    'action-id':'Action ID'
+    'action-id':'Action ID',
+    'open-page': 'Open page',
 }

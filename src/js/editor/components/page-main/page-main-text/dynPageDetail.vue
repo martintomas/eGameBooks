@@ -4,7 +4,8 @@
         <div class="modal-content">
             <template v-if='pageData != null'>
                 <div class="modal-header">
-                    {{String.doTranslationEditor('page-zoom-modal-header',(pageData.data.pageNumber))}}
+                    {{String.doTranslationEditor('page-zoom-modal-header',(pageData.data.pageNumber))}}&nbsp;
+                    <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='loadPage'></i>
                     <span class="close float-right" @click='close'><i class="fa fa-close unactive-icon" aria-hidden="true" @click='close'></i></span>
                 </div>
                 <div class="modal-body">
@@ -90,6 +91,10 @@ export default {
         },
         nextPage() {
             this.pageId = this.closestBiggerPage.data.id
+        },
+        loadPage() {
+            this.close()
+            this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
         }
     }
 }
@@ -119,7 +124,7 @@ export default {
 .modal-header {
     padding: 0.2rem 2%;
     background-color: gray;
-    font-size: 120%;
+    font-size: 130%;
     font-weight: bold;
     height: 1.5rem;
     line-height: 1.5rem;
