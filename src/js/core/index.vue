@@ -18,19 +18,21 @@ import MessageBox from 'core/components/dyn-components/messageBox.vue'
 defaultCore.coreNotificationWrapper.initializeNotification(store.commit)
 defaultCore.coreLoaderWrapper.initializeLoader(store.commit)
 
+//load core language
+if(!store.getters['core/languageExists'](constants.coreLangType)) {
+    let prom1 = store.dispatch('core/loadCoreLanguage').then(() => { //load core language
+        //defaultCore.coreNotificationWrapper.newInternalInfo(store.commit,'Core language have been loaded',true)
+    }).catch((reason) => {
+        defaultCore.coreNotificationWrapper.newInternalError(store.commit,'Error during core language processing. Reason of error is: '+reason,true)
+    })
+}
+
 export default {
     components: {
         MessageBox
     },
     created() {
-        //load core language
-        if(!store.getters['core/languageExists'](constants.coreLangType)) {
-            let prom1 = store.dispatch('core/loadCoreLanguage').then(() => { //load core language
-                //defaultCore.coreNotificationWrapper.newInternalInfo(store.commit,'Core language have been loaded',true)
-            }).catch((reason) => {
-                defaultCore.coreNotificationWrapper.newInternalError(store.commit,'Error during core language processing. Reason of error is: '+reason,true)
-            })
-        }
+    
     },
     mounted() {
         // setTimeout(() => {
