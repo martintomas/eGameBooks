@@ -1,9 +1,9 @@
-import * as mutationTypes from 'main/store/mutationTypes'
-import {mainStorePrefix} from 'main/constants'
+import * as mutationTypes from 'core/store/mutationTypes'
+import {coreStorePrefix} from 'core/constants'
 
 class NotificationStoreWrapper {
     constructor(notificationType,notification) {
-        this.storePrefix = mainStorePrefix
+        this.storePrefix = coreStorePrefix
         this.notificationType = notificationType
         this.notification = notification
 

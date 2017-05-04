@@ -33,6 +33,9 @@ export default {
     computed: {
         pages() {
             return this.pageData.reverseLink
+        },
+        pagesLength() {
+            return this.pages.length
         }
     }
 }

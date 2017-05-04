@@ -95,6 +95,9 @@
         watch: {
             pagesList(value) {
                 this.updateScroller()
+            },
+            activePage(value) {
+                if(value === null && this.activatedPage != null) this.hideMiniPage(this.activatedPage, true)
             }
         },
         created() {

@@ -1,9 +1,9 @@
-import * as mutationTypes from 'main/store/mutationTypes'
-import {mainStorePrefix} from 'main/constants'
+import * as mutationTypes from 'core/store/mutationTypes'
+import {coreStorePrefix} from 'core/constants'
 
 class LoaderStoreWrapper {
     constructor(loaderType) {
-        this.storePrefix = mainStorePrefix
+        this.storePrefix = coreStorePrefix
         this.loaderType = loaderType        
     }
     initializeLoader(commit) {

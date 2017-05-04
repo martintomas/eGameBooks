@@ -10,7 +10,7 @@
                     </template>
                     <template v-else>
                         <ul>
-                            <li is="mini-page-connection-down" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="model.id +'-'+model.pageId" :model="model" :index='index' :model-length='pages.length' :page-edited-id='pageId'
+                            <li is="mini-page-connection-down" v-for="(model,key,index) in pages" ref="pageConnectionsBox" :key="model.id +'-'+model.pageId" :model="model" :index='index' :model-length='pagesLength' :page-edited-id='pageId'
                                 :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
                             </li>
                         </ul>
@@ -32,9 +32,12 @@ export default {
         MiniPageConnectionDown,
     },
     computed: {
-         pages() {
+        pages() {
             return this.pageData.actions.link
         },
+        pagesLength() {
+            return Object.keys(this.pages).length
+        }
     }
 }
 

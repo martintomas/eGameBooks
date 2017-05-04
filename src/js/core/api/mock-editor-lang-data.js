@@ -43,4 +43,5 @@ module.exports = {
     'condition':'Condition',
     'action-id':'Action ID',
     'open-page': 'Open page',
+    'message-delete-page':'You are about to delete this page. Are you sure about it?',
 }

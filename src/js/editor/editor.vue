@@ -44,12 +44,12 @@ export default {
         defaults.editorLoaderWrapper.initializeLoader(store.commit)
 
         //load language
-        if(!store.getters['main/languageExists'](constants.editorLangType)) {
-            let prom1 = store.dispatch('main/loadEditorLanguage').then(() => { //load editor language
+        if(!store.getters['core/languageExists'](constants.editorLangType)) {
+            let prom1 = store.dispatch('core/loadEditorLanguage').then(() => { //load editor language
                 defaults.editorNotificationWrapper.newInternalInfo(store.commit,'Editor is shown',true)
                 next() //confirm hook when language have been loaded
             }).catch((reason) => {
-
+                defaults.editorNotificationWrapper.newInternalError(store.commit,'Editor during editor shown. Reason of error is: '+reason,true)
             })
         } else {
             defaults.editorNotificationWrapper.newInternalInfo(store.commit,'Language already loaded. Editor is shown immidatelly',true)
@@ -62,7 +62,7 @@ export default {
         }).then(() => {
             
         }).catch((reason) => {
-
+            console.log(reason)
         })
 
         // Promise.all([prom1,prom2]).then(() => {

@@ -1,9 +1,10 @@
+import Vue from 'vue'
 import {AllowedActions,ErrorImportance} from 'editor/constants'
 
 export function buildRenderInfo(renderInfo, actionInfo) { //even validation is done
     var res = {}
     for (let key in renderInfo) { //go through action types
-        if (!(key in res)) res[key] = [] //prepare array for storing data
+        if (!(key in res)) res[key] = {} //prepare array for storing data
 
         let i, j, isValid
         if (key in actionInfo) { //key exist in actions
@@ -16,35 +17,28 @@ export function buildRenderInfo(renderInfo, actionInfo) { //even validation is d
                         break
                     }
                 }
-                res[key].push({ 'id': renderInfo[key][i].id, 'exist': isValid })
+                Vue.set(res[key],renderInfo[key][i].id,{ 'id': renderInfo[key][i].id, 'exist': isValid })
             }
         } else { //key is completely missing in actionInfo
             for (i = 0; i < renderInfo[key].length; i++) {
-                res[key].push({ 'id': renderInfo[key][i].id, 'exist': false })
+                Vue.set(res[key],renderInfo[key][i].id,{ 'id': renderInfo[key][i].id, 'exist': false })
             }
         }
     }
     return res
 }
 
-export function getAction(actions,key,id) {
-    for (let i = 0; i < actions[key].length; i++) {
-        if(actions[key][i].id === id) return actions[key][i]
-    }
-    return null
-}
-
 export function isRenderedActionCorrect(page,actionType,renderedActionId,res={}) {
     if(!page.renderInfo[actionType][renderedActionId].exist) {
-        res[ErrorImportance.SEVERE].push({text:'missing-action-validation',args:[actionType,page.renderInfo[actionType][renderedActionId].id]})
+        res[ErrorImportance.SEVERE].push({text:'missing-action-validation',args:[actionType,renderedActionId]})
     } else { //action exists
-        let action = getAction(page.actions,actionType,page.renderInfo[actionType][renderedActionId].id)
+        let action = page.actions[actionType][renderedActionId]
         if(actionType === AllowedActions.LINK) { //do link specific validation
-            if(action.pageId === null) res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[page.renderInfo[actionType][renderedActionId].id]})
+            if(action.pageId === null) res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[renderedActionId]})
             //if(action.condition) //do condition check in future !!!!
         }
     }
-    for(let key in res) {
+    for(let key in res) { //check if some error was found
         return false
     }
     return true
@@ -69,8 +63,8 @@ export function isPageCorrect(state,page) { //checks only page inner data
     //check that all actions are defined
     for(let key in page.renderInfo) {
         if (key in page.renderInfo) { //key exist in actions
-            for (let i = 0; i < page.renderInfo[key].length; i++) {
-                isRenderedActionCorrect(page,key,i,res)
+            for (let id in page.renderInfo[key]) {
+                isRenderedActionCorrect(page,key,id,res)
             }
         }
     }

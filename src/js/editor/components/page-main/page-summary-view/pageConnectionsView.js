@@ -32,7 +32,7 @@ export default {
         pageMaxActivationDistance() { //how much should activated mini page move to left
             if (this.activatedPage != null) {
                 if (this.activatedPage.page === null) { //tooltip is missing --> not needed to create special space next to mini page!!
-                    if (this.activatedPage.index === this.pages.length - 1 || this.pageDistanceDefault < this.miniPageWidth) return this.miniPageWidth
+                    if (this.activatedPage.index === this.pagesLength - 1 || this.pageDistanceDefault < this.miniPageWidth) return this.miniPageWidth
                     return this.pageDistanceDefault
                 }
             }
@@ -114,7 +114,7 @@ export default {
             this.updateScroller()
         },
         pageOptimalDistance() {
-            if (this.pageConnectionView != null && this.pages.length > 0) {
+            if (this.pageConnectionView != null && this.pagesLength > 0) {
 
                 // let widthRem = (this.pageConnectionView.clientWidth - 2) / this.fontSize //width of component
                 // let remMiniPage = this.$refs.pageConnectionsBox[0].$refs.miniPage.clientWidth / this.fontSize //mini page box rem width
@@ -132,12 +132,12 @@ export default {
 
                 let distTemp = this.miniPageWidth
                 let widthBox = this.pageConnectionView.clientWidth
-                if (this.pages.length > 1) {
+                if (this.pagesLength > 1) {
                     if (this.activatedPage != null) {
-                        if (this.activatedPage.index === this.pages.length - 1) distTemp = ((widthBox - this.pageMaxActivationDistance - 5) / (this.pages.length - 1))
-                        else distTemp = ((widthBox - this.miniPageWidth - this.pageMaxActivationDistance - 5) / (this.pages.length - 2))
+                        if (this.activatedPage.index === this.pagesLength - 1) distTemp = ((widthBox - this.pageMaxActivationDistance - 5) / (this.pagesLength - 1))
+                        else distTemp = ((widthBox - this.miniPageWidth - this.pageMaxActivationDistance - 5) / (this.pagesLength - 2))
                     } else {
-                        distTemp = ((widthBox - this.miniPageWidth - 5) / (this.pages.length - 1))
+                        distTemp = ((widthBox - this.miniPageWidth - 5) / (this.pagesLength - 1))
                     }
                 }
 
@@ -151,9 +151,9 @@ export default {
         updateScroller() {
             //console.log('Mini pages connections - updating scroll width')
 
-            var scrollBarWidth = this.miniPageWidth + ((this.pages.length - 1) * this.pageDistanceDefault)
+            var scrollBarWidth = this.miniPageWidth + ((this.pagesLength - 1) * this.pageDistanceDefault)
             if (this.activatedPage != null) {
-                if (this.activatedPage.index === this.pages.length - 1) scrollBarWidth += this.pageMaxActivationDistance - this.miniPageWidth
+                if (this.activatedPage.index === this.pagesLength - 1) scrollBarWidth += this.pageMaxActivationDistance - this.miniPageWidth
                 else scrollBarWidth += this.pageMaxActivationDistance - this.pageDistanceDefault
             }
 
@@ -165,7 +165,7 @@ export default {
                 setTimeout(() => {
                     this.scroller.refresh(); //actualize scroller based on new width
                     if (this.activatedPage != null) {
-                        if (this.activatedPage.index === this.pages.length - 1) this.scroller.scrollToElement(this.activatedPage.$el, 100)
+                        if (this.activatedPage.index === this.pagesLength - 1) this.scroller.scrollToElement(this.activatedPage.$el, 100)
                     }
                 }, 200);
             }

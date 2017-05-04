@@ -4,4 +4,8 @@
 module.exports = {
     'loader-loading-editor-language':'Loading editor language',
     'loader-processing-editor-language':'Processing editor language',
+    'ok':'Ok',
+    'storno':'Storno',
+    'yes':'Yes',
+    'no':'No',
 }

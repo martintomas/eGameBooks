@@ -53,9 +53,7 @@ export default {
             }
         },
         linkAction() {
-            for(let linkId in this.page.actions.link) {
-                if(this.page.actions.link[linkId].id === this.model.actionId) return this.page.actions.link[linkId]
-            }
+            if(this.model.actionId in this.page.actions.link) return this.page.actions.link[this.model.actionId]
             console.log('Reverse connection up error!!! Link is missing')
             return null
         },

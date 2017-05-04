@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import * as mutationTypes from 'main/store/mutationTypes'
-import {mainNotification} from 'main/services/defaults.js'
+import * as mutationTypes from 'core/store/mutationTypes'
+import {coreNotification} from 'core/services/defaults.js'
 
 export default {
     state: {
@@ -11,7 +11,7 @@ export default {
             //args: notificationType,notification
             Vue.set(state.notificators,args.notificationType,args.notification)
 
-            mainNotification.newInternalInfo('New notification queue has been added. Type of queue is ' + args.notificationType,true)
+            coreNotification.newInternalInfo('New notification queue has been added. Type of queue is ' + args.notificationType,true)
         },
         [mutationTypes.ADD_NOTIFICATION](state,args) {
             state.notificators[args.notificationType].addNew(args)

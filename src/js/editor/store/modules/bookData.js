@@ -17,19 +17,19 @@ data: {
     ...
 },
 actions: {
-    link: [{
+    link: {id:{
         id:
         pageId:
         condition:
         existsInText:
-    },...],
+    },...},
     ...
 },
 renderInfo: {
-    link: [{
+    link: {id:{ //id corrrespond to action id
         id:
         exist:
-    },...],
+    },...},
     ...
 },
 reverseLink: [{
@@ -38,13 +38,16 @@ reverseLink: [{
 },...]
 */
 
-function actionDoesntExistByDefault(actionInfo) { //set up by default for all actions that they are missing in text
+function processActions(actionInfo) { //set up by default for all actions that they are missing in text
+    let res = {}
     for (let key in actionInfo) {
+        res[key] = {}
         for (let i = 0; i < actionInfo[key].length; i++) {
             actionInfo[key][i]['existsInText'] = false
+            Vue.set(res[key],actionInfo[key][i].id,actionInfo[key][i])
         }
     }
-    return actionInfo
+    return res
 }
 
 export function actualizeValidation(pageId,original, res) {
@@ -88,7 +91,7 @@ export default {
 
                 let analysis = JSON.parse(JSON.stringify(markdownItAnalysis)) //deep copy of markdownItAnalysis
                 Vue.set(state.pages[page.id].data, 'renderedText', state.markdownCompDefault.render(page.text, { 'analysis': analysis, 'pageId': page.id })) //render text
-                Vue.set(state.pages[page.id], 'actions', actionDoesntExistByDefault(page.actions))
+                Vue.set(state.pages[page.id], 'actions', processActions(page.actions))
                 Vue.set(state.pages[page.id], 'renderInfo', buildRenderInfo(analysis, page.actions)) //build complete render info
 
                 //update reverse links
@@ -151,8 +154,34 @@ export default {
             }
 
         },
-        [mutationTypes.GET_ALL_PAGES](state, initData) {
-            
+        [mutationTypes.DELETE_PAGE](state, pageId) {
+            if(state.selectedPage === pageId) state.selectedPage = null //unselected deleted page
+            Vue.delete(state.pagesOrder,state.pagesOrder.indexOf(pageId)) //delete pages from complete list of pages
+            Vue.delete(state.pagesSevereError,pageId) //delete page from list of severe errors
+            Vue.delete(state.pagesMinorError,pageId)
+
+            //based on actions, find reverse pages (its links) and correct them (delete it)
+            for(let key in state.pages[pageId].actions.link) {
+                if(state.pages[pageId].actions.link[key].pageId in state.pages) {
+                    let reverseLinks = state.pages[state.pages[pageId].actions.link[key].pageId].reverseLink
+                    for(let i=0;i<reverseLinks.length;i++) { //find appropriate reverse link
+                        if(reverseLinks[i].pageId === pageId && reverseLinks[i].actionId === state.pages[pageId].actions.link[key].id) {
+                            Vue.delete(reverseLinks,i)
+                        }
+                    }
+                }
+            }
+
+            //reverse links have to be corrected --> find actions and change pageId to null
+            for(let i=0;i<state.pages[pageId].reverseLink.length;i++) {
+                if(state.pages[pageId].reverseLink[i].pageId in state.pages) {
+                    let links = state.pages[state.pages[pageId].reverseLink[i].pageId].actions.link
+                    if(state.pages[pageId].reverseLink[i].actionId in links) 
+                        Vue.set(links[state.pages[pageId].reverseLink[i].actionId],'pageId',null)  
+                }
+            }
+
+            Vue.delete(state.pages,pageId) //delete page data
         }
     },
     getters: {
@@ -180,5 +209,18 @@ export default {
                 editorLoaderWrapper.removeLoader(commit,'page-load')
             })
         },
+        deletePage({ commit, dispatch, state }, pageId) {
+            let pageBackup = state.pages[pageId] //remmember backup for undo operation
+            commit(mutationTypes.ADD_UNDO_ACTION,() => {
+                dispatch('addPage',pageBackup)
+            })
+            commit(mutationTypes.DELETE_PAGE,pageId)
+        },
+        addEmptyPage({ commit, dispatch, state },pageId) {
+
+        },
+        addPage({ commit, dispatch, state }, page) {
+            console.log(page)
+        }
     }
 }

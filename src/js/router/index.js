@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 import { editorRoutes } from 'editor/router'
 import { mainRoutes } from 'main/router'
 
-import MainContainer from 'main/components/mainContainer.vue'
+import Main from 'main/main.vue'
 import Editor from 'editor/editor.vue'
 
 Vue.use(VueRouter)
@@ -15,7 +15,7 @@ export const router = new VueRouter({
         {
             path: '/',
             components: {
-                'main-center-view':MainContainer,
+                'main-center-view':Main,
             },
             name: 'main-view',
             //children: mainRoutes

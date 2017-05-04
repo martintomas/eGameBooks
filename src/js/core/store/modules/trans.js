@@ -1,8 +1,9 @@
-import * as mutationTypes from 'main/store/mutationTypes'
-import * as api from 'main/api'
+import * as mutationTypes from 'core/store/mutationTypes'
+import * as api from 'core/api'
 import Vue from 'vue'
 
-import {mainNotification,mainNotificationWrapper,mainLoaderWrapper} from 'main/services/defaults.js'
+import {coreNotification,coreNotificationWrapper,coreLoaderWrapper} from 'core/services/defaults.js'
+import {coreLangType} from 'core/constants.js'
 import {editorLangType} from 'editor/constants.js'
 
 let warnInformed = {}
@@ -15,7 +16,7 @@ export default {
         [mutationTypes.SET_LANG_TEXT](state, args) { //set up lang data
             //args: langData, langType
             //console.log('STORE: loading text for appropriate language')
-            mainNotification.newInternalInfo('Starting processing editor language',true)
+            coreNotification.newInternalInfo('Starting processing language of type: '+args.langType,true)
 
             if(!(args.langType in state.langData)) {
                 Vue.set(state.langData,args.langType,{})
@@ -25,25 +26,37 @@ export default {
                 Vue.set(state.langData[args.langType], key, args.langData[key])
             }
 
-            mainNotification.newInternalInfo('Editor language is prepared now',true)
+            coreNotification.newInternalInfo('Language of type: '+args.langType+' is prepared now',true)
         }
     },
     actions: {
         loadEditorLanguage({ commit, state }) {
-            mainNotificationWrapper.newInternalInfo(commit,'Starting loading editor language',true)
-            mainLoaderWrapper.addLoader(commit,'lang-load',String.doTranslationMain('loader-loading-editor-language'))
+            coreNotificationWrapper.newInternalInfo(commit,'Starting loading editor language',true)
+            coreLoaderWrapper.addLoader(commit,'lang-load',String.doTranslationCore('loader-loading-editor-language'))
 
             return api.getLangData(editorLangType,state.lang).then((langData) => {
-                mainNotificationWrapper.newInternalInfo(commit,'Editor language have been loaded',true)
-                mainLoaderWrapper.removeLoader(commit,'lang-load')
+                coreNotificationWrapper.newInternalInfo(commit,'Editor language have been loaded',true)
+                coreLoaderWrapper.removeLoader(commit,'lang-load')
 
-                //mainLoaderWrapper.addLoader(commit,'lang-process',String.doTranslationMain('loader-processing-editor-language'))
+                //coreLoaderWrapper.addLoader(commit,'lang-process',String.doTranslationCore('loader-processing-editor-language'))
                 commit(mutationTypes.SET_LANG_TEXT, {langData:langData,langType:editorLangType})
-                //mainLoaderWrapper.removeLoader(commit,'lang-process')
+                //coreLoaderWrapper.removeLoader(commit,'lang-process')
 
             }).catch((reason) => {
-                mainNotificationWrapper.newInternalInfo(commit,'Editor language have been not loaded. Reason is: '+reason,true)
-                mainLoaderWrapper.removeLoader(commit,'lang-load')
+                coreNotificationWrapper.newInternalInfo(commit,'Editor language have been not loaded. Reason is: '+reason,true)
+                coreLoaderWrapper.removeLoader(commit,'lang-load')
+            })
+        },
+        loadCoreLanguage({ commit, state }) {
+            coreNotificationWrapper.newInternalInfo(commit,'Starting loading core language',true)
+
+            return api.getLangData(coreLangType,state.lang).then((langData) => {
+                coreNotificationWrapper.newInternalInfo(commit,'Core language have been loaded',true)
+
+                commit(mutationTypes.SET_LANG_TEXT, {langData:langData,langType:coreLangType})
+
+            }).catch((reason) => {
+                coreNotificationWrapper.newInternalInfo(commit,'Core language have been not loaded. Reason is: '+reason,true)
             })
         }
     },

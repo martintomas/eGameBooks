@@ -55,9 +55,8 @@ export default {
     },
     computed: {
         linkData() {
-            for(let i=0;i<this.pageData.actions.link.length;i++) {
-                if(this.pageData.actions.link[i].id === this.actionId) return this.pageData.actions.link[i]
-            }
+            if(this.actionId in this.pageData.actions.link) return this.pageData.actions.link[this.actionId]
+
             //console.log('TEXT MAIN LINK WARN: link is missing')
             return null
         }

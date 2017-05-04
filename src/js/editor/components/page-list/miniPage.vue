@@ -23,7 +23,7 @@
                                 <span slot='tooltipText'>{{String.doTranslationEditor('deactive-page')}}</span>
                             </dyn-tooltip>
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                                <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='deletePage'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('delete-page')}}</span>
                             </dyn-tooltip>
                         </template>
@@ -41,7 +41,7 @@
     import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
     import * as mutationTypes from 'editor/store/mutationTypes'
     import {generateHash,getCompStyle} from 'defaults.js'
-    import {busEditor} from 'editor/services/defaults.js'
+    import {busEditor,messageBoxWrapper} from 'editor/services/defaults.js'
     
     export default {
         components: {
@@ -89,15 +89,15 @@
                 return this.model.data.id === this.$store.state.editor.bookData.selectedPage
             },
             numLinks() {
-                return this.model.actions.link.length
+                return Object.keys(this.model.actions.link).length
             },
             numReverseLinks() {
                 return this.model.reverseLink.length
             }
         },
         watch: {
-            active() { //observe if page selection is changed
-                if(this.active) this.showMiniPageEvent()
+            active(value) { //observe if page selection is changed
+                if(value) this.showMiniPageEvent()
                 else this.hideMiniPageEvent()
             }
         },
@@ -119,7 +119,7 @@
             },
             activeMiniPage(event) {
                 if (this.active) { //keep active even when douple clicked
-                    //this.$store.commit(mutationTypes.SELECT_PAGE,this.pageId)
+                    //this.$store.commit('editor/'+mutationTypes.SELECT_PAGE,null)
                 } else {
                     this.$store.commit('editor/'+mutationTypes.SELECT_PAGE,this.pageId) //set new selected page
                 }
@@ -157,6 +157,11 @@
                 if (event) event.stopPropagation()
 
                 busEditor.$emit('show-page-detail',this.pageId)
+            },
+            deletePage(event) {
+                messageBoxWrapper.showWarnMessageStorno(this.$store.commit,String.doTranslationEditor('message-delete-page'),() => {
+                    this.$store.dispatch('editor/deletePage',this.pageId)
+                })
             },
             showTooltip() {
                 setTimeout(() => {

@@ -5,7 +5,7 @@ import { router } from 'router/'
 import { store } from 'store/'
 import { waitForResizeEnd } from 'defaults.js'
 
-import Index from 'main/index.vue'
+import Index from 'core/index.vue'
 
 Vue.config.debug = true
 
