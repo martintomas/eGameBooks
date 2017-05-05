@@ -56,39 +56,26 @@ export default {
             next()
         }
 
-        //load book
         let prom2 = store.dispatch('editor/load', { //load book
             book: to.params.book
         }).then(() => {
             
         }).catch((reason) => {
             console.log(reason)
-        })
 
-        // Promise.all([prom1,prom2]).then(() => {
-        //     next()
-        // })
+            //!!!!show message box for users in future
+        })
 
     },
     beforeRouteUpdate (to, from, next) {
+        //load book
         next()
+    },
+    beforeRouteLeave (to, from, next) {
+        //clear data from editor vuex instance
     },
     mounted() {
     },
-    // install(Vue,options) {
-    //     Vue.use(Editor, { 'store': this.$store })
-    //     if(!('store' in options)) {
-    //         console.log('Editor registration error --> store was not provided')
-    //     }
-        
-    //     Vue.mixin({ //globaly register editor store variable
-    //         data() {
-    //             return {
-    //                 editorStore: options.store.state.editor
-    //             }
-    //         }
-    //     })
-    // }
 }
 
 </script>
