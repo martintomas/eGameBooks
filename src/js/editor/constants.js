@@ -4,7 +4,9 @@ export const editorLoaderType = 'editorLoader'
 export const editorLangType = 'editorLanguage'
 
 export const AllowedActions = {
-    LINK: 'link'
+    LINK: 'link',
+    ITEM: 'item',
+    JOURNAL: 'journal'
 }
 
 export const ErrorImportance = {

@@ -4,7 +4,8 @@ import { MarkdownComp } from 'editor/services/markdown-it/markdownComp.js'
 import Vue from 'vue' //use Vue.set for manipulation with dict/array --> it is reactive
 
 import {editorNotification,editorNotificationWrapper,editorLoaderWrapper} from 'editor/services/defaults.js'
-import {buildRenderInfo,isPageCorrect,isPageCorrectComplete} from 'editor/services/bookFuncs'
+import {buildRenderInfo} from 'editor/services/bookFuncs'
+import {isPageCorrect} from 'editor/services/validators'
 import {AllowedActions,ErrorImportance} from 'editor/constants'
 
 /*
@@ -66,6 +67,7 @@ markdownItAnalysis[AllowedActions.LINK] = []
 export default {
     state: {
         markdownCompDefault: new MarkdownComp(markdownItAllowedActions),
+        mainInfo: {},
         pages: {},
         pagesOrder: [], //array that describes which pages exists
         startPage: 1, //page that is first one
@@ -77,7 +79,9 @@ export default {
     mutations: {
         [mutationTypes.LOAD_BOOK_DATA](state, initData) {
             //console.log('STORE: loading initial data')
-            editorNotification.newInternalInfo('Starting processing initial data of book',true)
+            editorNotification.newInternalInfo('Starting processing initial pages of book',true)
+
+            for(let key in initData.main) Vue.set(state.mainInfo,key,initData.main[key]) //load main info
 
             //prepare page data
             initData.pages.forEach(page => {
@@ -102,32 +106,27 @@ export default {
 
                 state.pagesOrder.push(page.id) //remmember all existing pages
 
-                //do page validation
-                let res = isPageCorrect(state,state.pages[page.id])
-                if(res[ErrorImportance.MINOR].length > 0) Vue.set(state.pagesMinorError,page.id,res[ErrorImportance.MINOR])
-                if(res[ErrorImportance.SEVERE].length > 0) Vue.set(state.pagesSevereError,page.id,res[ErrorImportance.SEVERE])
-
             })
-            
-            //do page validation after all data have been build
-            for(let pageKey in state.pages) {
-                let res = isPageCorrectComplete(state,state.pages[pageKey])
-                actualizeValidation(pageKey,state.pagesMinorError,res[ErrorImportance.MINOR])
-                actualizeValidation(pageKey,state.pagesSevereError,res[ErrorImportance.SEVERE])
-            }
 
             state.pagesOrder = state.pagesOrder.sort((a,b) => a - b) //sort pages
 
-            if (state.editedPage === null || !(state.editedPage in state.pages)) { //be sure that edited page is set up and exists
-                //console.log('STORE: changed edited page by force')
-                editorNotification.newInternalWarn('Edited page was changed by force',true)
-                for (let key in state.pages) {
-                    state.editedPage = key //set up first suitable pages as edited
-                    break
-                }
+            editorNotification.newInternalInfo('Initial pages of book have been processed',true)
+        },
+        [mutationTypes.VALIDATE_BOOK](state, pageId=null) {
+            let pages,res,key
+            if(pageId === null) { //validate all pages
+                pages = state.pages
+            } else {
+                pages = {pageId:state.pages[pageId]}
             }
 
-            editorNotification.newInternalInfo('Initial data of book have been processed',true)
+            for(key in pages) {
+                res = isPageCorrect(state,pages[key])
+                if(res[ErrorImportance.MINOR].length > 0) Vue.set(state.pagesMinorError,key,res[ErrorImportance.MINOR])
+                if(res[ErrorImportance.SEVERE].length > 0) Vue.set(state.pagesSevereError,key,res[ErrorImportance.SEVERE])
+            }
+
+            editorNotification.newInternalInfo('Initial data of book have been validated',true)
         },
         [mutationTypes.RENDER_PAGE](state, page) {
             //console.log('STORE: rendering text for page number ' + page.id)
@@ -144,10 +143,13 @@ export default {
             //console.log('STORE: editing new page ' + pageId)
             editorNotification.newInternalInfo('Editing new page ' + pageId,true)
 
-            if (Object.keys(state.pages).length > 0) { //check if pages data are already loaded
-                if (pageId in state.pages) {
+            if (state.pagesOrder.length > 0) { //check if pages data are already loaded
+                if (pageId in state.pages && pageId != null) {
                     state.editedPage = pageId //change only edited page in case that page id is valid one
                     editorNotification.newExternalInfo(String.doTranslationEditor('notification-loaded-page',state.pages[pageId].data.pageNumber))
+                } else if(state.editedPage === null) { //be sure that some page is selected as edited
+                    editorNotification.newInternalWarn('Edited page was changed by force',true)
+                    state.editedPage = state.pagesOrder[0] //set up first suitable pages as edited
                 }
             } else {
                 state.editedPage = pageId
@@ -181,7 +183,10 @@ export default {
                 }
             }
 
+            let pageNumber = state.pages[pageId].data.pageNumber
             Vue.delete(state.pages,pageId) //delete page data
+
+            editorNotification.newExternalInfo(String.doTranslationEditor('notification-page-deleted',pageNumber))
         }
     },
     getters: {
@@ -201,7 +206,14 @@ export default {
                 editorLoaderWrapper.removeLoader(commit,'page-load')
 
                 editorLoaderWrapper.addLoader(commit,'page-process',String.doTranslationEditor('loader-processing-editor-book'))
-                commit(mutationTypes.LOAD_BOOK_DATA, initData)
+                editorNotificationWrapper.newInternalInfo(commit,'Starting processing initial data of book',true)
+
+                commit(mutationTypes.LOAD_BOOK_DATA, initData) //load pages
+                commit(mutationTypes.EDIT_PAGE,null)
+                commit(mutationTypes.MODULES_PROCESS_LOCAL_DATA,initData) //load modules data
+                commit(mutationTypes.VALIDATE_BOOK,null) //do validation after pages and module data are prepared
+
+                editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been processed',true)
                 editorLoaderWrapper.removeLoader(commit,'page-process')
 
             }).catch((reason) => {

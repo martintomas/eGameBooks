@@ -6,7 +6,10 @@
             <page-connections-down-view :page-id='editedPageId' :page-data='pageData'></page-connections-down-view>
         </template>
         <template v-else-if="pagesExists">
-            <div class='page-view-missing-page'>{{String.doTranslationEditor('missing-page-error')}}</div>
+            <div class='page-view-missing-page'>
+                {{String.doTranslationEditor('missing-page-error',editedPageId)}}
+                <span>{{String.doTranslationEditor('missing-page-create-new')}}</span>
+            </div>
         </template>
     </div>
 </template>
@@ -76,7 +79,7 @@ export default {
         justify-content: space-around;
     }
     .page-view-missing-page {
-        font-size:200%;
+        font-size:170%;
         text-align:center;
         font-weight:bold;
     }

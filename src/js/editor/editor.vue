@@ -49,7 +49,7 @@ export default {
                 defaults.editorNotificationWrapper.newInternalInfo(store.commit,'Editor is shown',true)
                 next() //confirm hook when language have been loaded
             }).catch((reason) => {
-                defaults.editorNotificationWrapper.newInternalError(store.commit,'Editor during editor shown. Reason of error is: '+reason,true)
+                defaults.editorNotificationWrapper.newInternalError(store.commit,'Error during editor shown. Reason of error is: '+reason,true)
             })
         } else {
             defaults.editorNotificationWrapper.newInternalInfo(store.commit,'Language already loaded. Editor is shown immidatelly',true)
