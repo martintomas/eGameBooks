@@ -16,18 +16,6 @@ export function isRenderedActionCorrect(state,page,actionType,renderedActionId,r
     return true
 }
 
-// export function isPageCorrectComplete(state,page) { //checks page outter data --> dependend on other pages
-//     let res = {}
-//     res[ErrorImportance.MINOR] = []
-//     res[ErrorImportance.SEVERE] = []
-
-//     if(state.startPage != page.data.id) { //is not start page --> have to have some reverse pages
-//         if(page.reverseLink.length === 0) res[ErrorImportance.MINOR].push({text:'no-reverse-pages-validation',args:[]})
-//     }
-
-//     return res
-// }
-
 export function isPageCorrect(state,page) { //checks only page inner data
     let res = {}
     res[ErrorImportance.MINOR] = []

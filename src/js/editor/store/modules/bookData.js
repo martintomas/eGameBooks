@@ -51,13 +51,6 @@ function processActions(actionInfo) { //set up by default for all actions that t
     return res
 }
 
-export function actualizeValidation(pageId,original, res) {
-    if(res.length > 0) {
-        if(pageId in original) for(let i=0;i<res.length;i++) original[pageId].push(res[i])
-        else Vue.set(original,pageId,res)
-    }
-}
-
 var markdownItAllowedActions = []
 for(let key in AllowedActions) markdownItAllowedActions.push(AllowedActions[key]) //provide array of allowed actions
 
