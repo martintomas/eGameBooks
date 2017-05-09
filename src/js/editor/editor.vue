@@ -5,7 +5,9 @@
         <div class="editor-main-root">
             <router-view name='editor-mini-page'></router-view>
             <router-view name='editor-page-view-container'></router-view>
-            <router-view name='editor-elements-view'></router-view>
+            <template v-if="usedModules.length > 0">
+                <router-view name='editor-elements-view'></router-view>
+            </template>
         </div>
 
         <dyn-page-detail></dyn-page-detail>
@@ -37,6 +39,12 @@ export default {
         EditorToolbar,
         DynPageDetail,
         Loader
+    },
+    computed: {
+        usedModules() {
+            if('usedModules' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.usedModules
+            return []
+        }
     },
     beforeRouteEnter (to, from, next) {
         //prepare loader and notification

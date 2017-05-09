@@ -2,19 +2,49 @@
     <div class="elements-view-root" ref='elementsViewRoot'>
         <div class='elements-view-main' ref='elementsViewMain'>
             <p class="elements-view-summary-text active-text" @click="showHideElementsList">{{String.doTranslationEditor('page-elements')}}</p>
+            <div class="elements-view-main-header">
+                <dyn-tooltip class='dyn-tooltip'>
+                    <i class="fa fa-eye active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                    <span slot='tooltipText'>{{String.doTranslationEditor('show-hide-elements')}}</span>
+                </dyn-tooltip>
+            </div>
+            <div class="elements-view-main-wrapper" ref="elementsViewMainWrapper">
+                <div class="elements-view-main-scroller" ref="elementsViewMainScroller">
+                    <template v-for="(model,index) in usedModules">
+                        <elements-item-view v-if="model === 'item'" :key='model' :outer-scroller='scroller' @size-changed='sizeChanged'></elements-item-view>
+                    </template>
+                </div>
+            </div>
+            <div class="elements-view-main-footer text-center">This is footer</div>
         </div>
     </div>
 </template>
 
 <script>
+import IScroll from 'iscroll'
 import {bus} from 'app.js'
 import {busEditor} from 'editor/services/defaults.js'
 import * as mutationTypes from 'editor/store/mutationTypes'
 import {waitForResizeEnd,setCss3Style} from 'defaults.js'
+import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
+import ElementsItemView from 'editor/components/page-elements/elementsItemView.vue'
 
 export default {
+    components: {
+        DynTooltip,
+        ElementsItemView
+    },
     data() {
         return {
+            scrollWrapper: 'elementsViewMainWrapper',
+            scrollContainer: 'elementsViewMainScroller',
+            scroller: null,
+        }
+    },
+    computed: {
+        usedModules() {
+            if('usedModules' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.usedModules
+            return []
         }
     },
     created() {
@@ -41,11 +71,25 @@ export default {
         })
     },
     mounted() {
+        //set up scroller
+        this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
+            mouseWheel: true,
+            bounce: false,
+            interactiveScrollbars: true,
+            shrinkScrollbars: 'clip',
+            scrollbars: 'custom',
+        })
+
         if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.$store.state.editor.editorConfig.miniElementListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
             this.hideImmidiatelyElementList()
         }
     },
     methods: {
+        sizeChanged() {
+            setTimeout(() => {
+                this.scroller.refresh() //actualize scroller based on new height
+            }, 200)
+        },
         showHideElementsList() {
             //console.log('Changing page elements show')
             if(!this.$store.state.editor.editorStatus.elementsListShow) {
@@ -109,7 +153,8 @@ export default {
         min-height:35rem;
         /*border: 0.05rem solid black;*/
         /*margin: 0.2rem 0.2rem 0.2rem 0.2rem;*/
-        background: url('/img/editor/page-elements-without-text.svg') no-repeat top left;
+        background: url('/img/editor/page-elements-without-text.svg') no-repeat top right;
+        background-size: contain;
         right:0rem;
         z-index:10000;
         background-color:white;
@@ -122,7 +167,7 @@ export default {
     }
 
     .elements-view-root .elements-hide-main {
-        right: -17rem;
+        right: -16.5rem;
     }   
 
     .elements-view-summary-text {
@@ -140,5 +185,40 @@ export default {
         font-weight: bold;
         /* has to be lower than 10000 and bigger than 1 */
         z-index: 2;
+    }
+    .elements-view-main-header {
+        position: absolute;
+        width: 17rem;
+        top: 0;
+        padding: 0.35rem 0.7rem 0.25rem 2.5rem;
+    }
+    .elements-view-main-header i {
+        color:white;
+        font-size:2.2rem;
+        padding: 0.2em;
+    }
+    .elements-view-main-wrapper {
+        position: absolute;
+        /*z-index: 1;*/
+        top: 3.5rem;
+        bottom: 2rem;
+        left: 2.5rem;
+        width: calc(100% - 2.5rem);
+        overflow: hidden;
+    }
+    
+    .elements-view-main-scroller {
+        /*z-index: 1;*/
+        position:relative;
+        left: 2px;
+        width: calc(100% - 13px); /*left some place for scroller*/
+        transform: translateZ(0);
+        user-select: none;
+        text-size-adjust: none;
+    }
+    .elements-view-main-footer {
+        position: absolute;
+        width: 14rem;
+        bottom: 1rem;
     }
 </style>

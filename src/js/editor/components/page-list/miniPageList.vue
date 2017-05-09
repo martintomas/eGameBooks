@@ -23,7 +23,7 @@
             </dyn-tooltip>
         </div>
         <!--<p class="vertical-text float-right page-mini-vertical-text">Page summary</p>-->
-        <div class="page-mini-main-wrapper" ref="page-mini-main-wrapper">
+        <div class="page-mini-main-wrapper scroller-left" ref="page-mini-main-wrapper">
 
             <div class="page-mini-main-scroller" ref="page-mini-main-scroller">
                 <ul>
@@ -283,6 +283,7 @@
         /*border: 0.05rem solid black;*/
         /*margin: 0.2rem 0.2rem 0.2rem 0.2rem;*/
         background: url('/img/editor/mini-page-list-up-without-text.svg') no-repeat top left;
+        background-size: contain;
         left:0rem;
         z-index:10001;
 
@@ -357,5 +358,10 @@
         padding: 0;
         margin: 0 0.5rem 0 1rem;
         width: 100%;
+    }
+
+    .scroller-left > div:nth-child(2) {
+        right:auto;
+        left:1px
     }
 </style>
