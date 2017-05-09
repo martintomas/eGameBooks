@@ -1,12 +1,46 @@
 <template>
     <div class='elements-module-root'>
-        <p class='module-name'>{{String.doTranslationEditor('item-module')}}</p>
+        <dyn-tooltip class='module-name' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('item-module','main-items')">
+            <span class="tooltip module-name-text" slot='tooltip' :component-id="generateHash('item-module','main-items')">
+                {{String.doTranslationEditor('item-module')}}
+            </span>
+            <span slot='tooltipText'>
+                <dyn-tooltip class='dyn-tooltip'>
+                    <i class="fa fa-plus unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                    <span slot='tooltipText'>{{String.doTranslationEditor('new-module-item')}}</span>
+                </dyn-tooltip>
+                <dyn-tooltip class='dyn-tooltip'>
+                    <i class="fa fa-gear unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                    <span slot='tooltipText'>{{String.doTranslationEditor('module-manager-open')}}</span>
+                </dyn-tooltip>
+            </span>
+        </dyn-tooltip>
+
         <div class="elements-module-wrapper" ref="elementsModuleWrapper">
             <div class="elements-module-scroller" ref="elementsModuleScroller">
                 <table class='elements-module-items'>
                     <tr><th>{{String.doTranslationEditor('name')}}</th></tr>
-                    <tr v-for='(model,key,index) in localItems'>
-                        <td>{{model.name}}</td>
+                    <tr v-for='(model,key,index) in localItems' :class="[activeModuleItem === index ? 'active':'']">
+                        <td>
+                            <dyn-tooltip style='width:100%;' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('item-module',index)">
+                                <div slot='tooltip' :component-id="generateHash('item-module',index)" @click='activateItem(index)' class='elements-module-item'>
+                                    {{model.name}}
+                                </div>
+                                <span slot='tooltipText'>
+                                    <template v-if='activeModuleItem === index'>
+                                        <dyn-tooltip class='dyn-tooltip'>
+                                            <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                                            <span slot='tooltipText'>{{String.doTranslationEditor('edit-module-item')}}</span>
+                                        </dyn-tooltip>
+                                        <dyn-tooltip class='dyn-tooltip'>
+                                            <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                                            <span slot='tooltipText'>{{String.doTranslationEditor('delete-module-item')}}</span>
+                                        </dyn-tooltip>
+                                    </template>
+                                </span>
+
+                            </dyn-tooltip>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -20,8 +54,13 @@
 
 <script>
 import IScroll from 'iscroll'
+import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
+import { generateHash } from 'defaults.js'
 
 export default {
+    components: {
+        DynTooltip,
+    },
     props: {
         outerScroller: Object,
     },
@@ -31,6 +70,7 @@ export default {
             scrollContainer: 'elementsModuleScroller',
             scroller: null,
             increaseDecreaseValue: null,
+            activeModuleItem: null,
         }
     },
     computed: {
@@ -66,6 +106,10 @@ export default {
 
     },
     methods: {
+        generateHash,
+        activateItem(itemIndex) {
+            this.activeModuleItem = itemIndex
+        },
         decreaseHeight() {
             if(this.$refs[this.scrollWrapper].clientHeight > 50) {
                 this.$refs[this.scrollWrapper].style.maxHeight =  this.$refs[this.scrollWrapper].clientHeight - this.increaseDecreaseValue + 'px'
@@ -107,9 +151,12 @@ export default {
     border-top-right-radius: 0.5rem;
     padding: 0.3rem;
     margin: 0;
+    box-sizing: border-box;
+    cursor:pointer;
+}
+.module-name-text {
     font-size: 120%;
     font-weight: bold;
-    box-sizing: border-box;
 }
 .elements-module-items {
     width:90%;   
@@ -127,11 +174,16 @@ export default {
     border:none;
 }
 .elements-module-items td {
-    padding: 0.2rem;
     cursor:pointer;
 }
 .elements-module-items td:hover {
     background-color:gray;
+}
+.elements-module-items .active {
+    background-color:gray;
+}
+.elements-module-item {
+    padding:0.2rem;
 }
 .elements-module-wrapper {
     /*position: absolute;*/

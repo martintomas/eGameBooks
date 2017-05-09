@@ -7,6 +7,10 @@
                     <i class="fa fa-eye active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                     <span slot='tooltipText'>{{String.doTranslationEditor('show-hide-elements')}}</span>
                 </dyn-tooltip>
+                <dyn-tooltip class='dyn-tooltip'>
+                    <i class="fa fa-eye-slash active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                    <span slot='tooltipText'>{{String.doTranslationEditor('hide-hide-elements')}}</span>
+                </dyn-tooltip>
             </div>
             <div class="elements-view-main-wrapper" ref="elementsViewMainWrapper">
                 <div class="elements-view-main-scroller" ref="elementsViewMainScroller">
