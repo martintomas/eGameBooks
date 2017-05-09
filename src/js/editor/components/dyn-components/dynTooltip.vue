@@ -54,6 +54,10 @@ export default {
             default:false,
             type:Boolean
         },
+        clickToogle: {
+            default: true,
+            type: Boolean
+        },
         inline: {
             default: false,
             type: Boolean
@@ -129,6 +133,15 @@ export default {
             return offset
             
         },
+        offsetTopRelativeToPage(element) { //get relative left position even for inline elements (they can go across multiple lines)
+            var offset = element.offsetTop;
+            var offsetParent = element.offsetParent;
+            if (offsetParent != null) { 
+                if(getCompStyle(offsetParent,'position') === 'static') offset += this.offsetTopRelativeToPage(offsetParent);
+            }
+            return offset
+            
+        },
         isTooltipShow() {
             return this.tooltiptext.classList.contains('show-tooltip')
         },
@@ -149,7 +162,10 @@ export default {
                         this.showInline(event.pageY - getElementOffset(event.target).top + event.target.offsetTop ,event.pageX - this.offsetLeftRelativeToPage(event.target) + event.target.offsetLeft)
                     }
                 }
-                else this.show(false)
+                else {
+                    if(this.clickToogle) this.toogle(false)
+                    else this.show(false)
+                }
             }
         },
         tooltipMouseEnter() {
@@ -280,7 +296,7 @@ export default {
             //compute position of tooltip
             //inspired by https://osvaldas.info/elegant-css-and-jquery-tooltip-responsive-mobile-friendly
             var pos_left = this.tooltip.offsetLeft + ( this.tooltip.clientWidth / 2 ) - ( tooltiptext.clientWidth / 2 )
-            var pos_top = this.tooltip.offsetTop - tooltiptext.clientHeight - 5
+            var pos_top = this.offsetTopRelativeToPage(this.tooltip) - tooltiptext.clientHeight - 5
             let itemWidth = itemBorder.innerWidth
             if(!itemWidth) itemWidth = itemBorder.clientWidth
             let clientHeightTemp = tooltiptext.clientHeight
@@ -319,7 +335,7 @@ export default {
 
             //position up or down
             if( pos_top < 0 && !this.forceTop) {
-                pos_top = this.tooltip.offsetTop + this.tooltip.clientHeight;
+                pos_top = this.offsetTopRelativeToPage(this.tooltip) + this.tooltip.clientHeight;
                 tooltiptext.classList.add('top') //arrow is at top -> text is at bottom
             } else {
                 if (tooltiptext.classList.contains('top')) {
@@ -446,7 +462,7 @@ export default {
     padding: 5px;
     border: solid 1px #555;
 
-    transition: opacity 0.5s;
+    transition: opacity 0.15s ease-out;
 }
 
 .tooltip-inner .tooltiptext i {
