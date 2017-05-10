@@ -103,8 +103,6 @@ export default {
     padding: 0;
     border: 1px solid #888;
     border-radius: 1.2rem;
-    min-width:10rem;
-    min-height:5rem;
     animation-name: animatetop;
     animation-duration: 0.4s;
 }
@@ -112,6 +110,8 @@ export default {
     background-color: #fefefe;
     width: 80%;
     height: 80vh;
+    min-width:10rem;
+    min-height:5rem;
 }
 .close {
     float: right;

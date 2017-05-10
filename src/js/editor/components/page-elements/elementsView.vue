@@ -15,12 +15,18 @@
             <div class="elements-view-main-wrapper" ref="elementsViewMainWrapper">
                 <div class="elements-view-main-scroller" ref="elementsViewMainScroller">
                     <template v-for="(model,index) in usedModules">
-                        <elements-item-view v-if="model === 'item'" :key='model' :outer-scroller='scroller' @size-changed='sizeChanged'></elements-item-view>
+                        <elements-item-view v-if="model === 'item'" :key='model' :outer-scroller='scroller' @size-changed='sizeChanged' @active-item-workspace='activeItemWorkspace'></elements-item-view>
                     </template>
                 </div>
             </div>
             <div class="elements-view-main-footer text-center">This is footer</div>
         </div>
+
+        <!-- prepare environment for modules -->
+        <template v-for="(model,index) in usedModules">
+            <item-module-workspace v-if="model === 'item'" :key='model' :item-data='itemData'></item-module-workspace>
+        </template>
+
     </div>
 </template>
 
@@ -32,23 +38,29 @@ import * as mutationTypes from 'editor/store/mutationTypes'
 import {waitForResizeEnd,setCss3Style} from 'defaults.js'
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import ElementsItemView from 'editor/components/page-elements/elementsItemView.vue'
+import ItemModuleWorkspace from 'editor/components/page-elements/itemModuleWorkspace.vue'
 
 export default {
     components: {
         DynTooltip,
-        ElementsItemView
+        ElementsItemView,
+        ItemModuleWorkspace,
     },
     data() {
         return {
             scrollWrapper: 'elementsViewMainWrapper',
             scrollContainer: 'elementsViewMainScroller',
             scroller: null,
+            itemData: null,
         }
     },
     computed: {
         usedModules() {
             if('usedModules' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.usedModules
             return []
+        },
+        itemModuleExists() {
+            return this.usedModules.indexOf('item') >= 0
         }
     },
     created() {
@@ -87,12 +99,16 @@ export default {
         if(window.innerWidth/this.$refs.elementsViewRoot.clientWidth < this.$store.state.editor.editorConfig.miniElementListWindowWidthAutomaticShown) { //keep hidden by default (when widht si too small)
             this.hideImmidiatelyElementList()
         }
+
     },
     methods: {
         sizeChanged() {
             setTimeout(() => {
                 this.scroller.refresh() //actualize scroller based on new height
             }, 200)
+        },
+        activeItemWorkspace(args) {
+            this.itemData = args
         },
         showHideElementsList() {
             //console.log('Changing page elements show')
@@ -222,7 +238,7 @@ export default {
     }
     .elements-view-main-footer {
         position: absolute;
-        width: 14rem;
         bottom: 1rem;
+        width: 100%;
     }
 </style>

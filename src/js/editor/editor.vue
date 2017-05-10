@@ -1,5 +1,6 @@
 <template>
     <div class="editor-root">
+        <loader></loader>
         <editor-toolbar></editor-toolbar>
 
         <div class="editor-main-root">
@@ -11,7 +12,9 @@
         </div>
 
         <dyn-page-detail></dyn-page-detail>
-        <loader></loader>
+        
+        <!-- -->
+
     </div>
 </template>
 

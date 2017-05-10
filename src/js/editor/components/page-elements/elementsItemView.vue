@@ -6,7 +6,7 @@
             </span>
             <span slot='tooltipText'>
                 <dyn-tooltip class='dyn-tooltip'>
-                    <i class="fa fa-plus unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                    <i class="fa fa-plus unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='newItem'></i>
                     <span slot='tooltipText'>{{String.doTranslationEditor('new-module-item')}}</span>
                 </dyn-tooltip>
                 <dyn-tooltip class='dyn-tooltip'>
@@ -49,17 +49,20 @@
             <i class="active-icon fa fa-chevron-up" aria-hidden="true" @click="decreaseHeight"></i>
             <i class="active-icon fa fa-chevron-down" aria-hidden="true" @click="increaseHeight"></i>
         </div>
+
     </div>
 </template>
 
 <script>
 import IScroll from 'iscroll'
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
+import DynModal from 'editor/components/dyn-components/dynModal.vue'
 import { generateHash } from 'defaults.js'
 
 export default {
     components: {
         DynTooltip,
+        DynModal,
     },
     props: {
         outerScroller: Object,
@@ -71,6 +74,7 @@ export default {
             scroller: null,
             increaseDecreaseValue: null,
             activeModuleItem: null,
+            newItemModal: null,
         }
     },
     computed: {
@@ -91,8 +95,6 @@ export default {
             scrollbars: 'custom',
         })
 
-        this.increaseDecreaseValue = this.$refs[this.scrollWrapper].clientHeight/2
-
         //inspired by https://github.com/cubiq/iscroll/issues/392
         let self = this
         this.scroller.on('scrollStart', function() {
@@ -104,11 +106,17 @@ export default {
             self.outerScroller.enable();
         })
 
+        this.increaseDecreaseValue = this.$refs[this.scrollWrapper].clientHeight/2
     },
     methods: {
         generateHash,
         activateItem(itemIndex) {
             this.activeModuleItem = itemIndex
+        },
+        newItem(event) {
+            this.$emit('active-item-workspace',{
+                type:'new-item'
+            })
         },
         decreaseHeight() {
             if(this.$refs[this.scrollWrapper].clientHeight > 50) {

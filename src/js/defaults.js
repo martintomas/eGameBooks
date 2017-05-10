@@ -71,6 +71,14 @@ export function getElementOffset(element)
     return { top: top, left: left };
 }
 
+export function clearDict(dict,vue=null) {
+    for(key in dict) {
+        if(vue != null) vue.set(dict,key,'') //clear dict reactive way
+        else dict[key] = ''
+    }
+    return dict
+}
+
 // interval function that call provided function after window resize is finished --> window has stable size for defined time period
 var windowResizeEndIntervalItems = {} //use global variable to remmember states
 var numResizeEndAttempsDefault = 10 //number to attemps before it is forced to end
