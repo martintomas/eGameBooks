@@ -1,41 +1,39 @@
 <template>
-<div ref="dynPageDetail" class="modal">
-    <div class='modal-middle-center' ref="dynPageDetailCenter">
-        <div class="modal-content modal-page-content">
-            <template v-if='pageData != null'>
-                <div class="modal-header">
-                    {{String.doTranslationEditor('page-zoom-modal-header',(pageData.data.pageNumber))}}&nbsp;
-                    <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='loadPage'></i>
-                    <span class="close float-right" @click='close'><i class="fa fa-close unactive-icon" aria-hidden="true" @click='close'></i></span>
-                </div>
-                <div class="modal-body">
-                    <div class='vertical-div float-left'>
-                        <span class='active-vertical-div' v-if="closestSmallerPage != null" @click='previousPage'>
-                            <span class='modal-middle-center'>
-                                <i class="fa fa-chevron-left unactive-icon" aria-hidden="true"></i>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="page-detail-text float-left" ref="pageDetailWrapper">
-                        <div class="page-detail-scroller" ref="pageDetailScroller">
-                            <dyn-text-renderer :page-data='pageData' render-type='pageDetail'></dyn-text-renderer>
-                        </div>
-                    </div>
-                    <div class='vertical-div float-right'>
-                        <span class='active-vertical-div' v-if="closestBiggerPage != null" @click='nextPage'>
-                            <span class='modal-middle-center'>
-                                <i class="fa fa-chevron-right unactive-icon" aria-hidden="true"></i>
-                            </span>
-                        </span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    {{String.doTranslationEditor('page-num',(pageData.data.pageNumber))}}
-                </div>
-            </template>
+
+<dyn-modal ref='dynPageDetail'>
+    <span slot='modalHeader'>
+        <template v-if='pageData != null'>
+            {{String.doTranslationEditor('page-zoom-modal-header',(pageData.data.pageNumber))}}&nbsp;
+        </template>
+        <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='loadPage'></i>
+    </span>
+    <span slot='modalBody'>
+        <div class='vertical-div float-left'>
+            <span class='active-vertical-div' v-if="closestSmallerPage != null" @click='previousPage'>
+                <span class='modal-middle-center'>
+                    <i class="fa fa-chevron-left unactive-icon" aria-hidden="true"></i>
+                </span>
+            </span>
         </div>
-    </div>
-</div>
+        <div class="page-detail-text float-left" ref="pageDetailWrapper">
+            <div class="page-detail-scroller" ref="pageDetailScroller">
+                <dyn-text-renderer v-if='pageData != null' :page-data='pageData' render-type='pageDetail'></dyn-text-renderer>
+            </div>
+        </div>
+        <div class='vertical-div float-right'>
+            <span class='active-vertical-div' v-if="closestBiggerPage != null" @click='nextPage'>
+                <span class='modal-middle-center'>
+                    <i class="fa fa-chevron-right unactive-icon" aria-hidden="true"></i>
+                </span>
+            </span>
+        </div>
+    </span>
+    <span slot='modalFooter'>
+        <template v-if='pageData != null'>
+            {{String.doTranslationEditor('page-num',(pageData.data.pageNumber))}}
+        </template>
+    </span>
+</dyn-modal>
 </template>
 
 <script>
@@ -47,7 +45,8 @@ import {busEditor} from 'editor/services/defaults.js'
 
 export default {
     components: {
-        DynTextRenderer
+        DynTextRenderer,
+        DynModal
     },
     props: {
     },
@@ -81,47 +80,30 @@ export default {
     },
     watch: {
         pageData(value) {
-            if(value != null && this.scroller === null) { //initialize scroller
-                this.$nextTick(() => { //have to wait till $refs is populated by new page data
-                    this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
-                        mouseWheel: true,
-                        bounce: false,
-                        interactiveScrollbars: true,
-                        shrinkScrollbars: 'clip',
-                        scrollbars: 'custom',
-                    })
-                    setTimeout(() => {
-                        this.scroller.refresh() //actualize scroller based on new height
-                    }, 200)
-                })
-            } else {
-                setTimeout(() => {
-                    this.scroller.refresh() //actualize scroller based on new height
-                }, 200)
-            }
+            setTimeout(() => {
+                this.scroller.refresh() //actualize scroller based on new height
+            }, 200)
         }
     },
     created() {
         busEditor.$on('show-page-detail',pageId => {
             this.pageId = pageId
-            this.show()
-        })
-
-        bus.$on('automatic-hide',source => { //listen for indirect event for hidding modal
-            if(source.target == this.$refs.dynPageDetail || source.target == this.$refs.dynPageDetailCenter) {
-                this.close()
-            }
+            this.$refs.dynPageDetail.show()
         })
     },
     mounted() {
+        this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
+            mouseWheel: true,
+            bounce: false,
+            interactiveScrollbars: true,
+            shrinkScrollbars: 'clip',
+            scrollbars: 'custom',
+        })
+        setTimeout(() => {
+            this.scroller.refresh() //actualize scroller based on new height
+        }, 200)
     },
     methods: {
-        show() {
-            this.$refs.dynPageDetail.style.display = "table"
-        },
-        close() {
-            this.$refs.dynPageDetail.style.display = "none"
-        },
         previousPage() {
             this.pageId = this.closestSmallerPage.data.id
         },
@@ -129,7 +111,7 @@ export default {
             this.pageId = this.closestBiggerPage.data.id
         },
         loadPage() {
-            this.close()
+            this.$refs.dynPageDetail.close()
             this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
         }
     }
