@@ -126,7 +126,6 @@ export default {
     overflow: hidden;
     box-sizing: border-box;
     height:100%;
-        position: relative;
 }
 .page-detail-scroller {
     /*z-index: 1;*/
