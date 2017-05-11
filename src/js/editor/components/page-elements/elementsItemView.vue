@@ -19,13 +19,16 @@
         <div class="elements-module-wrapper" ref="elementsModuleWrapper">
             <div class="elements-module-scroller" ref="elementsModuleScroller">
                 <table class='elements-module-items'>
-                    <tr><th>{{String.doTranslationEditor('name')}}</th></tr>
-                    <tr v-for='(model,key,index) in localItems' :class="[activeModuleItem === index ? 'active':'']">
+                    <tr><th>ID</th><th>{{String.doTranslationEditor('name')}}</th><th>{{String.doTranslationEditor('used')}}</th></tr>
+                    <tr v-for='(model,key,index) in localItems' :class="[activeModuleItem === index ? 'active':'']" @click='rowClicked(index)'>
                         <td>
-                            <dyn-tooltip style='width:100%;' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('item-module',index)">
-                                <div slot='tooltip' :component-id="generateHash('item-module',index)" @click='activateItem(index)' class='elements-module-item'>
+                            {{model.localId}}
+                        </td>
+                        <td>
+                            <dyn-tooltip ref='rowTooltip' style='width:100%;' :ignoreDefaultBehavior='true' :allowAutomaticHidding='false' >
+                                <span slot='tooltip' class='elements-module-item'>
                                     {{model.name}}
-                                </div>
+                                </span>
                                 <span slot='tooltipText'>
                                     <template v-if='activeModuleItem === index'>
                                         <dyn-tooltip class='dyn-tooltip'>
@@ -40,6 +43,9 @@
                                 </span>
 
                             </dyn-tooltip>
+                        </td>
+                        <td>
+                            {{reverseInfoItems[model.localId].length}}
                         </td>
                     </tr>
                 </table>
@@ -83,6 +89,9 @@ export default {
         },
         localItems() {
             return this.items.workspace.local
+        },
+        reverseInfoItems() {
+            return this.items.reverseInfo
         }
     },
     mounted() {
@@ -110,13 +119,22 @@ export default {
     },
     methods: {
         generateHash,
-        activateItem(itemIndex) {
-            this.activeModuleItem = itemIndex
-        },
         newItem(event) {
             this.$emit('active-item-workspace',{
                 type:'new-item'
             })
+        },
+        rowClicked(itemIndex) {
+            if(itemIndex === this.activeModuleItem) {
+                this.hideTooltip(this.activeModuleItem)
+                this.activeModuleItem = null
+            } else {
+                if(this.activeModuleItem != null) this.hideTooltip(this.activeModuleItem)
+                this.activeModuleItem = itemIndex
+                this.$nextTick(() => { //wait for item rendering
+                    this.showTooltip(itemIndex)
+                })
+            }
         },
         decreaseHeight() {
             if(this.$refs[this.scrollWrapper].clientHeight > 50) {
@@ -139,6 +157,12 @@ export default {
 
                 this.$emit('size-changed')
             }
+        },
+        showTooltip(itemIndex) {
+            this.$refs.rowTooltip[itemIndex].show()
+        },
+        hideTooltip(itemIndex) {
+            this.$refs.rowTooltip[itemIndex].hide()
         }
     }
 }
@@ -174,6 +198,7 @@ export default {
 .elements-module-items tr {
     border-bottom: black 1px solid;
     text-align:center;
+    cursor:pointer;
 }
 .elements-module-items tr:first-child { 
     border-width:2px;
@@ -181,10 +206,7 @@ export default {
 .elements-module-items tr:last-child { 
     border:none;
 }
-.elements-module-items td {
-    cursor:pointer;
-}
-.elements-module-items td:hover {
+.elements-module-items tr:hover {
     background-color:gray;
 }
 .elements-module-items .active {

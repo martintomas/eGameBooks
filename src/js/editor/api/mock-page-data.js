@@ -35,10 +35,12 @@ module.exports = {
             'item': [{
                 'id':1,
                 'ref':1,
+                'action':'add',
                 'condition':''
             },{
                 'id':2,
                 'ref':2,
+                'action':'remove',
                 'condition':''
             }],
             'journal': [{
@@ -245,137 +247,170 @@ module.exports = {
     }],
     modules: {
         item: [{
-            'id':1,
+            'id':null,
+            'localId':1,
             'name':'Sword of truth',
             'description': 'Super mega sword'
         }, {
             'id':2,
+            'localId':2,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
-            'id':3,
+            'id':null,
+            'localId':3,
             'name':'Potion of health super super super super super super super super',
             'description': 'Can restore health Can restore health Can restore health Can restore health Can restore health'
         }, {
             'id':4,
+            'localId':4,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':5,
+            'localId':5,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':6,
+            'localId':6,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':7,
+            'localId':7,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':8,
+            'localId':8,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':9,
+            'localId':9,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':10,
+            'localId':10,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':11,
+            'localId':11,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':12,
+            'localId':12,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':13,
+            'localId':13,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':14,
+            'localId':14,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':15,
+            'localId':15,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':16,
+            'localId':16,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':17,
+            'localId':17,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':18,
+            'localId':18,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':19,
+            'localId':19,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':20,
+            'localId':20,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':21,
+            'localId':21,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':22,
+            'localId':22,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':23,
+            'localId':23,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':24,
+            'localId':24,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':25,
+            'localId':25,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':26,
+            'localId':26,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':27,
+            'localId':27,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':28,
+            'localId':28,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':29,
+            'localId':29,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':30,
+            'localId':30,
             'name':'Potion of health',
             'description': 'Can restore health'
         }, {
             'id':31,
+            'localId':31,
             'name':'Potion of health',
             'description': 'Can restore health'
         }],
         journal: [{
             'id':1,
+            'localId':1,
             'name':'Visit of Holdbarg',
             'date':'1.1289',
             'text':'This rainy day, You have visited Holdbarg'
         },{
             'id':2,
+            'localId':2,
             'name':'password to doors',
             'date':null,
             'text':'You have learned that password to doors is 98785'
