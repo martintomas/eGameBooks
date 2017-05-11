@@ -133,13 +133,19 @@ export default {
             return offset
             
         },
-        offsetTopRelativeToPage(element) { //get relative left position even for inline elements (they can go across multiple lines)
-            var offset = element.offsetTop;
+        offsetRelativeToAbsolutePos(element) { //get relative left position even for inline elements (they can go across multiple lines)
+            let offsetTop, offsetLeft, offsetTopTemp, offsetLeftTemp
+            offsetTop = element.offsetTop
+            offsetLeft = element.offsetLeft
             var offsetParent = element.offsetParent;
             if (offsetParent != null) { 
-                if(getCompStyle(offsetParent,'position') === 'static') offset += this.offsetTopRelativeToPage(offsetParent);
+                if(getCompStyle(offsetParent,'position') === 'static') {
+                    [offsetTopTemp,offsetLeftTemp] = this.offsetRelativeToAbsolutePos(offsetParent)
+                    offsetTop += offsetTopTemp
+                    offsetLeft += offsetLeftTemp
+                } 
             }
-            return offset
+            return [offsetTop,offsetLeft]
             
         },
         isTooltipShow() {
@@ -222,9 +228,9 @@ export default {
             }
 
             //console.log('Showing tooltip')
-
-            let posLeft = this.tooltip.offsetLeft + this.tooltip.clientWidth + 5
-            let posTop = this.tooltip.offsetTop + ( this.tooltip.clientHeight / 2 ) - ( tooltiptext.clientHeight / 2 )
+            let offsets = this.offsetRelativeToAbsolutePos(this.tooltip)
+            let posLeft = offsets[1] + this.tooltip.clientWidth + 5
+            let posTop = offsets[0] + ( this.tooltip.clientHeight / 2 ) - ( tooltiptext.clientHeight / 2 )
             let itemWidth = itemBorder.innerWidth
             if(!itemWidth) itemWidth = itemBorder.clientWidth
             let itemHeight = itemBorder.innerHeight
@@ -262,13 +268,13 @@ export default {
 
             if(posTop + tooltiptext.clientHeight > itemHeight) { //item is out
                 alreadyUpdated = true
-                posTop = this.tooltip.offsetTop + this.tooltip.clientHeight/2 - tooltiptext.clientHeight + 10
+                posTop = offsets[0] + this.tooltip.clientHeight/2 - tooltiptext.clientHeight + 10
                 tooltiptext.classList.add('move-bottom')
                 if(tooltiptext.classList.contains('move-top')) tooltiptext.classList.remove('move-top')
             }
 
             if(posTop < 0 && !alreadyUpdated) {
-                posTop = this.tooltip.offsetTop + this.tooltip.clientHeight/2 - 10
+                posTop = offsets[0] + this.tooltip.clientHeight/2 - 10
                 tooltiptext.classList.add('move-top')
                 if(tooltiptext.classList.contains('move-bottom')) tooltiptext.classList.remove('move-bottom')
             }
@@ -295,8 +301,9 @@ export default {
             //console.log('Showing tooltip')
             //compute position of tooltip
             //inspired by https://osvaldas.info/elegant-css-and-jquery-tooltip-responsive-mobile-friendly
-            var pos_left = this.tooltip.offsetLeft + ( this.tooltip.clientWidth / 2 ) - ( tooltiptext.clientWidth / 2 )
-            var pos_top = this.offsetTopRelativeToPage(this.tooltip) - tooltiptext.clientHeight - 5
+            let offsets = this.offsetRelativeToAbsolutePos(this.tooltip)
+            var pos_left = offsets[1] + ( this.tooltip.clientWidth / 2 ) - ( tooltiptext.clientWidth / 2 )
+            var pos_top = offsets[0] - tooltiptext.clientHeight - 5
             let itemWidth = itemBorder.innerWidth
             if(!itemWidth) itemWidth = itemBorder.clientWidth
             let clientHeightTemp = tooltiptext.clientHeight
@@ -315,7 +322,7 @@ export default {
 
             //set left position
             if( pos_left < 0 ) {
-                pos_left = this.tooltip.offsetLeft + this.tooltip.clientWidth / 2 - 10;
+                pos_left = offsets[1] + this.tooltip.clientWidth / 2 - 10;
                 tooltiptext.classList.add('move-left')
             } else {
                 if (tooltiptext.classList.contains('move-left')) {
@@ -325,7 +332,7 @@ export default {
 
             //set right position
             if( pos_left + tooltiptext.clientWidth > itemWidth ) { //we can check whenever item is inside provided boundaries
-                pos_left = this.tooltip.offsetLeft - tooltiptext.clientWidth + tooltiptext.clientWidth / 2 + 10;
+                pos_left = offsets[1] - tooltiptext.clientWidth + tooltiptext.clientWidth / 2 + 10;
                 tooltiptext.classList.add('move-right')
             } else {
                 if (tooltiptext.classList.contains('move-right')) {
@@ -335,7 +342,7 @@ export default {
 
             //position up or down
             if( pos_top < 0 && !this.forceTop) {
-                pos_top = this.offsetTopRelativeToPage(this.tooltip) + this.tooltip.clientHeight;
+                pos_top = offsets[0] + this.tooltip.clientHeight;
                 tooltiptext.classList.add('top') //arrow is at top -> text is at bottom
             } else {
                 if (tooltiptext.classList.contains('top')) {
