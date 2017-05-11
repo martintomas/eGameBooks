@@ -56,6 +56,7 @@ for(let key in AllowedActions) markdownItAllowedActions.push(AllowedActions[key]
 
 var markdownItAnalysis = {}
 markdownItAnalysis[AllowedActions.LINK] = []
+markdownItAnalysis[AllowedActions.ITEM] = []
 
 export default {
     state: {
