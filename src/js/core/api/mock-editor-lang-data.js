@@ -57,6 +57,7 @@ module.exports = {
     'message-delete-page':'You are about to delete this page. Are you sure about it?',
     'module-manager-open':'Open module manager',
     'edit-module-item':'Edit\xa0module item',
+    'info-module-item':'Show\xa0information about module\xa0item',
     'new-module-item':'Add\xa0new item\xa0to\xa0module',
     'delete-module-item':'Delete\xa0this module\xa0item',
     'new-item-modal-header':'New item definition',

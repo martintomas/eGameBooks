@@ -36,6 +36,10 @@
                                             <span slot='tooltipText'>{{String.doTranslationEditor('edit-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
+                                            <i class="fa fa-question unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                                            <span slot='tooltipText'>{{String.doTranslationEditor('info-module-item')}}</span>
+                                        </dyn-tooltip>
+                                        <dyn-tooltip class='dyn-tooltip'>
                                             <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
                                             <span slot='tooltipText'>{{String.doTranslationEditor('delete-module-item')}}</span>
                                         </dyn-tooltip>
