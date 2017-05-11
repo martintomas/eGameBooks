@@ -48,6 +48,7 @@ module.exports = {
     'show-hide-elements':'Show module elements',
     'hide-hide-elements': 'Hide module elemens',
     'name':'Name',
+    'used':'Used',
     'item-module':'Item module',
     'item-name':'Item name',
     'item-description':'Item description',

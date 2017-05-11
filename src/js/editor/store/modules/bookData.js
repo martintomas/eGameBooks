@@ -9,7 +9,7 @@ import {isPageCorrect} from 'editor/services/validators'
 import {AllowedActions,ErrorImportance} from 'editor/constants'
 
 /*
-Structure of one page
+Structure of one page (state.pages)
 data: {
     id:
     pageNumber:
@@ -204,6 +204,7 @@ export default {
                 commit(mutationTypes.LOAD_BOOK_DATA, initData) //load pages
                 commit(mutationTypes.EDIT_PAGE,null)
                 commit(mutationTypes.MODULES_PROCESS_LOCAL_DATA,initData) //load modules data
+                commit(mutationTypes.MODULES_BUILD_REVERSE_INFO,state.pages) //pages are already prepared at this point
                 commit(mutationTypes.VALIDATE_BOOK,null) //do validation after pages and module data are prepared
 
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been processed',true)
