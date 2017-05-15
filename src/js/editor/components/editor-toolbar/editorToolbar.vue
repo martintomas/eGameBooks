@@ -28,8 +28,9 @@ export default {
     methods: {
         undoAction(event) {
             if(this.undoActions.length > 0) {
-                this.undoActions[this.undoActions.length-1]() //run last undo operation
-                this.$store.commit('editor/'+mutationTypes.REMOVE_UNDO_ACTION,this.undoActions.length-1)//remove last undo action
+                let lastElement = this.undoActions.length-1
+                this.undoActions[lastElement]() //run last undo operation
+                this.$store.commit('editor/'+mutationTypes.REMOVE_UNDO_ACTION,lastElement)//remove last undo action
             }
         }
     }

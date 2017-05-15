@@ -55,6 +55,7 @@ module.exports = {
     'add-item-description':'Type item description. Optional.',
     'add-item-name':'Type item name. Required!',
     'message-delete-page':'You are about to delete this page. Are you sure about it?',
+    'message-delete-item-module':'You are about to delete selected item. Are you sure about it?',
     'module-manager-open':'Open module manager',
     'edit-module-item':'Edit\xa0module item',
     'info-module-item':'Show\xa0information about module\xa0item',
@@ -63,4 +64,6 @@ module.exports = {
     'new-item-modal-header':'New item definition',
     'new-item-name-help':'Type\xa0name\xa0of\xa0the\xa0item. Required!',
     'new-item-description-help':'Type\xa0description\xa0of the\xa0item. This field is optional.',
+    'new-item-no-save':'New item is not saved. Do you want to really close form?',
+    'new-item-name-required':'Name of new item is required. This field have to be filled before new item can be saved!',
 }

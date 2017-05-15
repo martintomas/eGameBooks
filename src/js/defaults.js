@@ -72,7 +72,7 @@ export function getElementOffset(element)
 }
 
 export function clearDict(dict,vue=null) {
-    for(key in dict) {
+    for(let key in dict) {
         if(vue != null) vue.set(dict,key,'') //clear dict reactive way
         else dict[key] = ''
     }

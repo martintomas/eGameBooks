@@ -1,5 +1,5 @@
 <template>
-    <div class='modal' ref='messageBox' style="z-index:900000">
+    <div class='modal' ref='messageBox' style="z-index:9000000">
         <div class='modal-middle-center'>
             <template v-if='numMessages > 0'>
                 <div class='message-box'>

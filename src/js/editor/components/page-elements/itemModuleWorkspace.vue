@@ -36,6 +36,9 @@
 <script>
 import DynModal from 'editor/components/dyn-components/dynModal.vue'
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
+import {getUniqueId,clearDict} from 'defaults'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
+import * as mutationTypes from 'editor/store/mutationTypes'
 
 export default {
     components: {
@@ -58,13 +61,19 @@ export default {
         }
     },
     computed: {
-
+        items() {
+            return this.$store.state.editor.items
+        },
+        localItems() {
+            return this.items.workspace.local
+        },
     },
     watch: {
         itemData(value) {
             this.returnToWorkspace = false
             if('type' in value) {
                 if(value.type === 'new-item' && 'newItemModal' in this.$refs) { //if everything is prepared, show modal for item creation
+                    clearDict(this.newItem) //clear data before showing new creation
                     this.$refs.newItemModal.show()
                 }
             }
@@ -72,14 +81,42 @@ export default {
     },
     methods: {
         closeNewItem() {
-            this.$refs.newItemModal.close()
-            if(this.returnToWorkspace) {
-                //activate workspace
+            if(this.newItem.name != '' || this.newItem.description != '') {
+                messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('new-item-no-save'),
+                    () => {
+                        this.$refs.newItemModal.close()
+                        if(this.returnToWorkspace) {
+                            //activate workspace
+                        }
+                    })
+            } else {
+                this.$refs.newItemModal.close()
+                if(this.returnToWorkspace) {
+                    //activate workspace
+                }
             }
         },
         saveNewItem() {
+            if(this.newItemValidation(this.newItem)) {
+                this.newItem.localId = getUniqueId(this.localItems)
 
-        }
+                this.$store.dispatch('editor/newItemModule',this.newItem)
+                this.$refs.newItemModal.close()
+                clearDict(this.newItem)
+
+                this.$emit('workspace-message', {
+                    'module':'item',
+                    'message':'new-item'
+                })
+            }
+        },
+        newItemValidation(newItem) {
+            if(newItem.name === '') {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-item-name-required'))
+                return false
+            }
+            return true
+        },
     }
 }
 </script>

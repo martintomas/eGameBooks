@@ -20,7 +20,7 @@
             <div class="elements-module-scroller" ref="elementsModuleScroller">
                 <table class='elements-module-items'>
                     <tr><th>ID</th><th>{{String.doTranslationEditor('name')}}</th><th>{{String.doTranslationEditor('used')}}</th></tr>
-                    <tr v-for='(model,key,index) in localItems' :class="[activeModuleItem === index ? 'active':'']" @click='rowClicked(index)'>
+                    <tr v-for='(model,key,index) in localItems' :class="[activeModuleItem == key ? 'active':'']" @click='rowClicked(key)'>
                         <td>
                             {{model.localId}}
                         </td>
@@ -30,7 +30,7 @@
                                     {{model.name}}
                                 </span>
                                 <span slot='tooltipText'>
-                                    <template v-if='activeModuleItem === index'>
+                                    <template v-if='activeModuleItem == key'>
                                         <dyn-tooltip class='dyn-tooltip'>
                                             <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
                                             <span slot='tooltipText'>{{String.doTranslationEditor('edit-module-item')}}</span>
@@ -40,7 +40,7 @@
                                             <span slot='tooltipText'>{{String.doTranslationEditor('info-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
-                                            <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                                            <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='deleteItemModule(key,$event)'></i>
                                             <span slot='tooltipText'>{{String.doTranslationEditor('delete-module-item')}}</span>
                                         </dyn-tooltip>
                                     </template>
@@ -49,7 +49,12 @@
                             </dyn-tooltip>
                         </td>
                         <td>
-                            {{reverseInfoItems[model.localId].length}}
+                            <template v-if='reverseInfoItems[model.localId]'>
+                                {{reverseInfoItems[model.localId].length}}
+                            </template>
+                            <template v-else>
+                                0
+                            </template>
                         </td>
                     </tr>
                 </table>
@@ -68,6 +73,8 @@ import IScroll from 'iscroll'
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import DynModal from 'editor/components/dyn-components/dynModal.vue'
 import { generateHash } from 'defaults.js'
+import * as mutationTypes from 'editor/store/mutationTypes'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 export default {
     components: {
@@ -76,6 +83,7 @@ export default {
     },
     props: {
         outerScroller: Object,
+        itemMessage: null,
     },
     data() {
         return {
@@ -83,8 +91,7 @@ export default {
             scrollContainer: 'elementsModuleScroller',
             scroller: null,
             increaseDecreaseValue: null,
-            activeModuleItem: null,
-            newItemModal: null,
+            shownTooltip: null,
         }
     },
     computed: {
@@ -96,6 +103,44 @@ export default {
         },
         reverseInfoItems() {
             return this.items.reverseInfo
+        },
+        activeModuleItem() {
+            return this.$store.state.editor.items.selectedItem
+        }
+    },
+    watch: {
+        activeModuleItem(value) {
+            if(this.shownTooltip != null) { //if some tooltip is shown -> hide it
+                this.shownTooltip.hide()
+                this.shownTooltip = null
+            }
+
+            if(value != null) { 
+                let index = this.getKeyIndex(value)
+                this.$nextTick(() => { //wait for item rendering
+                    this.showTooltip(index)
+                })
+                
+            }
+        },
+        localItems() {
+            setTimeout(() => {
+                this.scroller.refresh() //actualize scroller when number of item changes
+            }, 200)
+        },
+        itemMessage(value) {
+            switch(value.message) {
+                case 'new-item': //new item was created
+                    let index = this.getKeyIndex(this.activeModuleItem)
+                    setTimeout(() => {
+                        if(this.scroller != null && this.$refs.rowTooltip[index]) { //scroll automaticaly only to new items
+                            this.scroller.scrollToElement(this.$refs.rowTooltip[index].$el,100) //move scroller to element
+                        }
+                    },250)
+                    break
+                default:
+                    console.log('Unknow message type')
+            }
         }
     },
     mounted() {
@@ -125,18 +170,31 @@ export default {
         generateHash,
         newItem(event) {
             this.$emit('active-item-workspace',{
+                module:'item',
                 type:'new-item'
             })
         },
-        rowClicked(itemIndex) {
-            if(itemIndex === this.activeModuleItem) {
-                this.hideTooltip(this.activeModuleItem)
-                this.activeModuleItem = null
+        getKeyIndex(localId) {
+            let index = 0
+            for(let key in this.localItems) { //find appropriate position of key
+                if(key == localId) return index
+                index += 1
+            }
+        },
+        rowClicked(itemLocalId) {
+            if(itemLocalId === this.activeModuleItem) {
+                this.$store.commit('editor/'+mutationTypes.SELECTED_ITEM_CHANGED,null)
             } else {
-                if(this.activeModuleItem != null) this.hideTooltip(this.activeModuleItem)
-                this.activeModuleItem = itemIndex
-                this.$nextTick(() => { //wait for item rendering
-                    this.showTooltip(itemIndex)
+                this.$store.commit('editor/'+mutationTypes.SELECTED_ITEM_CHANGED,itemLocalId)
+            }
+        },
+        deleteItemModule(itemLocalId,event) {
+            if (event) event.stopPropagation()
+            
+            if(itemLocalId in this.localItems) {
+                messageBoxWrapper.showWarnMessageStorno(this.$store.commit,String.doTranslationEditor('message-delete-item-module'),() => {
+                    this.hideTooltip(this.getKeyIndex(itemLocalId)) //hide tooltip before item is deleted
+                    this.$store.dispatch('editor/deleteItemModule',itemLocalId)
                 })
             }
         },
@@ -163,9 +221,11 @@ export default {
             }
         },
         showTooltip(itemIndex) {
+            this.shownTooltip = this.$refs.rowTooltip[itemIndex]
             this.$refs.rowTooltip[itemIndex].show()
         },
         hideTooltip(itemIndex) {
+            this.shownTooltip = null
             this.$refs.rowTooltip[itemIndex].hide()
         }
     }

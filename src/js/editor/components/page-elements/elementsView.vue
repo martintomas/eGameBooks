@@ -15,7 +15,7 @@
             <div class="elements-view-main-wrapper" ref="elementsViewMainWrapper">
                 <div class="elements-view-main-scroller" ref="elementsViewMainScroller">
                     <template v-for="(model,index) in usedModules">
-                        <elements-item-view v-if="model === 'item'" :key='model' :outer-scroller='scroller' @size-changed='sizeChanged' @active-item-workspace='activeItemWorkspace'></elements-item-view>
+                        <elements-item-view v-if="model === 'item'" :key='model' :outer-scroller='scroller' @size-changed='sizeChanged' @active-item-workspace='activeItemWorkspace' :item-message='itemMessage'></elements-item-view>
                     </template>
                 </div>
             </div>
@@ -24,7 +24,7 @@
 
         <!-- prepare environment for modules -->
         <template v-for="(model,index) in usedModules">
-            <item-module-workspace v-if="model === 'item'" :key='model' :item-data='itemData'></item-module-workspace>
+            <item-module-workspace v-if="model === 'item'" :key='model' :item-data='itemData' @workspace-message='workspaceMessage'></item-module-workspace>
         </template>
 
     </div>
@@ -52,6 +52,7 @@ export default {
             scrollContainer: 'elementsViewMainScroller',
             scroller: null,
             itemData: null,
+            itemMessage: null,
         }
     },
     computed: {
@@ -108,7 +109,22 @@ export default {
             }, 200)
         },
         activeItemWorkspace(args) {
-            this.itemData = args
+            switch(args.module) {
+                case 'item':
+                    this.itemData = args
+                    break
+                default:
+                    console.log('Module is missing')
+            }
+        },
+        workspaceMessage(args) {
+            switch(args.module) {
+                case 'item':
+                    this.itemMessage = args
+                    break
+                default:
+                    console.log('Module is missing')
+            }
         },
         showHideElementsList() {
             //console.log('Changing page elements show')

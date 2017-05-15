@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import * as mutationTypes from 'editor/store/mutationTypes'
 import {editorNotification} from 'editor/services/defaults.js'
+import {getUniqueId} from 'defaults'
 
 export default {
     state: {
         workspace: {'local':{}},
         reverseInfo: {},
+        selectedItem: null,
     },
     mutations: {
         [mutationTypes.ADD_WORKSPACES](state, modulesWorkspace) {
@@ -36,6 +38,54 @@ export default {
                     }
                 }
             }
+        },
+        [mutationTypes.SELECTED_ITEM_CHANGED](state,itemId) {
+            if(itemId in state.workspace.local || itemId === null) {
+                state.selectedItem = itemId
+                editorNotification.newInternalInfo('Selected item has been changed to '+itemId,true)
+
+            }           
+        },
+        [mutationTypes.ADD_NEW_ITEM](state,newItem) {
+            let item = {
+                'id':null,
+                'localId':newItem.localId,
+                'name':newItem.name,
+                'description':newItem.description
+            }
+            Vue.set(state.reverseInfo,newItem.localId,[]) //prepare reverse info --> it is empty at begging
+            Vue.set(state.workspace.local,newItem.localId,item)
+            state.selectedItem = newItem.localId //set new item as selected
+
+            editorNotification.newInternalInfo('New item with local id '+newItem.localId+' has been added',true)
+        },
+        [mutationTypes.DELETE_ITEM](state,localId) {
+            if(state.selectedItem === localId) state.selectedItem = null
+            Vue.delete(state.workspace.local,localId)
+            Vue.delete(state.reverseInfo,localId)
+
+            editorNotification.newInternalInfo('New item with local id '+localId+' has been deleted',true)
         }
+    },
+    actions: {
+        newItemModule({ commit, dispatch, state }, newItem) {
+            commit(mutationTypes.ADD_UNDO_ACTION,() => {
+                dispatch('deleteItemModuleUndo',newItem.localId)
+            })
+            commit(mutationTypes.ADD_NEW_ITEM,newItem)
+        },
+        newItemModuleUndo({ commit, dispatch, state }, newItem) { //actions run by undo command --> no undo adding
+            commit(mutationTypes.ADD_NEW_ITEM,newItem)
+        },
+        deleteItemModule({ commit, dispatch, state }, localId) {
+            let backupItem = state.workspace.local[localId]
+            commit(mutationTypes.ADD_UNDO_ACTION,() => {
+                dispatch('newItemModuleUndo',backupItem)
+            })
+            commit(mutationTypes.DELETE_ITEM,localId)
+        },
+        deleteItemModuleUndo({ commit, dispatch, state }, localId) {
+            commit(mutationTypes.DELETE_ITEM,localId)
+        },
     }
 }

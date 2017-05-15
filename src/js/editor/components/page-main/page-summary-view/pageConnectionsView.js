@@ -116,20 +116,6 @@ export default {
         pageOptimalDistance() {
             if (this.pageConnectionView != null && this.pagesLength > 0) {
 
-                // let widthRem = (this.pageConnectionView.clientWidth - 2) / this.fontSize //width of component
-                // let remMiniPage = this.$refs.pageConnectionsBox[0].$refs.miniPage.clientWidth / this.fontSize //mini page box rem width
-                // let remDiff = this.miniPageWidth / remMiniPage //diff between styled width and computed
-
-                // let distTemp = this.miniPageWidth
-                // if (this.pages.length > 1) {
-                //     if (this.activatedPage != null) {
-                //         if (this.activatedPage.index === this.pages.length - 1) distTemp = remDiff * ((widthRem - this.pageMaxDistance / remDiff) / (this.pages.length - 1))
-                //         else distTemp = remDiff * ((widthRem - remMiniPage - this.pageMaxDistance / remDiff) / (this.pages.length - 2))
-                //     } else {
-                //         distTemp = remDiff * ((widthRem - remMiniPage) / (this.pages.length - 1))
-                //     }
-                //}
-
                 let distTemp = this.miniPageWidth
                 let widthBox = this.pageConnectionView.clientWidth
                 if (this.pagesLength > 1) {
