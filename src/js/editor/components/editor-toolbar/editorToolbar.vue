@@ -4,8 +4,8 @@
             <span class='editor-toolbar-button'>{{String.doTranslationEditor('save')}}</span>
             <span class='editor-toolbar-button'>{{String.doTranslationEditor('close')}}</span>
             <span class='editor-toolbar-button'>{{String.doTranslationEditor('new-page-simple')}}</span>
-            <span class='editor-toolbar-button' @click='undoAction'>{{String.doTranslationEditor('undo')}}</span>
-            <span class='editor-toolbar-button'>{{String.doTranslationEditor('redo')}}</span>
+            <span class='editor-toolbar-button' @click='undoAction'>{{String.doTranslationEditor('undo')}} ({{undoActions.length}})</span>
+            <span class='editor-toolbar-button' @click='redoAction'>{{String.doTranslationEditor('redo')}} ({{redoActions.length}})</span>
         </div>
         <notification-line class='notification-line'></notification-line>
     </div>
@@ -23,14 +23,22 @@ export default {
     computed: {
         undoActions() {
             return this.$store.state.editor.editorStatus.undoActions
+        },
+        redoActions() {
+            return this.$store.state.editor.editorStatus.redoActions
         }
     },
     methods: {
         undoAction(event) {
             if(this.undoActions.length > 0) {
                 let lastElement = this.undoActions.length-1
-                this.undoActions[lastElement]() //run last undo operation
-                this.$store.commit('editor/'+mutationTypes.REMOVE_UNDO_ACTION,lastElement)//remove last undo action
+                this.$store.dispatch('editor/callUndoAction',lastElement)
+            }
+        },
+        redoAction(event) {
+            if(this.redoActions.length > 0) {
+                let lastElement = this.redoActions.length-1
+                this.$store.dispatch('editor/callRedoAction',lastElement)
             }
         }
     }

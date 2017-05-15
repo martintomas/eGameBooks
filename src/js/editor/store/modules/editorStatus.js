@@ -9,6 +9,7 @@ export default {
         elementsListShow: true,
         onlyErrorMiniPageList: false,
         undoActions: [],
+        redoActions: [],
     },
     mutations: {
         [mutationTypes.CHANGE_MINI_PAGE_LIST_STATUS](state, status) {
@@ -68,6 +69,53 @@ export default {
             Vue.delete(state.undoActions,index)
 
             editorNotification.newInternalInfo('Undo action with id: '+index+' has been removed',true)
+        },
+        [mutationTypes.ADD_REDO_ACTION](state, redoAction) {
+            state.redoActions.push(redoAction)
+
+            editorNotification.newInternalInfo('New redo action has been added',true)
+        },
+        [mutationTypes.REMOVE_REDO_ACTION](state, index=null) {
+            if(index != null) {
+                Vue.delete(state.redoActions,index)
+
+                editorNotification.newInternalInfo('Redo action with id: '+index+' has been removed',true)
+            } else {
+                //index is null -> delete all redo actions
+                for(let i=0;i<state.redoActions.length;i++) {
+                    Vue.delete(state.redoActions,i)
+                }
+
+                editorNotification.newInternalInfo('All redo actions has been removed',true)
+            }
+            
+        },
+    },
+    actions: {
+        undoRedoWrapper({ commit, dispatch, state }, args) {
+            //args should be undoAction,redoAction,undo,redo
+            if(args.undo) {
+                commit(mutationTypes.ADD_UNDO_ACTION,args)
+                commit(mutationTypes.REMOVE_REDO_ACTION)
+            }
+        },
+        callUndoAction({ commit, dispatch, state },index) {
+            let undoArgsBackup = JSON.parse(JSON.stringify(state.undoActions[index].undoArgs))
+
+            state.undoActions[index].undoAction(undoArgsBackup)
+
+            let backupRedo = state.undoActions[index]
+            commit(mutationTypes.REMOVE_UNDO_ACTION,index)
+            commit(mutationTypes.ADD_REDO_ACTION,backupRedo)
+        },
+        callRedoAction({ commit, dispatch, state },index) {
+            let redoArgsBackup = JSON.parse(JSON.stringify(state.redoActions[index].redoArgs))
+
+            state.redoActions[index].redoAction(redoArgsBackup)
+
+            let backupUndo = state.redoActions[index]
+            commit(mutationTypes.REMOVE_REDO_ACTION,index)
+            commit(mutationTypes.ADD_UNDO_ACTION,backupUndo)
         }
     }
 }

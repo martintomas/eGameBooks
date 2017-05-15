@@ -217,10 +217,21 @@ export default {
             })
         },
         deletePage({ commit, dispatch, state }, pageId) {
-            let pageBackup = state.pages[pageId] //remmember backup for undo operation
-            commit(mutationTypes.ADD_UNDO_ACTION,() => {
-                dispatch('addPage',pageBackup)
+            let localData =  JSON.parse(JSON.stringify(state.pages[pageId]))
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    dispatch('addPage',localData)
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.DELETE_PAGE,pageId)
+                },
+                'redoArgs':pageId,
+                'undo':true,
+                'redo':false,
             })
+
             commit(mutationTypes.DELETE_PAGE,pageId)
         },
         addEmptyPage({ commit, dispatch, state },pageId) {

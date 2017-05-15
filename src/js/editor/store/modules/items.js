@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import * as mutationTypes from 'editor/store/mutationTypes'
-import {editorNotification} from 'editor/services/defaults.js'
+import {editorNotification,editorNotificationWrapper} from 'editor/services/defaults.js'
 import {getUniqueId} from 'defaults'
 
 export default {
@@ -69,23 +69,46 @@ export default {
     },
     actions: {
         newItemModule({ commit, dispatch, state }, newItem) {
-            commit(mutationTypes.ADD_UNDO_ACTION,() => {
-                dispatch('deleteItemModuleUndo',newItem.localId)
+            let localData = JSON.parse(JSON.stringify(newItem))
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.DELETE_ITEM,localData.localId)
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.localId))
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.ADD_NEW_ITEM,localData)
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',localData.localId))
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
             })
+            
             commit(mutationTypes.ADD_NEW_ITEM,newItem)
-        },
-        newItemModuleUndo({ commit, dispatch, state }, newItem) { //actions run by undo command --> no undo adding
-            commit(mutationTypes.ADD_NEW_ITEM,newItem)
+            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',newItem.localId))
         },
         deleteItemModule({ commit, dispatch, state }, localId) {
-            let backupItem = state.workspace.local[localId]
-            commit(mutationTypes.ADD_UNDO_ACTION,() => {
-                dispatch('newItemModuleUndo',backupItem)
+            let localData =  JSON.parse(JSON.stringify(state.workspace.local[localId]))
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.ADD_NEW_ITEM,localData)
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',localData.localId))
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.DELETE_ITEM,localData.localId)
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.localId))
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
             })
+            
             commit(mutationTypes.DELETE_ITEM,localId)
-        },
-        deleteItemModuleUndo({ commit, dispatch, state }, localId) {
-            commit(mutationTypes.DELETE_ITEM,localId)
+            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localId))
         },
     }
 }

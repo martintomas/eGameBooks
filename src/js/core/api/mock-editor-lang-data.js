@@ -32,6 +32,8 @@ module.exports = {
     'no-forward-pages':'No forward pages',
     'notification-loaded-page':'page number {0} has been loaded',
     'notification-page-deleted':'page number {0} has been deleted',
+    'notification-new-item':'Item of id {0} has been created',
+    'notification-deleted-item':'Item of id {0} has been deleted',
     'loader-loading-editor-language':'Loading editor language',
     'loader-loading-editor-book':'Loading book initial data',
     'loader-processing-editor-language':'Processing editor language',
