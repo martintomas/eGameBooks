@@ -80,7 +80,18 @@ module.exports = {
                 'id': 6,
                 'pageId': 1,
                 'condition': ''
-            }]
+            }],
+            'item': [{
+                'id':1,
+                'ref':1,
+                'action':'add',
+                'condition':''
+            },{
+                'id':2,
+                'ref':2,
+                'action':'remove',
+                'condition':''
+            }],
         }
     }, {
         id: 3,

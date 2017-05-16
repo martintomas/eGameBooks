@@ -36,7 +36,7 @@
                                             <span slot='tooltipText'>{{String.doTranslationEditor('edit-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
-                                            <i class="fa fa-question unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                                            <i class="fa fa-question unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='infoItemModule(key,$event)'></i>
                                             <span slot='tooltipText'>{{String.doTranslationEditor('info-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
@@ -195,6 +195,19 @@ export default {
                 messageBoxWrapper.showWarnMessageStorno(this.$store.commit,String.doTranslationEditor('message-delete-item-module'),() => {
                     this.hideTooltip(this.getKeyIndex(itemLocalId)) //hide tooltip before item is deleted
                     this.$store.dispatch('editor/deleteItemModule',itemLocalId)
+                })
+            }
+        },
+        infoItemModule(itemLocalId,event) {
+            if (event) event.stopPropagation()
+
+            if(itemLocalId in this.localItems) {
+                let item = this.localItems[itemLocalId]
+                this.$emit('active-item-workspace',{
+                    module:'item',
+                    type:'info-item',
+                    item: item,
+                    workspace: 'local'
                 })
             }
         },

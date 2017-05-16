@@ -71,6 +71,10 @@ body {
     transform-origin: left top 0;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 .connection {
     font-weight: bold;
 }
@@ -101,13 +105,6 @@ body {
 
 .button-modal {
     margin: 0.1rem;
-}
-
-.modalLabel,
-.modalInput {
-    width: 20rem;
-    display: inline-block;
-    margin-bottom: 0.2rem;
 }
 
 .unactive-icon {
@@ -205,6 +202,20 @@ body {
     min-width:10rem;
     max-width:20rem;
     display:inline-block;
+    margin-bottom:0.2rem;
+    vertical-align:top;
+}
+.modalLabelFull {
+    width:95%;
+    max-width:40rem;
+    min-width:10rem;
+    margin-bottom:0.2rem;
+    font-size:115%;
+}
+.modalInputFull {
+    width:95%;
+    max-width:40rem;
+    min-width:10rem;
     margin-bottom:0.2rem;
 }
 .modalTextArea {
