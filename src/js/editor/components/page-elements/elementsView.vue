@@ -3,27 +3,42 @@
         <div class='elements-view-main' ref='elementsViewMain'>
             <p class="elements-view-summary-text active-text" @click="showHideElementsList">{{String.doTranslationEditor('page-elements')}}</p>
             <div class="elements-view-main-header">
-                <dyn-tooltip class='dyn-tooltip'>
-                    <i class="fa fa-eye active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
-                    <span slot='tooltipText'>{{String.doTranslationEditor('show-hide-elements')}}</span>
+                <dyn-tooltip class='dyn-tooltip' :reactToHover='false' :reactToClick='true' :tooltip-id="generateHash('show-modules','el-list')">
+                    <i class="fa fa-eye active-icon tooltip" aria-hidden="true" slot='tooltip' :component-id="generateHash('show-modules','el-list')"></i>
+                    <span slot='tooltipText'>
+                        <div class='module-select-button' v-for='(model,index) in hiddenModules' @click='showModule(model)'>
+                            <template v-if="model === 'item'">{{String.doTranslationEditor('item-module')}}</template>
+                            <template v-else-if="model === 'journal'">{{String.doTranslationEditor('journal-module')}}</template>
+                        </div>
+                        <div class='module-select-button' @click='showModule(null)'>{{String.doTranslationEditor('all')}}</div>
+                    </span>
                 </dyn-tooltip>
-                <dyn-tooltip class='dyn-tooltip'>
-                    <i class="fa fa-eye-slash active-icon tooltip" aria-hidden="true" slot='tooltip'></i>
-                    <span slot='tooltipText'>{{String.doTranslationEditor('hide-hide-elements')}}</span>
+                <dyn-tooltip class='dyn-tooltip' :reactToHover='false' :reactToClick='true' :tooltip-id="generateHash('hide-modules','el-list')">
+                    <i class="fa fa-eye-slash active-icon tooltip" aria-hidden="true" slot='tooltip' :component-id="generateHash('hide-modules','el-list')"></i>
+                    <span slot='tooltipText'>
+                        <div class='module-select-button' v-for='(model,index) in shownModules' @click='hideModule(model)'>
+                            <template v-if="model === 'item'">{{String.doTranslationEditor('item-module')}}</template>
+                            <template v-else-if="model === 'journal'">{{String.doTranslationEditor('journal-module')}}</template>
+                        </div>
+                        <div class='module-select-button' @click='hideModule(null)'>{{String.doTranslationEditor('all')}}</div>
+                    </span>
                 </dyn-tooltip>
             </div>
             <div class="elements-view-main-wrapper" ref="elementsViewMainWrapper">
-                <div class="elements-view-main-scroller" ref="elementsViewMainScroller">
-                    <template v-for="(model,index) in usedModules">
+                <div class="elements-view-main-scroller" ref="elementsViewMainScroller" v-if='shownModules.length > 0'>
+                    <template v-for="(model,index) in shownModules">
                         <elements-item-view v-if="model === 'item'" :key='model' :outer-scroller='scroller' @size-changed='sizeChanged' @active-item-workspace='activeItemWorkspace' :item-message='itemMessage'></elements-item-view>
                     </template>
+                </div>
+                <div class='no-module-root' v-else>
+                    <span class='no-module-text'>{{String.doTranslationEditor('no-module-shown')}}</span>
                 </div>
             </div>
             <div class="elements-view-main-footer text-center">This is footer</div>
         </div>
 
         <!-- prepare environment for modules -->
-        <template v-for="(model,index) in usedModules">
+        <template v-for="(model,index) in shownModules">
             <item-module-workspace v-if="model === 'item'" :key='model' :item-data='itemData' @workspace-message='workspaceMessage'></item-module-workspace>
         </template>
 
@@ -32,10 +47,11 @@
 
 <script>
 import IScroll from 'iscroll'
+import Vue from 'vue'
 import {bus} from 'app.js'
 import {busEditor} from 'editor/services/defaults.js'
 import * as mutationTypes from 'editor/store/mutationTypes'
-import {waitForResizeEnd,setCss3Style} from 'defaults.js'
+import {waitForResizeEnd,setCss3Style,generateHash} from 'defaults.js'
 import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import ElementsItemView from 'editor/components/page-elements/elementsItemView.vue'
 import ItemModuleWorkspace from 'editor/components/page-elements/itemModuleWorkspace.vue'
@@ -53,12 +69,28 @@ export default {
             scroller: null,
             itemData: null,
             itemMessage: null,
+            hiddenModules: [],
         }
     },
     computed: {
         usedModules() {
             if('usedModules' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.usedModules
             return []
+        },
+        shownModules() {
+            if(this.hiddenModules.length === 0) {
+                return this.usedModules
+            } else {
+                let show, res = []
+                for(let i=0;i<this.usedModules.length;i++) {
+                    show = true
+                    for(let j=0;j<this.hiddenModules.length;j++) {
+                        if(this.usedModules[i] === this.hiddenModules[j]) show = false
+                    }
+                    if(show) res.push(this.usedModules[i])
+                }
+                return res
+            }
         },
         itemModuleExists() {
             return this.usedModules.indexOf('item') >= 0
@@ -103,6 +135,7 @@ export default {
 
     },
     methods: {
+        generateHash,
         sizeChanged() {
             setTimeout(() => {
                 this.scroller.refresh() //actualize scroller based on new height
@@ -125,6 +158,39 @@ export default {
                 default:
                     console.log('Module is missing')
             }
+        },
+        showModule(moduleName=null) {
+            if(moduleName === null) { //show all
+                this.hiddenModules = []
+            } else {
+                for(let i=0;i<this.hiddenModules.length;i++) {
+                    if(this.hiddenModules[i] === moduleName) {
+                        Vue.delete(this.hiddenModules,i)
+                        break
+                    }
+                }
+            }
+            this.$nextTick(() => {
+                setTimeout(() => {
+                    this.scroller.refresh() //actualize scroller based on new height
+                }, 200)
+            })
+        },
+        hideModule(moduleName=null) {
+            if(moduleName === null) { //hide all
+                for(let i=0;i<this.usedModules.length;i++) {
+                    if(this.hiddenModules.indexOf(this.usedModules[i]) === -1) {
+                        this.hiddenModules.push(this.usedModules[i])
+                    }
+                }
+            } else {
+                this.hiddenModules.push(moduleName)
+            }
+            this.$nextTick(() => {
+                setTimeout(() => {
+                    this.scroller.refresh() //actualize scroller based on new height
+                }, 200)
+            })
         },
         showHideElementsList() {
             //console.log('Changing page elements show')
@@ -256,5 +322,23 @@ export default {
         position: absolute;
         bottom: 1rem;
         width: 100%;
+    }
+    .module-select-button {
+        cursor:pointer;
+        font-size: 105%;
+        padding: 0 0.2rem 0 0.2rem;
+    }
+    .module-select-button:hover {
+        background-color:gray;
+        color:white;
+    }
+    .no-module-root {
+        margin: 0 auto;
+        padding: 3rem;
+        margin-top: 2rem;
+    }
+    .no-module-text {
+        font-size:135%;
+        font-weight:bold;
     }
 </style>
