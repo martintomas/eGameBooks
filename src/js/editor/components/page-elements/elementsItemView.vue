@@ -32,7 +32,7 @@
                                 <span slot='tooltipText'>
                                     <template v-if='activeModuleItem == key'>
                                         <dyn-tooltip class='dyn-tooltip'>
-                                            <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                                            <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='editItemModule(key,$event)'></i>
                                             <span slot='tooltipText'>{{String.doTranslationEditor('edit-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
@@ -206,6 +206,19 @@ export default {
                 this.$emit('active-item-workspace',{
                     module:'item',
                     type:'info-item',
+                    item: item,
+                    workspace: 'local'
+                })
+            }
+        },
+        editItemModule(itemLocalId,event) {
+            if (event) event.stopPropagation()
+
+            if(itemLocalId in this.localItems) {
+                let item = this.localItems[itemLocalId]
+                this.$emit('active-item-workspace',{
+                    module:'item',
+                    type:'edit-item',
                     item: item,
                     workspace: 'local'
                 })

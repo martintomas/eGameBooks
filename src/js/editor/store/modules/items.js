@@ -65,6 +65,22 @@ export default {
             Vue.delete(state.reverseInfo,localId)
 
             editorNotification.newInternalInfo('New item with local id '+localId+' has been deleted',true)
+        },
+        [mutationTypes.EDIT_ITEM](state,itemValues) {
+            let localData
+            if(itemValues.localId && itemValues.localId in state.workspace.local) {
+                localData = state.workspace.local[itemValues.localId]
+            } else if(itemValues.workspace && itemValues.workspace in state.workspace && itemValues.id in state.workspace[itemValues.workspace]) {
+                localData = state.workspace[itemValues.workspace][itemValues.id]
+            } else {
+                editorNotification.newInternalError('Imposible to find item with id: '+itemValues.id+' and localId: '+itemValues.localId,true)
+                return
+            }
+
+            localData.name = itemValues.name
+            localData.description = itemValues.description
+
+            editorNotification.newInternalInfo('Item with id: '+itemValues.id+' and localId: '+itemValues.localId+' has been edited',true)
         }
     },
     actions: {
@@ -110,5 +126,37 @@ export default {
             commit(mutationTypes.DELETE_ITEM,localId)
             editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localId))
         },
+        editItemModule({ commit, dispatch, state}, newValues) {
+            let localDataEdit = JSON.parse(JSON.stringify(newValues))
+            let localData
+            if(newValues.localId && newValues.localId in state.workspace.local) {
+                localData = state.workspace.local[newValues.localId]
+            } else if(newValues.workspace && newValues.workspace in state.workspace && newValues.id in state.workspace[newValues.workspace]) {
+                localData = state.workspace[newValues.workspace][newValues.id]
+            } else {
+                editorNotificationWrapper.newInternalError(commit,'Imposible to find item with id: '+newValues.id+' and localId: '+newValues.localId,true)
+                editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('notification-missing-item',localData.localId))
+                return
+            }
+            localData = JSON.parse(JSON.stringify(localData))
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.EDIT_ITEM,localData)
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edited-item'))
+                },
+                'undoArgs':localData,
+                'redoAction':function(localDataEdit) {
+                    commit(mutationTypes.EDIT_ITEM,localDataEdit)
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edited-item'))
+                },
+                'redoArgs':localDataEdit,
+                'undo':true,
+                'redo':false,
+            })
+
+            commit(mutationTypes.EDIT_ITEM,localDataEdit)    
+            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edited-item'))        
+        }
     }
 }

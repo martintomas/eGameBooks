@@ -31,6 +31,37 @@
             </span>
         </dyn-modal>
 
+        <!-- Modal for item editing -->
+        <dyn-modal ref='itemEditModal' body-specific='modal-body-item' footer-specific='modal-footer-item' content-specific='modal-content-item'>
+            <span slot='modalHeader'>
+                {{String.doTranslationEditor('edit-item-modal-header')}}
+            </span>
+            <span slot='modalBody'>
+                <div class='new-item-body' v-if='openedItem != null'>
+                    <label for="newItemName" class="modalLabel">{{String.doTranslationEditor('item-name')}}*: </label>
+                    <input class="modalInput" v-model="openedItem.name" type="text" id="newItemName" :placeholder="String.doTranslationEditor('add-item-name')">
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('new-item-name-help')}}</span>
+                    </dyn-tooltip>
+                    <br>
+                    <label for="newItemDescription" class="modalLabel">{{String.doTranslationEditor('item-description')}}: </label>
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip' :placeholder="String.doTranslationEditor('new-item-name-help')"></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('new-item-description-help')}}</span>
+                    </dyn-tooltip>
+                    <br>
+                    <textarea cols='50' row='5' class="modalTextArea" v-model="openedItem.description" :placeholder="String.doTranslationEditor('add-item-description')" id="newItemDescription"></textarea>
+                </div>
+            </span>
+            <span slot='modalFooter'>
+                <template v-if='openedItem != null'>
+                    <span class='common-button' @click='saveEditItem'>{{String.doTranslationEditor('save')}}</span>
+                    <span class='common-button' @click='closeEditItem'>{{String.doTranslationEditor('close')}}</span>
+                </template>
+            </span>
+        </dyn-modal>
+
         <!-- Modal for item info -->
         <dyn-modal ref='itemInfoModal' body-specific='modal-body-item' footer-specific='modal-footer-item' content-specific='modal-content-item'>
             <span slot='modalHeader'>
@@ -124,6 +155,10 @@ export default {
                     if(value.workspace) this.openedItem.workspace = value.workspace
                     if(value.item.localId) this.openedItem.used = this.$store.state.editor.items.reverseInfo[value.item.localId]
                     this.$refs.itemInfoModal.show()
+                } else if(value.type === 'edit-item' && value.item && 'itemEditModal' in this.$refs) {
+                    this.openedItem = JSON.parse(JSON.stringify(value.item))
+                    if(value.workspace) this.openedItem.workspace = value.workspace
+                    this.$refs.itemEditModal.show()
                 }
             }
         },
@@ -140,6 +175,29 @@ export default {
                     })
             } else {
                 this.$refs.newItemModal.close()
+                if(this.returnToWorkspace) {
+                    //activate workspace
+                }
+            }
+        },
+        closeEditItem() {
+            let origValues
+            if(this.openedItem.localId && this.openedItem.localId != null) {
+                origValues = this.$store.state.editor.items.workspace.local[this.openedItem.localId]
+            } else {
+                origValues = this.$store.state.editor.items.workspace[this.openedItem.workspace][this.openedItem.id]
+            }
+
+            if(origValues.name != this.openedItem.name || origValues.description != this.openedItem.description) {
+                messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('edit-item-no-save'),
+                    () => {
+                        this.$refs.itemEditModal.close()
+                        if(this.returnToWorkspace) {
+                            //activate workspace
+                        }
+                    })
+            } else {
+                this.$refs.itemEditModal.close()
                 if(this.returnToWorkspace) {
                     //activate workspace
                 }
@@ -165,6 +223,13 @@ export default {
                     'module':'item',
                     'message':'new-item'
                 })
+            }
+        },
+        saveEditItem() {
+            if(this.newItemValidation(this.openedItem)) {
+                this.$store.dispatch('editor/editItemModule',this.openedItem)
+                this.$refs.itemEditModal.close()
+                this.openedItem = null
             }
         },
         newItemValidation(newItem) {

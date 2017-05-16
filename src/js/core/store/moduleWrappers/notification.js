@@ -27,6 +27,12 @@ class NotificationStoreWrapper {
     newExternalInfo(commit,message) {
         this.newNotification(commit,{message:message,debug:false,level:'external',type:'info'})
     }
+    newExternalWarn(commit,message) {
+        this.newNotification(commit,{message:message,debug:false,level:'external',type:'warn'})
+    }
+    newExternalError(commit,message) {
+        this.newNotification(commit,{message:message,debug:false,level:'external',type:'error'})
+    }
     newNotification(commit,args) {
         args.notificationType = this.notificationType
         commit(this.storePrefix +'/'+mutationTypes.ADD_NOTIFICATION,args,{root:true})
