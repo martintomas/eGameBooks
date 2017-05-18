@@ -87,8 +87,8 @@
                         <br>
                         <template v-if='openedItem.used.length > 0'>
                             <label class="text-left modalLabelFull">{{String.doTranslationEditor('item-used-pages')}}: </label><br>
-                            <span class='bold' style='padding-right:0.5rem;' v-for='(model,index) in openedItem.used'>
-                                {{model}}
+                            <span class='bold' style='padding-right:0.5rem;' v-for='(model,key,index) in openedItem.used'>
+                                {{model.pageId}}
                             </span>
                             <br>
                         </template>

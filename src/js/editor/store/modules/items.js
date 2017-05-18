@@ -32,8 +32,29 @@ export default {
                 if('item' in pages[key].actions) {
                     for(let i in pages[key].actions.item) {
                         if(pages[key].actions.item[i].ref != null) {
-                            if(pages[key].actions.item[i].ref in state.reverseInfo) state.reverseInfo[pages[key].actions.item[i].ref].push(pages[key].data.id)
-                            else Vue.set(state.reverseInfo,pages[key].actions.item[i].ref,[pages[key].data.id])
+                            if(pages[key].actions.item[i].ref in state.reverseInfo) {
+                                state.reverseInfo[pages[key].actions.item[i].ref].push({'pageId':pages[key].data.id,'actionId':pages[key].actions.item[i].id})
+                            } else {
+                                Vue.set(state.reverseInfo,pages[key].actions.item[i].ref,[{'pageId':pages[key].data.id,'actionId':pages[key].actions.item[i].id}])
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        [mutationTypes.MODULES_UPDATE_REV](state,args) {
+            //args should contain moduleName, localId and pages
+            if('item' === args.moduleName) {
+                for(let key in args.pages) {
+                    if(args.moduleName in args.pages[key].actions) {
+                        for(let i in args.pages[key].actions.item) {
+                            if(args.pages[key].actions.item[i].ref === args.localId) {
+                                if(args.pages[key].actions.item[i].ref in state.reverseInfo) {
+                                    state.reverseInfo[args.pages[key].actions.item[i].ref].push({'pageId':args.pages[key].data.id,'actionId':args.pages[key].actions.item[i].id})
+                                } else {
+                                    Vue.set(state.reverseInfo,args.pages[key].actions.item[i].ref,[{'pageId':args.pages[key].data.id,'actionId':args.pages[key].actions.item[i].id}])
+                                }
+                            }
                         }
                     }
                 }
@@ -60,7 +81,7 @@ export default {
             editorNotification.newInternalInfo('New item with local id '+newItem.localId+' has been added',true)
         },
         [mutationTypes.DELETE_ITEM](state,localId) {
-            if(state.selectedItem === localId) state.selectedItem = null
+            if(state.selectedItem == localId) state.selectedItem = null
             Vue.delete(state.workspace.local,localId)
             Vue.delete(state.reverseInfo,localId)
 
@@ -106,25 +127,51 @@ export default {
             editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',newItem.localId))
         },
         deleteItemModule({ commit, dispatch, state }, localId) {
-            let localData =  JSON.parse(JSON.stringify(state.workspace.local[localId]))
+            let localData = {
+                item: JSON.parse(JSON.stringify(state.workspace.local[localId])),
+                reverseInfo: JSON.parse(JSON.stringify(state.reverseInfo[localId]))
+            }
 
             dispatch('undoRedoWrapper',{
                 'undoAction':function(localData) {
-                    commit(mutationTypes.ADD_NEW_ITEM,localData)
-                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',localData.localId))
+                    commit(mutationTypes.ADD_NEW_ITEM,localData.item)
+                    dispatch('moduleRefAdded',{
+                        moduleName:'item',
+                        rev:localData.reverseInfo,
+                        localId:localData.item.localId,
+                    }).then(() => {
+                        editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.item.localId))
+                    }).catch((reason) => {
+                        console.log(reason)
+                    })
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
-                    commit(mutationTypes.DELETE_ITEM,localData.localId)
-                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.localId))
+                    commit(mutationTypes.DELETE_ITEM,localId)
+                    dispatch('moduleRefDeleted',{
+                        moduleName:'item',
+                        rev:localData.reverseInfo
+                    }).then(() => {
+                        editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.item.localId))
+                    }).catch((reason) => {
+                        console.log(reason)
+                    })
                 },
                 'redoArgs':localData,
                 'undo':true,
                 'redo':false,
             })
-            
+
             commit(mutationTypes.DELETE_ITEM,localId)
-            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localId))
+            dispatch('moduleRefDeleted',{
+                moduleName:'item',
+                rev:localData.reverseInfo
+            }).then(() => {
+                editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localId))
+            }).catch((reason) => {
+                console.log(reason)
+            })
+            
         },
         editItemModule({ commit, dispatch, state}, newValues) {
             let localDataEdit = JSON.parse(JSON.stringify(newValues))

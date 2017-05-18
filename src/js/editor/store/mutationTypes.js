@@ -6,6 +6,8 @@ export const EDIT_PAGE = 'EDIT_PAGE'
 export const RENDER_PAGE = 'RENDER_PAGE'
 export const DELETE_PAGE = 'DELETE_PAGE'
 export const NEW_PAGE = 'NEW_PAGE'
+export const MODULE_REF_DELETED = 'MODULE_REF_DELETED'
+export const MODULE_REF_ADDED = 'MODULE_REF_ADDED'
 
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'
@@ -21,9 +23,11 @@ export const REMOVE_REDO_ACTION = 'REMOVE_REDO_ACTION'
 export const ADD_WORKSPACES = 'ADD_WORKSPACES'
 export const MODULES_PROCESS_LOCAL_DATA = 'MODULES_PROCESS_LOCAL_DATA'
 export const MODULES_BUILD_REVERSE_INFO = 'MODULES_BUILD_REVERSE_INFO'
+export const MODULES_UPDATE_REV = 'MODULES_UPDATE_REV'
 
 //Item module mutations
 export const ADD_NEW_ITEM = 'ADD_NEW_ITEM'
 export const SELECTED_ITEM_CHANGED = 'SELECTED_ITEM_CHANGED'
 export const DELETE_ITEM = 'DELETE_ITEM'
 export const EDIT_ITEM = 'EDIT_ITEM'
+export const SET_REVERSE_INFO_ITEM = 'SET_REVERSE_INFO_ITEM'

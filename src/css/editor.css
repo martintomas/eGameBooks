@@ -239,6 +239,10 @@ body {
 .error-color {
     color:#e63900;
 }
+.error-action {
+    color:#e63900;
+    text-decoration: underline;
+}
 .warning-color {
     color:yellow
 }

@@ -22,14 +22,14 @@ actions: {
         id:
         pageId:
         condition:
-        existsInText:
+        existsInText: //appropriate text exists
     },...},
     ...
 },
 renderInfo: {
     link: {id:{ //id corrrespond to action id
         id:
-        exist:
+        exist: //apropriate action exists
     },...},
     ...
 },
@@ -106,21 +106,28 @@ export default {
 
             editorNotification.newInternalInfo('Initial pages of book have been processed',true)
         },
-        [mutationTypes.VALIDATE_BOOK](state, pageId=null) {
-            let pages,res,key
-            if(pageId === null) { //validate all pages
-                pages = state.pages
-            } else {
-                pages = {pageId:state.pages[pageId]}
+        [mutationTypes.VALIDATE_BOOK](state, args) {
+            //args should contains pages and actionType arguments
+            //onlyId arg can be provided --> array of pages id --> get pages from state
+            let pages,i,res,key
+            if(args.onlyId) {
+                for(i=0;i<args.pages.length;i++) {
+                    if(args.pages[i] in state.pages) pages[args.pages[i]] = state.pages[args.pages[i]]
+                }
+            } else {    
+                pages = args.pages === null ? state.pages : args.pages
             }
 
             for(key in pages) {
-                res = isPageCorrect(state,pages[key])
+                res = isPageCorrect(state,pages[key],args.actionType)
+                if(key in state.pagesMinorError) Vue.delete(state.pagesMinorError,key)
+                if(key in state.pagesSevereError) Vue.delete(state.pagesSevereError,key)
+
                 if(res[ErrorImportance.MINOR].length > 0) Vue.set(state.pagesMinorError,key,res[ErrorImportance.MINOR])
                 if(res[ErrorImportance.SEVERE].length > 0) Vue.set(state.pagesSevereError,key,res[ErrorImportance.SEVERE])
             }
 
-            editorNotification.newInternalInfo('Initial data of book have been validated',true)
+            editorNotification.newInternalInfo('Pages of book ('+Object.keys(pages)+') have been validated',true)
         },
         [mutationTypes.RENDER_PAGE](state, page) {
             //console.log('STORE: rendering text for page number ' + page.id)
@@ -181,6 +188,28 @@ export default {
             Vue.delete(state.pages,pageId) //delete page data
 
             editorNotification.newExternalInfo(String.doTranslationEditor('notification-page-deleted',pageNumber))
+        },
+        [mutationTypes.MODULE_REF_DELETED](state,args) {
+            //args should contain pageId and actionId -> ref will be set up to null
+            //args should contain module name -> moduleName
+            for(let i=0;i<args.rev.length;i++) {
+                if(args.rev[i].pageId in state.pages) {
+                    if(args.rev[i].actionId in state.pages[args.rev[i].pageId].actions[args.moduleName]) {
+                        state.pages[args.rev[i].pageId].actions[args.moduleName][args.rev[i].actionId].ref = null
+                    }
+                }
+            }
+        },
+        [mutationTypes.MODULE_REF_ADDED](state,args) {
+            //args should contain rev array with pageId and actionId -> ref will be set up to args.localId value
+            //args should contain module name -> moduleName
+            for(let i=0;i<args.rev.length;i++) {
+                if(args.rev[i].pageId in state.pages) {
+                    if(args.rev[i].actionId in state.pages[args.rev[i].pageId].actions[args.moduleName]) {
+                        state.pages[args.rev[i].pageId].actions[args.moduleName][args.rev[i].actionId].ref = args.localId
+                    }
+                }
+            }
         }
     },
     getters: {
@@ -206,7 +235,10 @@ export default {
                 commit(mutationTypes.EDIT_PAGE,null)
                 commit(mutationTypes.MODULES_PROCESS_LOCAL_DATA,initData) //load modules data
                 commit(mutationTypes.MODULES_BUILD_REVERSE_INFO,state.pages) //pages are already prepared at this point
-                commit(mutationTypes.VALIDATE_BOOK,null) //do validation after pages and module data are prepared
+                commit(mutationTypes.VALIDATE_BOOK,{
+                    pages:null,
+                    actionType:null
+                }) //do validation after pages and module data are prepared
 
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been processed',true)
                 editorLoaderWrapper.removeLoader(commit,'page-process')
@@ -217,28 +249,95 @@ export default {
             })
         },
         deletePage({ commit, dispatch, state }, pageId) {
-            let localData =  JSON.parse(JSON.stringify(state.pages[pageId]))
+            let i,key, localData, pageToBeValidated = {}
+            for(key in state.pages[pageId].actions.link) {
+                if(state.pages[pageId].actions.link[key].pageId in state.pages)
+                    pageToBeValidated[state.pages[pageId].actions.link[key].pageId] = state.pages[state.pages[pageId].actions.link[key].pageId]
+            }
+            for(i=0;i<state.pages[pageId].reverseLink.length;i++) {
+                if(state.pages[pageId].reverseLink[i].pageId in state.pages)
+                    pageToBeValidated[state.pages[pageId].reverseLink[i].pageId] = state.pages[state.pages[pageId].reverseLink[i].pageId]
+            }
+
+            localData =  {
+                pageData: JSON.parse(JSON.stringify(state.pages[pageId])),
+                validatePages: Object.keys(pageToBeValidated), //remmember just 
+            }
 
             dispatch('undoRedoWrapper',{
                 'undoAction':function(localData) {
-                    dispatch('addPage',localData)
+                    dispatch('addPage',localData.pageData)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
                     commit(mutationTypes.DELETE_PAGE,pageId)
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:pageToBeValidated,
+                        actionType:null,
+                        onlyId: true
+                    })
                 },
-                'redoArgs':pageId,
+                'redoArgs':localData,
                 'undo':true,
                 'redo':false,
             })
 
             commit(mutationTypes.DELETE_PAGE,pageId)
+            commit(mutationTypes.VALIDATE_BOOK,{
+                pages:pageToBeValidated,
+                actionType:null
+            })
         },
         addEmptyPage({ commit, dispatch, state },pageId) {
 
         },
         addPage({ commit, dispatch, state }, page) {
             console.log(page)
+        },
+        moduleRefAdded({ commit, dispatch, state }, args) {
+            //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed
+            commit(mutationTypes.MODULE_REF_ADDED,{
+                moduleName:args.moduleName,
+                localId:args.localId,
+                rev: args.rev
+            })
+
+            let pages = {}
+            for(let i=0;i<args.rev.length;i++) {
+                if(!(args.rev[i].pageId in pages)) {
+                    pages[args.rev[i].pageId] = state.pages[args.rev[i].pageId]
+                } 
+            }
+
+            commit(mutationTypes.MODULES_UPDATE_REV,{
+                    moduleName:args.moduleName,
+                    localId:args.localId,
+                    pages:pages,
+                })   
+            commit(mutationTypes.VALIDATE_BOOK,{
+                pages:pages,
+                actionType:null
+            }) //run validation after rev has been added   
+
+        },
+        moduleRefDeleted({ commit, dispatch, state }, args) {
+            //args should contain moduleName and rev (reverseInfo) --> how the ref actions should be changed
+            commit(mutationTypes.MODULE_REF_DELETED,{
+                moduleName:args.moduleName,
+                rev:args.rev
+            })
+
+            let pages = {}
+            for(let i=0;i<args.rev.length;i++) {
+                if(!(args.rev[i].pageId in pages)) {
+                    pages[args.rev[i].pageId] = state.pages[args.rev[i].pageId]
+                } 
+            }
+
+            commit(mutationTypes.VALIDATE_BOOK,{
+                pages:pages,
+                actionType:null
+            }) //run validation after rev has been deleted
         }
     }
 }

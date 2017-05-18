@@ -45,6 +45,7 @@ module.exports = {
     'no-reverse-pages-validation':'Page has not reverse connections, but It is not starting one.',
     'missing-action-validation':'Action of {0} type and id: {1} is missing. Please, create one and edit text appropriately.',
     'missing-link-pageid-validation':'Link action of id: {0} is missing destination page.',
+    'missing-item-actionid-validation':'Item reference of action id {0} is missing',
     'page-number':'Page number',
     'condition':'Condition',
     'action-id':'Action ID',

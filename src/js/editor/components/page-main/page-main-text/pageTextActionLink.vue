@@ -1,6 +1,6 @@
 <template>
     <dyn-tooltip :inline='true' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('main-text','link'+actionId)">
-        <span v-html='text' slot='tooltip' class='link-text tooltip' :component-id="generateHash('main-text','link'+actionId)"></span>
+        <span v-html='text' slot='tooltip' :class="[isCorrect ? '' : 'error-action', 'link-text', 'tooltip']" :component-id="generateHash('main-text','link'+actionId)"></span>
         <span slot='tooltipText'>
             <template v-if="renderType === 'main'">
                 {{String.doTranslationEditor('action-id')}}: {{actionId}}<br>
@@ -39,6 +39,8 @@ import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
 import { generateHash } from 'defaults.js'
 import {busEditor,editorNotificationWrapper} from 'editor/services/defaults.js'
 import * as mutationTypes from 'editor/store/mutationTypes'
+import {AllowedActions} from 'editor/constants'
+import {containsErrors,isActionCorrect} from 'editor/services/validators'
 
 export default {
     components: {
@@ -53,12 +55,23 @@ export default {
         },
         text: ''
     },
+    data() {
+        return {
+            actionType: AllowedActions.LINK,
+        }
+    },
     computed: {
         linkData() {
             if(this.actionId in this.pageData.actions.link) return this.pageData.actions.link[this.actionId]
 
             //console.log('TEXT MAIN LINK WARN: link is missing')
             return null
+        },
+        isCorrect() {
+            if(this.linkData != null) {
+                return !containsErrors(isActionCorrect(this.actionType,this.linkData))
+            }
+            return false
         }
     },
     mounted() {

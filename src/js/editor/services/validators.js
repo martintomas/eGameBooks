@@ -1,28 +1,56 @@
 import {AllowedActions,ErrorImportance} from 'editor/constants'
 
-export function isRenderedActionCorrect(state,page,actionType,renderedActionId,res={}) {
+export function containsErrors(res,severinity=null) {
+    if(severinity === null) {
+        if(res[ErrorImportance.MINOR].length > 0) return true
+        if(res[ErrorImportance.SEVERE].length > 0) return true
+    } else {
+        if(res[severinity].length > 0) return true
+    }
+    return false
+}
+
+export function isRenderedActionCorrect(state,page,actionType,renderedActionId,res=null) {
+    if(res === null) {
+        res = {}
+        res[ErrorImportance.MINOR] = []
+        res[ErrorImportance.SEVERE] = []
+    }
+
     if(!page.renderInfo[actionType][renderedActionId].exist) {
         res[ErrorImportance.SEVERE].push({text:'missing-action-validation',args:[actionType,renderedActionId]})
     } else { //action exists
         let action = page.actions[actionType][renderedActionId]
-        if(actionType === AllowedActions.LINK) { //do link specific validation
-            if(action.pageId === null) res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[renderedActionId]})
-            //if(action.condition) //do condition check in future !!!!
-        }
+        isActionCorrect(actionType,action,res)
     }
-    for(let key in res) { //check if some error was found
-        return false
-    }
-    return true
+
+    return res
 }
 
-export function isPageCorrect(state,page) { //checks only page inner data
+export function isActionCorrect(actionType,action,res=null) {
+    if(res === null) {
+        res = {}
+        res[ErrorImportance.MINOR] = []
+        res[ErrorImportance.SEVERE] = []
+    }
+
+    if(actionType === AllowedActions.LINK) { //do link specific validation
+        if(action.pageId === null) res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[action.id]})
+        //if(action.condition) //do condition check in future !!!!
+    } else if(actionType === AllowedActions.ITEM) {
+        if(action.ref === null) res[ErrorImportance.SEVERE].push({text:'missing-item-actionid-validation',args:[action.id]})
+    }
+
+    return res
+}
+
+export function isPageCorrect(state,page,actionType) { //checks only page inner data
     let res = {}
     res[ErrorImportance.MINOR] = []
     res[ErrorImportance.SEVERE] = []
     //check that all actions are defined
     for(let key in page.renderInfo) {
-        if (key in page.renderInfo) { //key exist in actions
+        if (actionType === null || actionType === key) { //key exist in actionType
             for (let id in page.renderInfo[key]) {
                 isRenderedActionCorrect(state,page,key,id,res)
             }
