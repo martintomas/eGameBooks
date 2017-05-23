@@ -149,8 +149,12 @@ export default {
                     state.editedPage = pageId //change only edited page in case that page id is valid one
                     editorNotification.newExternalInfo(String.doTranslationEditor('notification-loaded-page',state.pages[pageId].data.pageNumber))
                 } else if(state.editedPage === null) { //be sure that some page is selected as edited
-                    editorNotification.newInternalWarn('Edited page was changed by force',true)
-                    state.editedPage = state.pagesOrder[0] //set up first suitable pages as edited
+                    if(state.startPage != null && state.startPage in state.pages) {
+                        state.editedPage = state.startPage
+                    } else {
+                        editorNotification.newInternalWarn('Edited page was changed by force',true)
+                        state.editedPage = state.pagesOrder[0] //set up first suitable pages as edited
+                    }  
                 }
             } else {
                 state.editedPage = pageId
@@ -242,6 +246,12 @@ export default {
                     }
                 }
             }
+        },
+        [mutationTypes.CHANGE_STARTING_PAGE](state,pageId) {
+            if(pageId in state.pages) {
+                state.startPage = pageId
+                editorNotification.newInternalInfo('Starting page was changed to: '+pageId)
+            }
         }
     },
     getters: {
@@ -329,11 +339,65 @@ export default {
                 actionType:null
             })
         },
-        addEmptyPage({ commit, dispatch, state },pageId) {
+        addNewPage({ commit, dispatch, state },newPage) {
+            //only required value of new page is now pageNumber
+            let newPageDict = {}
+            Vue.set(newPageDict,'data', {
+                'id': newPage.pageNumber,
+                'pageNumber': newPage.pageNumber,
+                'text': '',
+                'renderedText': ''
+            })
+            Vue.set(newPageDict, 'actions', {
+                'link': {},
+            })
+            Vue.set(newPageDict, 'renderInfo', {})
+            Vue.set(newPageDict, 'reverseLink', [])
 
+            return dispatch('addPage',{
+                page:newPageDict,
+                isStartingPage: newPage.isStartingPage
+            })
         },
-        addPage({ commit, dispatch, state }, page) {
-            
+        addPage({ commit, dispatch, state }, args) {
+            //args contain page and isStartingPage variables
+            let page, localData
+            page = args.page
+            localData =  {
+                page: JSON.parse(JSON.stringify(page)),
+                startingPage: JSON.parse(JSON.stringify(state.startPage)),
+            }
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.DELETE_PAGE,localData.page.data.id)
+                    commit(mutationTypes.MODULES_PAGE_DELETED,localData.page)
+                    if(args.isStartingPage) commit(mutationTypes.CHANGE_STARTING_PAGE,localData.startingPage)
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.ADD_PAGE,localData.page)
+                    commit(mutationTypes.MODULES_PAGE_ADDED,localData.page)
+                    if(args.isStartingPage) commit(mutationTypes.CHANGE_STARTING_PAGE,localData.page.data.id)
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:[localData.page.data.id],
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+            })
+
+            commit(mutationTypes.ADD_PAGE,page)
+            commit(mutationTypes.MODULES_PAGE_ADDED,page)
+            if(args.isStartingPage) commit(mutationTypes.CHANGE_STARTING_PAGE,page.data.id)
+            commit(mutationTypes.VALIDATE_BOOK,{
+                pages:[page.data.id],
+                actionType:null,
+                onlyId: true
+            })
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed

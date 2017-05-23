@@ -6,6 +6,7 @@ export const EDIT_PAGE = 'EDIT_PAGE'
 export const RENDER_PAGE = 'RENDER_PAGE'
 export const DELETE_PAGE = 'DELETE_PAGE'
 export const ADD_PAGE = 'ADD_PAGE'
+export const CHANGE_STARTING_PAGE = 'CHANGE_STARTING_PAGE'
 export const MODULE_REF_DELETED = 'MODULE_REF_DELETED'
 export const MODULE_REF_ADDED = 'MODULE_REF_ADDED'
 

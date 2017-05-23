@@ -3,7 +3,7 @@
         <div class='editor-toolbars-buttons'>
             <span class='editor-toolbar-button'>{{String.doTranslationEditor('save')}}</span>
             <span class='editor-toolbar-button'>{{String.doTranslationEditor('close')}}</span>
-            <span class='editor-toolbar-button'>{{String.doTranslationEditor('new-page-simple')}}</span>
+            <span class='editor-toolbar-button' @click='newPageSimple'>{{String.doTranslationEditor('new-page-simple')}}</span>
             <span class='editor-toolbar-button' @click='undoAction'>{{String.doTranslationEditor('undo')}} ({{undoActions.length}})</span>
             <span class='editor-toolbar-button' @click='redoAction'>{{String.doTranslationEditor('redo')}} ({{redoActions.length}})</span>
         </div>
@@ -40,6 +40,9 @@ export default {
                 let lastElement = this.redoActions.length-1
                 this.$store.dispatch('editor/callRedoAction',lastElement)
             }
+        },
+        newPageSimple(event) {
+            this.$router.push({ name: 'editor-new-page-default' })
         }
     }
 

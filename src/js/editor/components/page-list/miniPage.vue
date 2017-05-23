@@ -2,6 +2,9 @@
     <li class="page-mini-box" ref="pageMiniBox" v-bind:style="styleMiniPageBox" @click="activeMiniPage">
         <div class="page-mini" :style="styleMiniPage">
             <div class="page-mini-title">
+                <span v-if='startPage === model.data.id' class='float-left'>
+                    <i class="fa fa-circle" aria-hidden="true"></i>
+                </span>
                 <dyn-tooltip ref='tooltipMiniPage' :tooltip-id="generateHash('mini-page',index)" :allow-automatic-hidding="false" :force-top='true' :react-to-hover='false'>
                     <span class="page-mini-title-text text-center" slot='tooltip'>
                         {{String.doTranslationEditor('page-num',(pageNumber))}}&nbsp;
@@ -61,6 +64,9 @@
         computed: {
             index() {
                 return this.$store.state.editor.bookData.pagesOrder.indexOf(this.model.data.id)
+            },
+            startPage() {
+                return this.$store.state.editor.bookData.startPage
             },
             styleMiniPageBox() {
                 return {

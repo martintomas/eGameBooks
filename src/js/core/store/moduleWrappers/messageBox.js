@@ -20,7 +20,7 @@ class MessageBoxWrapper {
     }
     showWarnMessage(commit,message,func=null,args=null) {
         let mess = {
-            type:'info',
+            type:'warn',
             message:message,
             func1:func,
             args1:args,
@@ -31,7 +31,16 @@ class MessageBoxWrapper {
         this.addMessage(commit,mess)
     }
     showErrorMessage(commit,message,func=null,args=null) {
-        
+        let mess = {
+            type:'error',
+            message:message,
+            func1:func,
+            args1:args,
+            func2:null,
+            args2:null,
+            buttonType: 'ok'
+        }
+        this.addMessage(commit,mess)
     }
     showInformationMessageStorno(commit,message,func=null,args=null) {
 

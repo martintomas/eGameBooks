@@ -197,6 +197,9 @@ body {
 .modalLabel {
     font-size:115%;
 }
+.label {
+    font-size:115%;
+}
 .modalLabel,.modalInput {
     width:45%; 
     min-width:10rem;

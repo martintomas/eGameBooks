@@ -3,7 +3,7 @@ import ElementsView from 'editor/components/page-elements/elementsView.vue'
 import PageMainContainer from 'editor/components/page-main/pageMainContainer.vue'
 import PageView from 'editor/components/page-main/page-summary-view/pageView.vue'
 import PageEditorMain from 'editor/components/page-main/page-editor-view/pageEditorMain.vue'
-
+import NewPage from 'editor/components/page-main/new-page/newPage.vue'
 
 export const editorRoutes = [{
     path: '',
@@ -14,6 +14,20 @@ export const editorRoutes = [{
     },
     props: { 'editor-mini-page': true, 'editor-page-view-container': true, 'editor-elements-view': true },
     children: [{
+        path: 'new-page',
+        name: 'editor-new-page-default',
+        components: {
+            'editor-page-view': NewPage
+        },
+        props: { 'editor-page-view': true }
+    },{
+        path: 'new-page/:pageId',
+        name: 'editor-new-page',
+        components: {
+            'editor-page-view': NewPage
+        },
+        props: { 'editor-page-view': true }
+    },{
         path: 'page/:pageId/edit',
         name: 'editor-page-view-edit',
         components: {
