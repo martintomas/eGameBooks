@@ -26,6 +26,7 @@ module.exports = {
     'close':'Close',
     'create':'Create',
     'leave':'Leave',
+    'text':'text',
     'undo':'Undo',
     'redo':'Redo',
     'yes':'Yes',
@@ -95,5 +96,6 @@ module.exports = {
     'last-suitable':'Last suitable',
     'first-suitable':'First suitable',
     'new-page-wrong-page-number':'Page number has wrong format. Please check once more that page number is correctly filled.',
-    'new-page-not-unique-page-number':'Page number is not unique. Page with this number already exists. Please change page number.'
+    'new-page-not-unique-page-number':'Page number is not unique. Page with this number already exists. Please change page number.',
+    'new-page-page-type':'Page type',
 }

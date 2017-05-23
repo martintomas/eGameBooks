@@ -83,6 +83,7 @@ export default {
                 Vue.set(state.pages[page.id], 'data', {
                     'id': page.id,
                     'pageNumber': page.pageNumber,
+                    'pageType':'text',
                     'text': page.text,
                     'renderedText': ''
                 })
@@ -345,6 +346,7 @@ export default {
             Vue.set(newPageDict,'data', {
                 'id': newPage.pageNumber,
                 'pageNumber': newPage.pageNumber,
+                'pageType':newPage.pageType,
                 'text': '',
                 'renderedText': ''
             })

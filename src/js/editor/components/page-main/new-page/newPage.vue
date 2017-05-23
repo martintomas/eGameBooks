@@ -2,20 +2,26 @@
     <div class='new-page-root'>
         <div class='new-page-header'>{{String.doTranslationEditor('new-page-def')}}</div>
         <div class='new-page-form'>
-            <label class="modalLabel">{{String.doTranslationEditor('method-page-number')}}*: </label>
-            <input type="radio" id='newPageFirst' value="first" v-model="pageNumberMethod"><label for="newPageFirst" >{{String.doTranslationEditor('first-suitable')}}</label>
+            <label class="modalLabel horizontal-space">{{String.doTranslationEditor('method-page-number')}}*: </label>
+            <input class='horizontal-space'type="radio" id='newPageFirst' value="first" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageFirst" >{{String.doTranslationEditor('first-suitable')}}</label>
             &nbsp;&nbsp;
-            <input type="radio" id='newPageLast' value="last" v-model="pageNumberMethod"><label for="newPageLast" >{{String.doTranslationEditor('last-suitable')}}</label>
+            <input class='horizontal-space' type="radio" id='newPageLast' value="last" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageLast" >{{String.doTranslationEditor('last-suitable')}}</label>
             &nbsp;&nbsp;
-            <input type="radio" id='newPageOptional' value="optional" v-model="pageNumberMethod"><label for="newPageOptional" >{{String.doTranslationEditor('optional')}}</label>
+            <input class='horizontal-space' type="radio" id='newPageOptional' value="optional" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageOptional" >{{String.doTranslationEditor('optional')}}</label>
             <br>
-            <label class="modalLabel" for='newPagePageNumber'>{{String.doTranslationEditor('page-number')}}*: </label>
-            <input v-if="pageNumberMethod === 'optional'" class="modalInput" v-model="pageNumber" type="number" id="newPagePageNumber" :placeholder="String.doTranslationEditor('add-page-number')">
-            <input v-else class="modalInput" v-model="pageNumber" type="number" id="newPagePageNumber" disabled>
+            <label class="modalLabel horizontal-space" for='newPagePageNumber'>{{String.doTranslationEditor('page-number')}}*: </label>
+            <input v-if="pageNumberMethod === 'optional'" class="modalInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" :placeholder="String.doTranslationEditor('add-page-number')">
+            <input v-else class="modalInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" disabled>
             <br>
-            <label class="modalLabel">{{String.doTranslationEditor('is-starting-page')}}*: </label>
-            <input type="radio" id="newPageStartingYes" value="yes" v-model="startingPage"><label for="newPageStartingYes" >{{String.doTranslationEditor('yes')}} </label>
-            <input type="radio" id="newPageStartingNo" value="no" v-model="startingPage"><label for="newPageStartingNo" >{{String.doTranslationEditor('no')}} </label>
+            <label class="modalLabel horizontal-space" for='newPagePageType'>{{String.doTranslationEditor('new-page-page-type')}}*: </label>
+            <select class='horizontal-space' v-model="pageType" id='newPagePageType'>
+                <option value='text'>{{String.doTranslationEditor('text')}}</option>
+            </select>
+            <br>
+            <label class="modalLabel horizontal-space">{{String.doTranslationEditor('is-starting-page')}}*: </label>
+            <input class='horizontal-space' type="radio" id="newPageStartingYes" value="yes" v-model="startingPage"><label for="newPageStartingYes" >{{String.doTranslationEditor('yes')}} </label>
+            <input class='horizontal-space' type="radio" id="newPageStartingNo" value="no" v-model="startingPage"><label for="newPageStartingNo" >{{String.doTranslationEditor('no')}} </label>
+            <br>
         </div>
         <div class='new-page-footer'>
             <span class='common-button' @click='saveNewPage'>{{String.doTranslationEditor('create')}}</span>
@@ -38,6 +44,7 @@ export default {
             startingPage: 'no',
             pageNumberMethod: 'first',
             pageNumber: '',
+            pageType:'text',
         }
     },
     computed: {
@@ -79,6 +86,7 @@ export default {
             let newPage = {
                 pageNumber:Number(this.pageNumber),
                 isStartingPage: this.startingPage === 'yes' ? true:false,
+                pageType: this.pageType,
             }
 
             if(this.newPageValidation(newPage)) {

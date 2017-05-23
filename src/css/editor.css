@@ -174,7 +174,9 @@ body {
 .dyn-tooltip {
     margin: 0.1rem;
 }
-
+.horizontal-space {
+    margin:0.5rem 0 0.5rem 0;
+}
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
