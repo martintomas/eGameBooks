@@ -3,7 +3,7 @@
         <div class='page-connection-down-box' ref='pageConnectionView'>
             <div class="page-connection-wrapper scroller-bottom" ref="page-mini-main-wrapper">
                 <div class="page-connection-scroller" ref="page-mini-main-scroller">
-                    <template v-if="pages.length === 0">
+                    <template v-if="pagesLength === 0">
                         <div class='page-connection-no-pages'>
                             {{String.doTranslationEditor('no-forward-pages')}}
                         </div>

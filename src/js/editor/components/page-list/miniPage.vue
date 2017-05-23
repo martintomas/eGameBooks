@@ -54,6 +54,7 @@
             model: Object,
             pageMiniDistance: 0,
             multiPage: true,
+            index: 0,
         },
         data() {
             return {
@@ -62,9 +63,6 @@
             }
         },
         computed: {
-            index() {
-                return this.$store.state.editor.bookData.pagesOrder.indexOf(this.model.data.id)
-            },
             startPage() {
                 return this.$store.state.editor.bookData.startPage
             },
