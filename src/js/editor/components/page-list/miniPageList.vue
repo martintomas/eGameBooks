@@ -94,7 +94,9 @@
         },
         watch: {
             pagesList(value) {
-                if(this.activatedPage != null) this.showMiniPage(this.activatedPage) //keep activatedPage correctly shown
+                this.$nextTick(() => { //wait for page rendering
+                    if(this.activatedPage != null)  this.showMiniPage(this.activatedPage) //keep activatedPage correctly shown
+                })
                 this.updateScroller()
             },
             activePage(value) {

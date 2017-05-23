@@ -54,6 +54,10 @@ export default {
         },
         pagesOrder() {
             this.pageNumber = this.getSuitablePageNumber(this.pageNumberMethod)
+        },
+        pageId(value) {
+            if(Number.isInteger(Number(value))) this.pageNumberMethod = 'optional'
+            else this.pageNumberMethod = 'first'
         }
     },
     mounted() {
@@ -65,6 +69,8 @@ export default {
                 return getUniqueId(this.pages)
             } else if(method === 'last') {
                 return this.pagesOrder[this.pagesOrder.length-1] + 1
+            } else if(this.pageId){
+                return this.pageId
             } else {
                 return ''
             }

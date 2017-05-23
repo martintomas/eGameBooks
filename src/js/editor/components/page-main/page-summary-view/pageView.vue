@@ -8,7 +8,7 @@
         <template v-else-if="pagesExists">
             <div class='page-view-missing-page'>
                 {{String.doTranslationEditor('missing-page-error',editedPageId)}}
-                <span>{{String.doTranslationEditor('missing-page-create-new')}}</span>
+                <span style='text-decoration:underline;cursor:pointer;' @click='createNewPage'>{{String.doTranslationEditor('missing-page-create-new')}}</span>
             </div>
         </template>
     </div>
@@ -60,6 +60,9 @@ export default {
                     this.$store.commit('editor/'+mutationTypes.EDIT_PAGE,value)
                 }
             }
+        },
+        createNewPage() {
+            this.$router.push({ name: 'editor-new-page', params: { pageId: this.pageId }})
         }
     }
 }
