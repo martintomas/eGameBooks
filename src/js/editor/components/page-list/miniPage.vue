@@ -49,7 +49,6 @@
         },
         props: {
             model: Object,
-            index: 0,
             pageMiniDistance: 0,
             multiPage: true,
         },
@@ -60,6 +59,9 @@
             }
         },
         computed: {
+            index() {
+                return this.$store.state.editor.bookData.pagesOrder.indexOf(this.model.data.id)
+            },
             styleMiniPageBox() {
                 return {
                     top: ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'px',

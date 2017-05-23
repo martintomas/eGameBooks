@@ -109,7 +109,7 @@ export default {
         [mutationTypes.VALIDATE_BOOK](state, args) {
             //args should contains pages and actionType arguments
             //onlyId arg can be provided --> array of pages id --> get pages from state
-            let pages,i,res,key
+            let pages = {},i,res,key
             if(args.onlyId) {
                 for(i=0;i<args.pages.length;i++) {
                     if(args.pages[i] in state.pages) pages[args.pages[i]] = state.pages[args.pages[i]]
@@ -189,6 +189,38 @@ export default {
 
             editorNotification.newExternalInfo(String.doTranslationEditor('notification-page-deleted',pageNumber))
         },
+        [mutationTypes.ADD_PAGE](state,page) {
+            if(page.data.id in state.pages) {
+                editorNotification.newInternalError('Page with id '+page.data.id+' already exists. It cannot be created.',false)
+                return
+            }
+            Vue.set(state.pages,page.data.id,page) //add page to pages state
+
+            //update link info -> back from null to this page id
+            let i,links,valid
+            for(i=0;i<page.reverseLink.length;i++) {
+                valid = false
+                if(page.reverseLink[i].pageId in state.pages) {
+                    links = state.pages[page.reverseLink[i].pageId].actions.link
+                    if(page.reverseLink[i].actionId in links) {
+                        valid = true
+                        Vue.set(links[page.reverseLink[i].actionId],'pageId',page.data.id)  
+                    }
+                }
+                if(!valid) Vue.delete(page.reverseLink,i)
+            }
+
+            //build reverse info for other pages
+            for (i = 0; i < page.actions.link.length; i++) {
+                if (page.actions.link[i].pageId in state.pages) state.pages[page.actions.link[i].pageId].reverseLink.push({ 'pageId': page.id, 'actionId': page.actions.link[i].id })
+                else if (page.actions.link[i].pageId != null) Vue.set(state.pages, page.actions.link[i].pageId, { 'reverseLink': [{ 'pageId': page.id, 'actionId': page.actions.link[i].id }] })
+            }
+
+            state.pagesOrder.push(page.data.id)
+            state.pagesOrder = state.pagesOrder.sort((a,b) => a - b) //sort pages
+
+            editorNotification.newExternalInfo(String.doTranslationEditor('notification-page-added',page.data.pageNumber))
+        },
         [mutationTypes.MODULE_REF_DELETED](state,args) {
             //args should contain pageId and actionId -> ref will be set up to null
             //args should contain module name -> moduleName
@@ -266,13 +298,21 @@ export default {
 
             dispatch('undoRedoWrapper',{
                 'undoAction':function(localData) {
-                    dispatch('addPage',localData.pageData)
+                    commit(mutationTypes.ADD_PAGE,localData.pageData)
+                    commit(mutationTypes.MODULES_PAGE_ADDED,localData.pageData)
+                    localData.validatePages.push(localData.pageData.data.id) //validate even new page
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:localData.validatePages,
+                        actionType:null,
+                        onlyId: true
+                    })
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
                     commit(mutationTypes.DELETE_PAGE,pageId)
+                    commit(mutationTypes.MODULES_PAGE_DELETED,localData.pageData)
                     commit(mutationTypes.VALIDATE_BOOK,{
-                        pages:pageToBeValidated,
+                        pages:localData.validatePages,
                         actionType:null,
                         onlyId: true
                     })
@@ -283,6 +323,7 @@ export default {
             })
 
             commit(mutationTypes.DELETE_PAGE,pageId)
+            commit(mutationTypes.MODULES_PAGE_DELETED,localData.pageData)
             commit(mutationTypes.VALIDATE_BOOK,{
                 pages:pageToBeValidated,
                 actionType:null
@@ -292,7 +333,7 @@ export default {
 
         },
         addPage({ commit, dispatch, state }, page) {
-            console.log(page)
+            
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed

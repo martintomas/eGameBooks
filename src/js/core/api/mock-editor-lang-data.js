@@ -32,6 +32,7 @@ module.exports = {
     'no-forward-pages':'No forward pages',
     'notification-loaded-page':'page number {0} has been loaded',
     'notification-page-deleted':'page number {0} has been deleted',
+    'notification-page-added':'page number {0} has been created',
     'notification-new-item':'Item of id {0} has been created',
     'notification-deleted-item':'Item of id {0} has been deleted',
     'notification-missing-item':'Impossible to find required item!',

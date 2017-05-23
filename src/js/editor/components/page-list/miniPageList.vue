@@ -27,7 +27,7 @@
 
             <div class="page-mini-main-scroller" ref="page-mini-main-scroller">
                 <ul>
-                    <li is="mini-page" v-for="(model,index) in pagesList" ref="miniPagesBox" :key="model" v-bind:model="pages[model]" v-bind:index="index" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
+                    <li is="mini-page" v-for="(model,index) in pagesList" ref="miniPagesBox" :key="model" v-bind:model="pages[model]" v-bind:page-mini-distance="pageDistanceDefault" v-bind:multi-page="multiPage"
                         v-on:show-mini-page="showMiniPage" v-on:hide-mini-page="hideMiniPage" v-on:mini-page-update-height='miniPageUpdateHeight'>
                     </li>
                 </ul>
@@ -94,6 +94,7 @@
         },
         watch: {
             pagesList(value) {
+                if(this.activatedPage != null) this.showMiniPage(this.activatedPage) //keep activatedPage correctly shown
                 this.updateScroller()
             },
             activePage(value) {
@@ -172,8 +173,11 @@
                 if (updateScroller) this.updateScroller();
             },
             moveMiniPagesY(fromPage, distance) {
-                for (var i = fromPage.index +1 ; i < this.$refs.miniPagesBox.length; i++) {
-                    this.$refs.miniPagesBox[i].moveDistanceTop(distance);
+                // for (var i = fromPage.index +1 ; i < this.$refs.miniPagesBox.length; i++) {
+                //     this.$refs.miniPagesBox[i].moveDistanceTop(distance);
+                // }
+                for (let i = 0 ; i < this.$refs.miniPagesBox.length; i++) { //manipulation with pages list changes ref order --> go through all list and check index
+                    if(this.$refs.miniPagesBox[i].index > fromPage.index) this.$refs.miniPagesBox[i].moveDistanceTop(distance);
                 }
             },
             onePageShow(event) {

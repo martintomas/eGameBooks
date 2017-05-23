@@ -102,7 +102,31 @@ export default {
             localData.description = itemValues.description
 
             editorNotification.newInternalInfo('Item with id: '+itemValues.id+' and localId: '+itemValues.localId+' has been edited',true)
-        }
+        },
+        [mutationTypes.MODULES_PAGE_DELETED](state,page) {
+            let i,j
+            if('item' in page.actions) {
+                for(i in page.actions.item) {
+                    if(page.actions.item[i].ref != null) {
+                        for(j=0;j<state.reverseInfo[page.actions.item[i].ref].length;j++) {
+                            if(state.reverseInfo[page.actions.item[i].ref][j].pageId == page.data.id) {
+                                Vue.delete(state.reverseInfo[page.actions.item[i].ref],j)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        [mutationTypes.MODULES_PAGE_ADDED](state,page) {
+            let i,j
+            if('item' in page.actions) {
+                for(i in page.actions.item) {
+                    if(page.actions.item[i].ref != null) {
+                        state.reverseInfo[page.actions.item[i].ref].push({'pageId':page.data.id,'actionId':page.actions.item[i].id})
+                    }
+                }
+            }
+        },
     },
     actions: {
         newItemModule({ commit, dispatch, state }, newItem) {
