@@ -100,4 +100,6 @@ module.exports = {
     'new-page-wrong-page-number':'Page number has wrong format. Please check once more that page number is correctly filled.',
     'new-page-not-unique-page-number':'Page number is not unique. Page with this number already exists. Please change page number.',
     'new-page-page-type':'Page type',
+    'go-to-page':'Go to page',
+    'set-up-link':'Set up link',
 }

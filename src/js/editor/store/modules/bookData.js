@@ -254,6 +254,17 @@ export default {
                 state.startPage = pageId
                 editorNotification.newInternalInfo('Starting page was changed to: '+pageId)
             }
+        },
+        [mutationTypes.CHANGE_LINK_PAGEID](state,args) {
+            //args should contain pageId, actionId, value arguments
+            if(args.pageId in state.pages) {
+                if(args.actionId in state.pages[args.pageId].actions.link) {
+                    Vue.set(state.pages[args.pageId].actions.link[args.actionId],'pageId',args.value)
+                    editorNotification.newInternalInfo('Link pageId value was changed to: '+args.value)
+                    return
+                }
+            }
+            editorNotification.newInternalInfo('Impossible to change link pageId value')
         }
     },
     getters: {
@@ -360,7 +371,9 @@ export default {
 
             return dispatch('addPage',{
                 page:newPageDict,
-                isStartingPage: newPage.isStartingPage
+                isStartingPage: newPage.isStartingPage,
+                setLinkAction: newPage.setLinkAction,
+                linkData: newPage.linkData
             })
         },
         addPage({ commit, dispatch, state }, args) {
@@ -369,15 +382,27 @@ export default {
             page = args.page
             localData =  {
                 page: JSON.parse(JSON.stringify(page)),
+                isStartingPage: args.isStartingPage,
                 startingPage: JSON.parse(JSON.stringify(state.startPage)),
+                setLinkAction: args.setLinkAction,
+                linkData: JSON.parse(JSON.stringify(args.linkData)),
             }
 
             dispatch('undoRedoWrapper',{
                 'undoAction':function(localData) {
                     commit(mutationTypes.DELETE_PAGE,localData.page.data.id)
                     commit(mutationTypes.MODULES_PAGE_DELETED,localData.page)
-                    if(args.isStartingPage) {
+                    let validatedPages = []
+                    if(localData.isStartingPage) {
                         commit(mutationTypes.CHANGE_STARTING_PAGE,localData.startingPage)
+                        validatedPages.push(localData.page.data.id)
+                    }
+                    if(localData.setLinkAction && localData.linkData.pageId) {
+                        if(validatedPages.indexOf(localData.linkData.pageId) === -1) validatedPages.push(localData.linkData.pageId)
+                        localData.linkData.value = null //set value to null
+                        commit(mutationTypes.CHANGE_LINK_PAGEID,localData.linkData)
+                    }
+                    if(validatedPages.length > 0) {
                         commit(mutationTypes.VALIDATE_BOOK,{
                             pages:[localData.startingPage],
                             actionType:null,
@@ -390,9 +415,14 @@ export default {
                     commit(mutationTypes.ADD_PAGE,localData.page)
                     commit(mutationTypes.MODULES_PAGE_ADDED,localData.page)
                     let validatedPages = [localData.page.data.id]
-                    if(args.isStartingPage) {
+                    if(localData.isStartingPage) {
                         validatedPages.push(localData.startingPage)
                         commit(mutationTypes.CHANGE_STARTING_PAGE,localData.page.data.id)
+                    }
+                    if(localData.setLinkAction && localData.linkData.pageId) {
+                        if(validatedPages.indexOf(localData.linkData.pageId) === -1) validatedPages.push(localData.linkData.pageId)
+                        localData.linkData.value = localData.page.data.id //set value for new page
+                        commit(mutationTypes.CHANGE_LINK_PAGEID,localData.linkData)
                     }
                     commit(mutationTypes.VALIDATE_BOOK,{
                         pages:validatedPages,
@@ -411,6 +441,11 @@ export default {
             if(args.isStartingPage) {
                 validatedPages.push(localData.startingPage)
                 commit(mutationTypes.CHANGE_STARTING_PAGE,page.data.id)
+            }
+            if(args.setLinkAction && args.linkData.pageId) {
+                if(validatedPages.indexOf(args.linkData.pageId) === -1) validatedPages.push(args.linkData.pageId)
+                args.linkData.value = page.data.id //set value for new page
+                commit(mutationTypes.CHANGE_LINK_PAGEID,args.linkData)
             }
             commit(mutationTypes.VALIDATE_BOOK,{
                 pages:validatedPages,

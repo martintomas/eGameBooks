@@ -9,6 +9,7 @@ export const ADD_PAGE = 'ADD_PAGE'
 export const CHANGE_STARTING_PAGE = 'CHANGE_STARTING_PAGE'
 export const MODULE_REF_DELETED = 'MODULE_REF_DELETED'
 export const MODULE_REF_ADDED = 'MODULE_REF_ADDED'
+export const CHANGE_LINK_PAGEID = 'CHANGE_LINK_PAGEID'
 
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'

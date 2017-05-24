@@ -11,8 +11,8 @@
             <span slot='tooltipText'>
                 <template v-if='active'>
                     <dyn-tooltip class='dyn-tooltip'>
-                        <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
-                        <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
+                        <i class="fa fa-hand-o-right unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='goToMiniPage'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('go-to-page')}}</span>
                     </dyn-tooltip>
                     <br>
                     <dyn-tooltip class='dyn-tooltip'>

@@ -55,6 +55,8 @@ export default {
             pageNumber: '',
             pageTittle:'',
             pageType:'text',
+            setActionId: null,
+            setPageId: null,
         }
     },
     computed: {
@@ -80,8 +82,30 @@ export default {
     mounted() {
         this.pageNumber = this.getSuitablePageNumber(this.pageNumberMethod)
     },
+    beforeRouteEnter (to, from, next) {
+        if(to.query.action && to.query.page) {
+            next(vm => {
+                vm.setActionId = to.query.action
+                vm.setPageId = to.query.page
+            })
+        } else {
+            next()
+        }
+    },
+    beforeRouteUpdate (to, from, next) {
+        if(to.query.action && to.query.page) {
+            this.setActionId = to.query.action
+            this.setPageId = to.query.page
+        } else {
+            this.setActionId = null
+            this.setPageId = null
+        }
+        next()
+    },
     beforeRouteLeave (to, from, next) {
         this.pageTittle = '' //clear page tittle data
+        this.setActionId = null
+        this.setPageId = null
         next()
     },
     methods: {
@@ -97,11 +121,22 @@ export default {
             }
         },
         saveNewPage() {
-            let newPage = {
+            let newPage, linkData = null, setLinkAction = false
+            if(this.setActionId != null && this.setPageId != null) {
+                setLinkAction = true
+                linkData = {
+                    pageId: this.setPageId,
+                    actionId: this.setActionId
+                }
+            }
+
+            newPage = {
                 pageNumber:Number(this.pageNumber),
                 isStartingPage: this.startingPage === 'yes' ? true:false,
                 pageType: this.pageType,
                 pageTittle: this.pageTittle,
+                setLinkAction: setLinkAction,
+                linkData: linkData
             }
 
             if(this.newPageValidation(newPage)) {

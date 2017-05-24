@@ -103,7 +103,7 @@ export default {
             this.tooltipTextMiniPageActive = false
             this.hideTooltip(this.tooltipTextMiniPage)
         },
-        editMiniPage(event) {
+        goToMiniPage(event) {
             if (event) event.stopPropagation()
 
             this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId } })

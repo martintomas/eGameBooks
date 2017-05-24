@@ -26,17 +26,23 @@
                 <span slot='tooltipText'>
                     <template v-if='active'>
                         <dyn-tooltip class='dyn-tooltip'>
-                            <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
-                            <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
+                            <i class="fa fa-hand-o-right unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='goToMiniPage'></i>
+                            <span slot='tooltipText'>{{String.doTranslationEditor('go-to-page')}}</span>
                         </dyn-tooltip>
                         <dyn-tooltip class='dyn-tooltip'>
                             <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='showPageDetail'></i>
                             <span slot='tooltipText'>{{String.doTranslationEditor('zoom-mini-page')}}</span>
                         </dyn-tooltip>
                         <dyn-tooltip class='dyn-tooltip'>
-                            <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
-                            <span slot='tooltipText'>{{String.doTranslationEditor('delete-link')}}</span>
+                            <i class="fa fa-edit unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='editMiniPage'></i>
+                            <span slot='tooltipText'>{{String.doTranslationEditor('edit-page')}}</span>
                         </dyn-tooltip>
+                        <template v-if='!existsInText'>
+                            <dyn-tooltip class='dyn-tooltip'>
+                                <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                                <span slot='tooltipText'>{{String.doTranslationEditor('delete-link')}}</span>
+                            </dyn-tooltip>
+                        </template>
                     </template>
                 </span>
             </dyn-tooltip>
@@ -61,9 +67,9 @@
                     {{String.doTranslationEditor('missing-page')}}
                 </div>
                 <div class="mini-page-connection-missing-buttons">
-                        <span class='mini-page-connection-missing-button'>{{String.doTranslationEditor('new-page-simple')}}</span>
-                        <span class='mini-page-connection-missing-button'>{{String.doTranslationEditor('use-existing')}}</span>
-                        <span class='mini-page-connection-missing-button'>{{String.doTranslationEditor('delete-link-simple')}}</span>
+                    <span class='mini-page-connection-missing-button' @click='newPage'>{{String.doTranslationEditor('new-page-simple')}}</span>
+                    <span class='mini-page-connection-missing-button'>{{String.doTranslationEditor('set-up-link')}}</span>
+                    <span v-if='!existsInText' class='mini-page-connection-missing-button'>{{String.doTranslationEditor('delete-link-simple')}}</span>
                 </div>
             </div>
         </template>
@@ -101,6 +107,14 @@ export default {
             return this.model.existsInText
         }
     },
+    methods: {
+        newPage() {
+            this.$router.push({ name: 'editor-new-page-default', query: {page:this.pageEditedId,action:this.model.id} })
+        },
+        editMiniPage() {
+
+        }
+    }
 }
 
 
