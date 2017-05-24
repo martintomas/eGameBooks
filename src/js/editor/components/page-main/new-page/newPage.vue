@@ -1,31 +1,36 @@
 <template>
     <div class='new-page-root'>
-        <div class='new-page-header'>{{String.doTranslationEditor('new-page-def')}}</div>
         <div class='new-page-form'>
-            <label class="modalLabel horizontal-space">{{String.doTranslationEditor('method-page-number')}}*: </label>
-            <input class='horizontal-space'type="radio" id='newPageFirst' value="first" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageFirst" >{{String.doTranslationEditor('first-suitable')}}</label>
-            &nbsp;&nbsp;
-            <input class='horizontal-space' type="radio" id='newPageLast' value="last" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageLast" >{{String.doTranslationEditor('last-suitable')}}</label>
-            &nbsp;&nbsp;
-            <input class='horizontal-space' type="radio" id='newPageOptional' value="optional" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageOptional" >{{String.doTranslationEditor('optional')}}</label>
-            <br>
-            <label class="modalLabel horizontal-space" for='newPagePageNumber'>{{String.doTranslationEditor('page-number')}}*: </label>
-            <input v-if="pageNumberMethod === 'optional'" class="modalInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" :placeholder="String.doTranslationEditor('add-page-number')">
-            <input v-else class="modalInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" disabled>
-            <br>
-            <label class="modalLabel horizontal-space" for='newPagePageType'>{{String.doTranslationEditor('new-page-page-type')}}*: </label>
-            <select class='horizontal-space' v-model="pageType" id='newPagePageType'>
-                <option value='text'>{{String.doTranslationEditor('text')}}</option>
-            </select>
-            <br>
-            <label class="modalLabel horizontal-space">{{String.doTranslationEditor('is-starting-page')}}*: </label>
-            <input class='horizontal-space' type="radio" id="newPageStartingYes" value="yes" v-model="startingPage"><label for="newPageStartingYes" >{{String.doTranslationEditor('yes')}} </label>
-            <input class='horizontal-space' type="radio" id="newPageStartingNo" value="no" v-model="startingPage"><label for="newPageStartingNo" >{{String.doTranslationEditor('no')}} </label>
-            <br>
-        </div>
-        <div class='new-page-footer'>
-            <span class='common-button' @click='saveNewPage'>{{String.doTranslationEditor('create')}}</span>
-            <span class='common-button' @click='closeNewPage'>{{String.doTranslationEditor('leave')}}</span>
+            <div class='new-page-header'>{{String.doTranslationEditor('new-page-def')}}</div>
+            <div class='new-page-body'>
+                <label class="mainLabel">{{String.doTranslationEditor('method-page-number')}}<span class='required'>*</span>: </label>
+                <input class='horizontal-space'type="radio" id='newPageFirst' value="first" v-model="pageNumberMethod"><label class='horizontal-space vertical-proc-right-space' for="newPageFirst" >{{String.doTranslationEditor('first-suitable')}}</label>
+                &nbsp;&nbsp;
+                <input class='horizontal-space vertical-proc-left-space' type="radio" id='newPageLast' value="last" v-model="pageNumberMethod"><label class='horizontal-space vertical-proc-right-space' for="newPageLast" >{{String.doTranslationEditor('last-suitable')}}</label>
+                &nbsp;&nbsp;
+                <input class='horizontal-space vertical-proc-left-space' type="radio" id='newPageOptional' value="optional" v-model="pageNumberMethod"><label class='horizontal-space' for="newPageOptional" >{{String.doTranslationEditor('optional')}}</label>
+                <br>
+                <br>
+                <label class="mainLabel" for='newPagePageNumber'>{{String.doTranslationEditor('page-number')}}<span class='required'>*</span>: </label>
+                <input v-if="pageNumberMethod === 'optional'" class="modalInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" :placeholder="String.doTranslationEditor('add-page-number')">
+                <input v-else class="mainInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" disabled>
+                <br>
+                <br>
+                <label class="mainLabel" for='newPagePageType'>{{String.doTranslationEditor('new-page-page-type')}}<span class='required'>*</span>: </label>
+                <select class='mainInput horizontal-space' v-model="pageType" id='newPagePageType'>
+                    <option value='text'>{{String.doTranslationEditor('text')}}</option>
+                </select>
+                <br>
+                <br>
+                <label class="mainLabel">{{String.doTranslationEditor('is-starting-page')}}<span class='required'>*</span>: </label>
+                <input class='horizontal-space' type="radio" id="newPageStartingYes" value="yes" v-model="startingPage"><label class='horizontal-space vertical-proc-right-space' for="newPageStartingYes" >{{String.doTranslationEditor('yes')}} </label>
+                <input class='horizontal-space vertical-proc-left-space' type="radio" id="newPageStartingNo" value="no" v-model="startingPage"><label class='horizontal-space' for="newPageStartingNo" >{{String.doTranslationEditor('no')}} </label>
+                <br>
+            </div>
+            <div class='new-page-footer'>
+                <span class='common-button' @click='saveNewPage'>{{String.doTranslationEditor('create')}}</span>
+                <span class='common-button' @click='closeNewPage'>{{String.doTranslationEditor('leave')}}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -119,27 +124,26 @@ export default {
     min-width:15rem;
 }
 .new-page-form {
-    position:relative;
+    max-width:40rem;
     width: 80%;
-    left: 15%;
+    margin: 2rem auto 0 auto;
+    border: 1px solid black;
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+.new-page-body {
+    
 }
 .new-page-header {
-    position:relative;
-    width: 80%;
-    font-size:135%;
+    font-size:155%;
     font-weight:bold;
-    text-align:center;
-    text-decoration: underline;
-    margin: 1rem 0 1rem 0;
-    left:15%;
-    max-width:40rem;
+    margin: 0 0 1rem 0;
+    border-bottom: solid black 1px;
+    background-color: darkgray;
+    padding: 0.2rem;
 }
 .new-page-footer {
-    position:relative;
-    left:15%;
-    width: 80%;
-    max-width:40rem;
     text-align:center;
-    margin-top:1rem;
+    margin-top:0.5rem;
 }
 </style>

@@ -175,7 +175,14 @@ body {
     margin: 0.1rem;
 }
 .horizontal-space {
-    margin:0.5rem 0 0.5rem 0;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+}
+.vertical-proc-left-space {
+    margin-left: 5%;
+}
+.vertical-proc-right-space {
+    margin-right: 5%;
 }
 .modal {
     display: none; /* Hidden by default */
@@ -201,6 +208,21 @@ body {
 }
 .label {
     font-size:115%;
+}
+.required {
+    color:red;
+}
+.mainLabel {
+    display:block;
+    font-size:125%;
+    margin: 0.2rem;
+    font-weight: bold;
+}
+.mainInput {
+    font-size:115%;
+    margin: 0.2rem;
+    width:100%;
+    box-sizing: border-box;
 }
 .modalLabel,.modalInput {
     width:45%; 
