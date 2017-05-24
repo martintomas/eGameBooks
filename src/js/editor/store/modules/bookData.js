@@ -84,6 +84,7 @@ export default {
                     'id': page.id,
                     'pageNumber': page.pageNumber,
                     'pageType':'text',
+                    'pageTittle':page.pageTittle,
                     'text': page.text,
                     'renderedText': ''
                 })
@@ -346,6 +347,7 @@ export default {
             Vue.set(newPageDict,'data', {
                 'id': newPage.pageNumber,
                 'pageNumber': newPage.pageNumber,
+                'pageTittle':newPage.pageTittle,
                 'pageType':newPage.pageType,
                 'text': '',
                 'renderedText': ''
@@ -374,15 +376,26 @@ export default {
                 'undoAction':function(localData) {
                     commit(mutationTypes.DELETE_PAGE,localData.page.data.id)
                     commit(mutationTypes.MODULES_PAGE_DELETED,localData.page)
-                    if(args.isStartingPage) commit(mutationTypes.CHANGE_STARTING_PAGE,localData.startingPage)
+                    if(args.isStartingPage) {
+                        commit(mutationTypes.CHANGE_STARTING_PAGE,localData.startingPage)
+                        commit(mutationTypes.VALIDATE_BOOK,{
+                            pages:[localData.startingPage],
+                            actionType:null,
+                            onlyId: true
+                        })
+                    }
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
                     commit(mutationTypes.ADD_PAGE,localData.page)
                     commit(mutationTypes.MODULES_PAGE_ADDED,localData.page)
-                    if(args.isStartingPage) commit(mutationTypes.CHANGE_STARTING_PAGE,localData.page.data.id)
+                    let validatedPages = [localData.page.data.id]
+                    if(args.isStartingPage) {
+                        validatedPages.push(localData.startingPage)
+                        commit(mutationTypes.CHANGE_STARTING_PAGE,localData.page.data.id)
+                    }
                     commit(mutationTypes.VALIDATE_BOOK,{
-                        pages:[localData.page.data.id],
+                        pages:validatedPages,
                         actionType:null,
                         onlyId: true
                     })
@@ -394,9 +407,13 @@ export default {
 
             commit(mutationTypes.ADD_PAGE,page)
             commit(mutationTypes.MODULES_PAGE_ADDED,page)
-            if(args.isStartingPage) commit(mutationTypes.CHANGE_STARTING_PAGE,page.data.id)
+            let validatedPages = [page.data.id]
+            if(args.isStartingPage) {
+                validatedPages.push(localData.startingPage)
+                commit(mutationTypes.CHANGE_STARTING_PAGE,page.data.id)
+            }
             commit(mutationTypes.VALIDATE_BOOK,{
-                pages:[page.data.id],
+                pages:validatedPages,
                 actionType:null,
                 onlyId: true
             })

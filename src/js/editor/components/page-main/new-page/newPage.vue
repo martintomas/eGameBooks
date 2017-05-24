@@ -12,8 +12,12 @@
                 <br>
                 <br>
                 <label class="mainLabel" for='newPagePageNumber'>{{String.doTranslationEditor('page-number')}}<span class='required'>*</span>: </label>
-                <input v-if="pageNumberMethod === 'optional'" class="modalInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" :placeholder="String.doTranslationEditor('add-page-number')">
+                <input v-if="pageNumberMethod === 'optional'" class="mainInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" :placeholder="String.doTranslationEditor('add-page-number')">
                 <input v-else class="mainInput horizontal-space" v-model="pageNumber" type="number" id="newPagePageNumber" disabled>
+                <br>
+                <br>
+                <label class="mainLabel" for='newPagePageTittle'>{{String.doTranslationEditor('page-tittle')}}: </label>
+                <input class="mainInput horizontal-space" v-model="pageTittle" type="text" id="newPagePageTittle" :placeholder="String.doTranslationEditor('add-page-tittle')">
                 <br>
                 <br>
                 <label class="mainLabel" for='newPagePageType'>{{String.doTranslationEditor('new-page-page-type')}}<span class='required'>*</span>: </label>
@@ -49,6 +53,7 @@ export default {
             startingPage: 'no',
             pageNumberMethod: 'first',
             pageNumber: '',
+            pageTittle:'',
             pageType:'text',
         }
     },
@@ -75,6 +80,10 @@ export default {
     mounted() {
         this.pageNumber = this.getSuitablePageNumber(this.pageNumberMethod)
     },
+    beforeRouteLeave (to, from, next) {
+        this.pageTittle = '' //clear page tittle data
+        next()
+    },
     methods: {
         getSuitablePageNumber(method) {
             if(method === 'first') {
@@ -92,6 +101,7 @@ export default {
                 pageNumber:Number(this.pageNumber),
                 isStartingPage: this.startingPage === 'yes' ? true:false,
                 pageType: this.pageType,
+                pageTittle: this.pageTittle,
             }
 
             if(this.newPageValidation(newPage)) {
