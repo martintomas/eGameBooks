@@ -343,13 +343,7 @@ export default {
                 'redoArgs':localData,
                 'undo':true,
                 'redo':false,
-            })
-
-            commit(mutationTypes.DELETE_PAGE,pageId)
-            commit(mutationTypes.MODULES_PAGE_DELETED,localData.pageData)
-            commit(mutationTypes.VALIDATE_BOOK,{
-                pages:pageToBeValidated,
-                actionType:null
+                'runRedo':true
             })
         },
         addNewPage({ commit, dispatch, state },newPage) {
@@ -433,24 +427,7 @@ export default {
                 'redoArgs':localData,
                 'undo':true,
                 'redo':false,
-            })
-
-            commit(mutationTypes.ADD_PAGE,page)
-            commit(mutationTypes.MODULES_PAGE_ADDED,page)
-            let validatedPages = [page.data.id]
-            if(args.isStartingPage) {
-                validatedPages.push(localData.startingPage)
-                commit(mutationTypes.CHANGE_STARTING_PAGE,page.data.id)
-            }
-            if(args.setLinkAction && args.linkData.pageId) {
-                if(validatedPages.indexOf(args.linkData.pageId) === -1) validatedPages.push(args.linkData.pageId)
-                args.linkData.value = page.data.id //set value for new page
-                commit(mutationTypes.CHANGE_LINK_PAGEID,args.linkData)
-            }
-            commit(mutationTypes.VALIDATE_BOOK,{
-                pages:validatedPages,
-                actionType:null,
-                onlyId: true
+                'runRedo':true
             })
         },
         moduleRefAdded({ commit, dispatch, state }, args) {

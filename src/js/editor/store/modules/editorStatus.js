@@ -98,6 +98,9 @@ export default {
                 commit(mutationTypes.ADD_UNDO_ACTION,args)
                 commit(mutationTypes.REMOVE_REDO_ACTION)
             }
+            if(args.runRedo) {
+                args.redoAction(args.redoArgs)
+            }
         },
         callUndoAction({ commit, dispatch, state },index) {
             let undoArgsBackup = JSON.parse(JSON.stringify(state.undoActions[index].undoArgs))

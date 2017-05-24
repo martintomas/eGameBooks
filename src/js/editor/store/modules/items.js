@@ -145,10 +145,8 @@ export default {
                 'redoArgs':localData,
                 'undo':true,
                 'redo':false,
+                'runRedo':true
             })
-            
-            commit(mutationTypes.ADD_NEW_ITEM,newItem)
-            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',newItem.localId))
         },
         deleteItemModule({ commit, dispatch, state }, localId) {
             let localData = {
@@ -184,18 +182,8 @@ export default {
                 'redoArgs':localData,
                 'undo':true,
                 'redo':false,
-            })
-
-            commit(mutationTypes.DELETE_ITEM,localId)
-            dispatch('moduleRefDeleted',{
-                moduleName:'item',
-                rev:localData.reverseInfo
-            }).then(() => {
-                editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localId))
-            }).catch((reason) => {
-                console.log(reason)
-            })
-            
+                'runRedo':true
+            })            
         },
         editItemModule({ commit, dispatch, state}, newValues) {
             let localDataEdit = JSON.parse(JSON.stringify(newValues))
@@ -224,10 +212,8 @@ export default {
                 'redoArgs':localDataEdit,
                 'undo':true,
                 'redo':false,
-            })
-
-            commit(mutationTypes.EDIT_ITEM,localDataEdit)    
-            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edited-item'))        
+                'runRedo':true
+            })       
         }
     }
 }
