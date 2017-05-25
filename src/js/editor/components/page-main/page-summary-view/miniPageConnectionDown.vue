@@ -39,7 +39,7 @@
                         </dyn-tooltip>
                         <template v-if='!existsInText'>
                             <dyn-tooltip class='dyn-tooltip'>
-                                <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                                <i class="fa fa-trash unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='deleteLinkAction'></i>
                                 <span slot='tooltipText'>{{String.doTranslationEditor('delete-link')}}</span>
                             </dyn-tooltip>
                         </template>
@@ -69,7 +69,7 @@
                 <div class="mini-page-connection-missing-buttons">
                     <span class='mini-page-connection-missing-button' @click='newPage'>{{String.doTranslationEditor('new-page-simple')}}</span>
                     <span class='mini-page-connection-missing-button'>{{String.doTranslationEditor('set-up-link')}}</span>
-                    <span v-if='!existsInText' class='mini-page-connection-missing-button'>{{String.doTranslationEditor('delete-link-simple')}}</span>
+                    <span v-if='!existsInText' class='mini-page-connection-missing-button' @click='deleteLinkAction'>{{String.doTranslationEditor('delete-link-simple')}}</span>
                 </div>
             </div>
         </template>
@@ -81,6 +81,7 @@
 
 import MiniPageConnections from 'editor/components/page-main/page-summary-view/miniPageConnections'
 import * as mutationTypes from 'editor/store/mutationTypes'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 export default {
     mixins: [MiniPageConnections],
@@ -110,6 +111,15 @@ export default {
     methods: {
         newPage() {
             this.$router.push({ name: 'editor-new-page-default', query: {page:this.pageEditedId,action:this.model.id} })
+        },
+        deleteLinkAction() {
+            messageBoxWrapper.showWarnMessageStorno(this.$store.commit,String.doTranslationEditor('message-delete-page-link'),() => {
+                this.$store.dispatch('editor/deleteAction',{
+                    actionType:'link',
+                    pageId: this.pageEditedId,
+                    actionId: this.model.id
+                })
+            })
         },
         editMiniPage() {
 

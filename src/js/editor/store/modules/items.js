@@ -127,6 +127,26 @@ export default {
                 }
             }
         },
+        [mutationTypes.MODULES_ACTION_DELETED](state,args) {
+            //args should contain pos and action variables
+            //action is copy of action
+            //pos contains actionType, pageId and actionId values
+            if('item' === args.pos.actionType && args.action.ref != null) { //check if item was deleted -> update rev info
+                for(let i=0;i<state.reverseInfo[args.action.ref].length;i++) {
+                    if(state.reverseInfo[args.action.ref][i].pageId == args.pos.pageId && state.reverseInfo[args.action.ref][i].actionId == args.pos.actionId) {
+                        Vue.delete(state.reverseInfo[args.action.ref],i)
+                    }
+                }
+            }
+        },
+        [mutationTypes.MODULES_ACTION_ADDED](state,args) {
+            //args should contain pos and action variables
+            //action is copy of action
+            //pos contains actionType, pageId and actionId values
+            if('item' === args.pos.actionType && args.action.ref != null) { //build reverse info
+                state.reverseInfo[args.action.ref].push({'pageId':args.pos.pageId,'actionId':args.pos.actionId})
+            }
+        }
     },
     actions: {
         newItemModule({ commit, dispatch, state }, newItem) {

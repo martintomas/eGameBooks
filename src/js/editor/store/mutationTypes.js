@@ -10,6 +10,10 @@ export const CHANGE_STARTING_PAGE = 'CHANGE_STARTING_PAGE'
 export const MODULE_REF_DELETED = 'MODULE_REF_DELETED'
 export const MODULE_REF_ADDED = 'MODULE_REF_ADDED'
 export const CHANGE_LINK_PAGEID = 'CHANGE_LINK_PAGEID'
+export const DELETE_ACTION = 'DELETE_ACTION'
+export const ADD_ACTION = 'ADD_ACTION'
+export const DELETE_LINK = 'DELETE_LINK'
+export const ADD_LINK = 'ADD_LINK'
 
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'
@@ -28,6 +32,8 @@ export const MODULES_BUILD_REVERSE_INFO = 'MODULES_BUILD_REVERSE_INFO'
 export const MODULES_UPDATE_REV = 'MODULES_UPDATE_REV'
 export const MODULES_PAGE_DELETED = 'MODULES_PAGE_DELETED'
 export const MODULES_PAGE_ADDED = 'MODULES_PAGE_ADDED'
+export const MODULES_ACTION_DELETED = 'MODULES_ACTION_DELETED'
+export const MODULES_ACTION_ADDED = 'MODULES_ACTION_ADDED'
 
 //Item module mutations
 export const ADD_NEW_ITEM = 'ADD_NEW_ITEM'

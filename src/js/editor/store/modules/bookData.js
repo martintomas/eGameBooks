@@ -265,6 +265,57 @@ export default {
                 }
             }
             editorNotification.newInternalInfo('Impossible to change link pageId value')
+        },
+        [mutationTypes.DELETE_LINK](state,args) {
+            //args should contain pageId and action
+            //link action should be deleted by delete action mutation, this part only takes care of deleting reverse info
+            if(args.action.pageId in state.pages) {
+                for(let i=0;i<state.pages[args.action.pageId].reverseLink.length;i++) {
+                    if(state.pages[args.action.pageId].reverseLink[i].pageId == args.pageId && state.pages[args.action.pageId].reverseLink[i].actionId == args.action.id) {
+                        Vue.delete(state.pages[args.action.pageId].reverseLink,i)
+                    }
+                }
+            }
+        },
+        [mutationTypes.ADD_LINK](state,args) {
+            //link action is added by add action mutation, this part takes only care about reverse info
+            if(args.action.pageId in state.pages) {
+                state.pages[args.action.pageId].reverseLink.push({'pageId':args.pageId,'actionId':args.action.id})
+            }
+        },
+        [mutationTypes.DELETE_ACTION](state,args) {
+            //args should contain actionType, pageId and actionId variables
+            if(args.pageId in state.pages) {
+                if(args.actionType in state.pages[args.pageId].actions) {
+                    if(args.actionId in state.pages[args.pageId].actions[args.actionType]) {
+                        Vue.delete(state.pages[args.pageId].actions[args.actionType],args.actionId)
+                        editorNotification.newInternalInfo('Action was deleted properly')
+                        return
+                    }
+                }
+            }
+            editorNotification.newInternalInfo('Impossible to delete action. Action wasnt loaded properly')
+
+        },
+        [mutationTypes.ADD_ACTION](state,args) {
+            //args should contain pos and action variables
+            //action is copy of action
+            //pos contains actionType, pageId and actionId values
+            if(args.pos.pageId in state.pages) {
+                if(args.pos.actionType in state.pages[args.pos.pageId].actions) {
+                    if(args.pos.actionId in state.pages[args.pos.pageId].actions[args.pos.actionType]) { //action already exists --> imposible to add
+                        editorNotification.newInternalError('Impossible to add action. Action with same id already exists')
+                        return
+                    } else {
+                        Vue.set(state.pages[args.pos.pageId].actions[args.pos.actionType],args.pos.actionId,args.action)
+                    }
+                } else { //create even actionType
+                    let res = {}
+                    res[args.pos.actionId] = args.action
+                    Vue.set(state.pages[args.pos.pageId].actions,args.pos.actionType,res)
+                }
+                editorNotification.newInternalInfo('Action was added properly')
+            }
         }
     },
     getters: {
@@ -429,6 +480,62 @@ export default {
                 'redo':false,
                 'runRedo':true
             })
+        },
+        deleteAction({ commit, dispatch, state }, args) {
+            //args should contain actionType, pageId and actionId variables
+            let localData, valid = false
+            if(args.pageId in state.pages) {
+                if(args.actionType in state.pages[args.pageId].actions) {
+                    if(args.actionId in state.pages[args.pageId].actions[args.actionType]) valid = true
+                }
+            }
+            if(!valid) {
+                editorNotification.newInternalInfo('Impossible to delete action. Action wasnt loaded properly')
+                return
+            }
+            localData = {
+                action: JSON.parse(JSON.stringify(state.pages[args.pageId].actions[args.actionType][args.actionId])),
+                pos: JSON.parse(JSON.stringify(args))
+            }
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.ADD_ACTION,localData)
+                    commit(mutationTypes.MODULES_ACTION_ADDED,localData)
+                    if(localData.pos.actionType === 'link') {
+                        commit(mutationTypes.ADD_LINK,{
+                            pageId: localData.pos.pageId,
+                            action:localData.action
+                        })
+                    }
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:[localData.pos.pageId],
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.DELETE_ACTION,localData.pos)
+                    commit(mutationTypes.MODULES_ACTION_DELETED,localData)
+                    if(localData.pos.actionType === 'link') {
+                        commit(mutationTypes.DELETE_LINK,{
+                            pageId: localData.pos.pageId,
+                            action:localData.action
+                        })
+                    }
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:[localData.pos.pageId],
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+                'runRedo':true
+            })
+            
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed
