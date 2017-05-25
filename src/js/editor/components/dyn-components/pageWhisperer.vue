@@ -137,7 +137,8 @@ export default {
             this.hideWhisperer()
         },
         clear() {
-            this.pageNumberLocal = ''
+            if(this.pageNumber === null) this.pageNumberLocal = ''
+            else if(this.pageNumber != this.pageNumberLocal) this.pageNumberLocal = this.pageNumber
         },
     }
 }
