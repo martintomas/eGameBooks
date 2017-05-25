@@ -253,7 +253,24 @@ body {
     display:block; 
     margin-bottom:0.2rem;
 }
-
+.modal-content-form {
+    width: 50%;
+    min-width: 12rem;
+    max-width:25rem;
+    background-color: #fefefe;
+}
+.modal-body-form {
+    padding: 0.5rem;
+    margin-bottom: 3rem;
+    text-align:center;
+}
+.modal-footer-form {
+    padding: 0.2rem 2%;
+    background-color: white;
+    text-align:center;
+    height: 3rem;
+    vertical-align: middle;
+}
 .helper i{
     font-size:140%;
     font-weight: bold;

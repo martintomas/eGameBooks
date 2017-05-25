@@ -103,4 +103,6 @@ module.exports = {
     'new-page-page-type':'Page type',
     'go-to-page':'Go to page',
     'set-up-link':'Set up link',
+    'edit-link-action':'Edit link action',
+    'page':'Page',
 }

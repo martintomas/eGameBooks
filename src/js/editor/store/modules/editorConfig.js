@@ -11,5 +11,7 @@ export default {
         listsAutomaticHide: 3,
 
         commentShaveHTMLPageConnection: 100, //max number of letters in comments
+        whispererShaveHTML: 50,
+        whispererLimit: 20,
     }
 }

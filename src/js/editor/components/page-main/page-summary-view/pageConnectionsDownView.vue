@@ -10,7 +10,7 @@
                     </template>
                     <template v-else>
                         <ul>
-                            <li is="mini-page-connection-down" v-for="(model,key,index) in pages" ref="pageConnectionsBox" :key="model.id +'-'+model.pageId" :model="model" :index='index' :model-length='pagesLength' :page-edited-id='pageId'
+                            <li is="mini-page-connection-down" v-for="(model,key,index) in pages" ref="pageConnectionsBox" :key="model.id +'-'+model.pageId" :model="model" :index='index' :model-length='pagesLength' :page-edited-id='pageId' @edit-link-action='editLinkAction'
                                 :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
                             </li>
                         </ul>
@@ -18,6 +18,26 @@
                 </div>
             </div>
         </div>
+
+        <!-- modal for link editing -->
+        <dyn-modal ref='linkEditModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
+            <span slot='modalHeader'>
+                {{String.doTranslationEditor('edit-link-action')}}
+            </span>
+            <span slot='modalBody'>
+                <template v-if='editedLink != null'>
+                    <label class="modalLabel" for='pageNumberEditLink'>{{String.doTranslationEditor('page-number')}}<span class='required'>*</span>: </label>
+                    <page-whisperer ref='linkEditPageWhisperer' :page-number='editedLink.pageId' :component-id="generateHash('page-con-down',0)" input-id='pageNumberEditLink'></page-whisperer>
+                </template>
+            </span>
+            <span slot='modalFooter'>
+                <template v-if='editedLink != null'>
+                    <span class='common-button' @click='saveEditedLink'>{{String.doTranslationEditor('save')}}</span>
+                    <span class='common-button' @click='closeEditedLink'>{{String.doTranslationEditor('close')}}</span>
+                </template>
+            </span>
+        </dyn-modal>
+
     </div>
 </template>
 
@@ -25,11 +45,21 @@
 
 import MiniPageConnectionDown from 'editor/components/page-main/page-summary-view/miniPageConnectionDown.vue'
 import PageConnectionsView from 'editor/components/page-main/page-summary-view/pageConnectionsView'
+import DynModal from 'editor/components/dyn-components/dynModal.vue'
+import PageWhisperer from 'editor/components/dyn-components/pageWhisperer.vue'
+import {generateHash} from 'defaults.js'
 
 export default {
     mixins: [PageConnectionsView],
     components: {
         MiniPageConnectionDown,
+        DynModal,
+        PageWhisperer
+    },
+    data() {
+        return {
+            editedLink: null
+        }
     },
     computed: {
         pages() {
@@ -37,6 +67,30 @@ export default {
         },
         pagesLength() {
             return Object.keys(this.pages).length
+        }
+    },
+    methods: {
+        generateHash,
+        editLinkAction(linkId) {
+            if(!(linkId in this.pages)) {
+                console.log('missing action')
+                return
+            }
+            this.editedLink = this.pages[linkId]
+            this.$refs.linkEditModal.show()
+        },
+        saveEditedLink() {
+            this.$store.dispatch('editor/changeLinkPageId',{
+                pageId: this.pageId,
+                actionId: this.editedLink.id,
+                value:this.$refs.linkEditPageWhisperer.pageNumberLocal
+            }).then(() => {
+                this.closeEditedLink()
+            })
+        },
+        closeEditedLink() {
+            this.$refs.linkEditPageWhisperer.clear()
+            this.$refs.linkEditModal.close()
         }
     }
 }

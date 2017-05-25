@@ -68,7 +68,7 @@
                 </div>
                 <div class="mini-page-connection-missing-buttons">
                     <span class='mini-page-connection-missing-button' @click='newPage'>{{String.doTranslationEditor('new-page-simple')}}</span>
-                    <span class='mini-page-connection-missing-button'>{{String.doTranslationEditor('set-up-link')}}</span>
+                    <span class='mini-page-connection-missing-button' @click='editMiniPage'>{{String.doTranslationEditor('set-up-link')}}</span>
                     <span v-if='!existsInText' class='mini-page-connection-missing-button' @click='deleteLinkAction'>{{String.doTranslationEditor('delete-link-simple')}}</span>
                 </div>
             </div>
@@ -122,7 +122,7 @@ export default {
             })
         },
         editMiniPage() {
-
+            this.$emit('edit-link-action',this.model.id)
         }
     }
 }

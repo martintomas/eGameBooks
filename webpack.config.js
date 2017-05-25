@@ -56,7 +56,7 @@ module.exports = {
     },
     entry: {
         app: './src/js/app.js',
-        vendor: ['vue', 'vuex', 'vue-router', 'iscroll', 'markdown-it', 'truncate-html']
+        vendor: ['vue', 'vuex', 'vue-router', 'iscroll', 'markdown-it', 'sanitize-html' ,'truncate-html']
     },
     output: {
         //filename: '[name].[chunkhash].js',

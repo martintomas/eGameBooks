@@ -259,7 +259,25 @@ export default {
             //args should contain pageId, actionId, value arguments
             if(args.pageId in state.pages) {
                 if(args.actionId in state.pages[args.pageId].actions.link) {
+                    let oldValue = state.pages[args.pageId].actions.link[args.actionId].pageId
                     Vue.set(state.pages[args.pageId].actions.link[args.actionId],'pageId',args.value)
+                    if(oldValue != null && oldValue != args.value) { //remove old reverse info
+                        if(oldValue in state.pages) {
+                            for(let i=0;i<state.pages[oldValue].reverseLink.length;i++) {
+                                if(state.pages[oldValue].reverseLink[i].pageId == args.pageId && state.pages[oldValue].reverseLink[i].actionId == args.actionId) {
+                                    Vue.delete(state.pages[oldValue].reverseLink,i)
+                                }
+                            }
+                        }
+                    }
+                    if(args.value != null && oldValue != args.value) { //add new reverse info
+                        if(args.value in state.pages) {
+                            state.pages[args.value].reverseLink.push({'pageId':args.pageId,'actionId':args.actionId})
+                            state.pages[args.value].reverseLink.sort((a,b) => {
+                                return ((a.pageId < b.pageId) ? -1 : ((a.pageId > b.pageId) ? 1 : 0))
+                            })
+                        }
+                    }
                     editorNotification.newInternalInfo('Link pageId value was changed to: '+args.value)
                     return
                 }
@@ -281,6 +299,9 @@ export default {
             //link action is added by add action mutation, this part takes only care about reverse info
             if(args.action.pageId in state.pages) {
                 state.pages[args.action.pageId].reverseLink.push({'pageId':args.pageId,'actionId':args.action.id})
+                state.pages[args.action.pageId].reverseLink.sort((a,b) => {
+                    return ((a.pageId < b.pageId) ? -1 : ((a.pageId > b.pageId) ? 1 : 0))
+                })
             }
         },
         [mutationTypes.DELETE_ACTION](state,args) {
@@ -490,7 +511,7 @@ export default {
                 }
             }
             if(!valid) {
-                editorNotification.newInternalInfo('Impossible to delete action. Action wasnt loaded properly')
+                editorNotificationWrapper.newInternalInfo('Impossible to delete action. Action wasnt loaded properly')
                 return
             }
             localData = {
@@ -536,6 +557,53 @@ export default {
                 'runRedo':true
             })
             
+        },
+        changeLinkPageId({ commit, dispatch, state }, args) {
+            let valid = false, localData
+
+            if(args.pageId in state.pages) {
+                if(args.actionId in state.pages[args.pageId].actions.link) valid = true
+            }
+            if(!valid) editorNotificationWrapper.newInternalInfo('Impossible to change link pageId value')
+
+            localData = {
+                newLink: JSON.parse(JSON.stringify(args)),
+                oldPageId: state.pages[args.pageId].actions.link[args.actionId].pageId
+            }
+            
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.CHANGE_LINK_PAGEID,{
+                        pageId: localData.newLink.pageId,
+                        actionId: localData.newLink.actionId,
+                        value: localData.oldPageId
+                    })
+                    let validatedBooks = [localData.newLink.pageId]
+                    if(localData.oldPageId != null && validatedBooks.indexOf(localData.oldPageId) === -1) validatedBooks.push(localData.oldPageId)
+                    if(localData.newLink.value != null && validatedBooks.indexOf(localData.newLink.value) === -1) validatedBooks.push(localData.newLink.value)
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:validatedBooks,
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.CHANGE_LINK_PAGEID,localData.newLink)
+                    let validatedBooks = [localData.newLink.pageId]
+                    if(localData.oldPageId != null && validatedBooks.indexOf(localData.oldPageId) === -1) validatedBooks.push(localData.oldPageId)
+                    if(localData.newLink.value != null && validatedBooks.indexOf(localData.newLink.value) === -1) validatedBooks.push(localData.newLink.value)
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:validatedBooks,
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+                'runRedo':true
+            })
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed

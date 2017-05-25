@@ -3,13 +3,13 @@
         <!-- prepare modals for item module -->
 
         <!-- Modal for new item creation -->
-        <dyn-modal ref='newItemModal' body-specific='modal-body-item' footer-specific='modal-footer-item' content-specific='modal-content-item'>
+        <dyn-modal ref='newItemModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
             <span slot='modalHeader'>
                 {{String.doTranslationEditor('new-item-modal-header')}}
             </span>
             <span slot='modalBody'>
                 <div class='new-item-body'>
-                    <label for="newItemName" class="modalLabel">{{String.doTranslationEditor('item-name')}}*: </label>
+                    <label for="newItemName" class="modalLabel">{{String.doTranslationEditor('item-name')}}<span class='required'>*</span>: </label>
                     <input class="modalInput" v-model="newItem.name" type="text" id="newItemName" :placeholder="String.doTranslationEditor('add-item-name')">
                     <dyn-tooltip class='helper float-right'>
                         <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
@@ -32,13 +32,13 @@
         </dyn-modal>
 
         <!-- Modal for item editing -->
-        <dyn-modal ref='itemEditModal' body-specific='modal-body-item' footer-specific='modal-footer-item' content-specific='modal-content-item'>
+        <dyn-modal ref='itemEditModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
             <span slot='modalHeader'>
                 {{String.doTranslationEditor('edit-item-modal-header')}}
             </span>
             <span slot='modalBody'>
                 <div class='new-item-body' v-if='openedItem != null'>
-                    <label for="newItemName" class="modalLabel">{{String.doTranslationEditor('item-name')}}*: </label>
+                    <label for="newItemName" class="modalLabel">{{String.doTranslationEditor('item-name')}}<span class='required'>*</span>: </label>
                     <input class="modalInput" v-model="openedItem.name" type="text" id="newItemName" :placeholder="String.doTranslationEditor('add-item-name')">
                     <dyn-tooltip class='helper float-right'>
                         <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
@@ -63,7 +63,7 @@
         </dyn-modal>
 
         <!-- Modal for item info -->
-        <dyn-modal ref='itemInfoModal' body-specific='modal-body-item' footer-specific='modal-footer-item' content-specific='modal-content-item'>
+        <dyn-modal ref='itemInfoModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
             <span slot='modalHeader'>
                 {{String.doTranslationEditor('info-item-modal-header')}}
             </span>
@@ -244,24 +244,6 @@ export default {
 </script>
 
 <style>
-.modal-content-item {
-    width: 50%;
-    min-width: 12rem;
-    max-width:25rem;
-    background-color: #fefefe;
-}
-.modal-body-item {
-    padding: 0.5rem;
-    margin-bottom: 3rem;
-    text-align:center;
-}
-.modal-footer-item {
-    padding: 0.2rem 2%;
-    background-color: white;
-    text-align:center;
-    height: 3rem;
-    vertical-align: middle;
-}
 .new-item-body {
     text-align:left;
     width:100%;

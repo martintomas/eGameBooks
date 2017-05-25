@@ -1,4 +1,5 @@
 var truncate = require('truncate-html')
+var sanitize = require('sanitize-html');
 
 //Format string
 if (!String.prototype.format) { // First, checks if it isn't implemented yet.
@@ -34,4 +35,11 @@ String.shaveText = function(value, maxChars, maxLastWord = 20) {
 
 String.shaveHTML = function(value, maxChars, args = {}) {
     return truncate(value, maxChars, args)
+}
+
+String.sanitizeHTML = function(value,allowedTags=['b','strong','i','em'],allowedAttributes=[]) {
+    return sanitize(value,{
+        allowedTags:allowedTags,
+        allowedAttributes: allowedAttributes
+    })
 }
