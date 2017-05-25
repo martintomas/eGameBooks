@@ -104,8 +104,8 @@ export default {
             if (updateScroller) this.updateScroller()
         },
         moveMiniPagesX(fromPage, distance) {
-            for (var i = fromPage.index + 1; i < this.$refs['pageConnectionsBox'].length; i++) {
-                this.$refs['pageConnectionsBox'][i].moveDistanceLeft(distance);
+            for (let i = 0 ; i < this.$refs.pageConnectionsBox.length; i++) { //manipulation with pages connection changes ref order --> go through all list and check index
+                if(this.$refs.pageConnectionsBox[i].index > fromPage.index) this.$refs.pageConnectionsBox[i].moveDistanceLeft(distance);
             }
         },
         updateWidthChange() {

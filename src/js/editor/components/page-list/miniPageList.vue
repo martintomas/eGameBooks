@@ -175,9 +175,6 @@
                 if (updateScroller) this.updateScroller();
             },
             moveMiniPagesY(fromPage, distance) {
-                // for (var i = fromPage.index +1 ; i < this.$refs.miniPagesBox.length; i++) {
-                //     this.$refs.miniPagesBox[i].moveDistanceTop(distance);
-                // }
                 for (let i = 0 ; i < this.$refs.miniPagesBox.length; i++) { //manipulation with pages list changes ref order --> go through all list and check index
                     if(this.$refs.miniPagesBox[i].index > fromPage.index) this.$refs.miniPagesBox[i].moveDistanceTop(distance);
                 }
