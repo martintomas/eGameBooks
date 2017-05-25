@@ -156,7 +156,13 @@ export default {
             return true
         },
         closeNewPage() {
-            this.$router.push({ name: 'editor-page-view-default'})
+            if(this.setActionId != null && this.setPageId != null) {
+                this.$router.push({ name: 'editor-page-view',params: { pageId: this.setPageId }})
+            } else if(this.pageId && this.pageId != null) {
+                this.$router.push({ name: 'editor-page-view',params: { pageId: this.pageId }})
+            } else {
+                this.$router.push({ name: 'editor-page-view-default'})
+            }
         }
     }
 }
