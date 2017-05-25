@@ -534,6 +534,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-action'),false)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
@@ -550,6 +551,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-action'),false)
                 },
                 'redoArgs':localData,
                 'undo':true,
@@ -586,6 +588,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-modify-link-action'),false)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
@@ -598,6 +601,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-modify-link-action'),false)
                 },
                 'redoArgs':localData,
                 'undo':true,
