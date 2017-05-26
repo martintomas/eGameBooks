@@ -112,7 +112,9 @@ export default {
         newPage() {
             this.$router.push({ name: 'editor-new-page-default', query: {page:this.pageEditedId,action:this.model.id} })
         },
-        deleteLinkAction() {
+        deleteLinkAction(event) {
+            if (event) event.stopPropagation()
+
             messageBoxWrapper.showWarnMessageStorno(this.$store.commit,String.doTranslationEditor('message-delete-page-link'),() => {
                 this.$store.dispatch('editor/deleteAction',{
                     actionType:'link',
@@ -121,7 +123,9 @@ export default {
                 })
             })
         },
-        editMiniPage() {
+        editMiniPage(event) {
+            if (event) event.stopPropagation()
+            
             this.$emit('edit-link-action',this.model.id)
         }
     }

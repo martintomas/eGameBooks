@@ -10,7 +10,7 @@
                     </template>
                     <template v-else>
                         <ul>
-                            <li is="mini-page-connection-up" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="index" :model="model" :index='index' :model-length='pages.length'
+                            <li is="mini-page-connection-up" v-for="(model,index) in pages" ref="pageConnectionsBox" :key="pageId+'-'+model.id" :model="model" :index='index' :model-length='pages.length'
                                 :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
                             </li>
                         </ul>

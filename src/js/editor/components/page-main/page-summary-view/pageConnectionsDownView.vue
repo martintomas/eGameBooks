@@ -10,7 +10,7 @@
                     </template>
                     <template v-else>
                         <ul>
-                            <li is="mini-page-connection-down" v-for="(model,key,index) in pages" ref="pageConnectionsBox" :key="model.id +'-'+model.pageId" :model="model" :index='index' :model-length='pagesLength' :page-edited-id='pageId' @edit-link-action='editLinkAction'
+                            <li is="mini-page-connection-down" v-for="(model,key,index) in pages" ref="pageConnectionsBox" :key="pageId+'-'+model.id" :model="model" :index='index' :model-length='pagesLength' :page-edited-id='pageId' @edit-link-action='editLinkAction'
                                 :page-mini-distance="pageDistanceDefault" v-on:show-connection-page="showConnectionPage" v-on:hide-connection-page="hideConnectionPage" :active-distance="pageMaxActivationDistance" v-on:mini-page-update-width='miniPageUpdateWidth'>
                             </li>
                         </ul>
@@ -27,7 +27,7 @@
             <span slot='modalBody'>
                 <template v-if='editedLink != null'>
                     <label class="modalLabel" for='pageNumberEditLink'>{{String.doTranslationEditor('page-number')}}<span class='required'>*</span>: </label>
-                    <page-whisperer ref='linkEditPageWhisperer' :page-number='editedLink.pageId' :component-id="generateHash('page-con-down',0)" input-id='pageNumberEditLink'></page-whisperer>
+                    <page-whisperer ref='linkEditPageWhisperer' :edited-page='pageId' :page-number='editedLink.pageId' :component-id="generateHash('page-con-down',0)" input-id='pageNumberEditLink'></page-whisperer>
                 </template>
             </span>
             <span slot='modalFooter'>

@@ -60,9 +60,9 @@ export default {
         },
     },
     watch: {
-        page() {
-            if (this.active) this.hideMiniPageEvent() //when changed --> hide active page
-        }
+        // page() {
+        //     if (this.active) this.hideMiniPageEvent() //when changed --> hide active page
+        // }
     },
     mounted() {
         this.miniPageRef = this.$refs.miniPage
