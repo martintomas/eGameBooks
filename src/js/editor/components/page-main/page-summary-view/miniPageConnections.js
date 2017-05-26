@@ -16,10 +16,8 @@ export default {
     },
     data() {
         return {
-            miniPageRef: null,
             active: false,
-            tooltipMiniPage: null,
-            tooltipTextMiniPage: null,
+            previousPageId: null,
             tooltipTextMiniPageActive: false,
             pageMiniDistanceMove: 0,
             pageMiniWidth: 200,
@@ -29,7 +27,7 @@ export default {
         styleMiniPageBox() {
             let style = {}
             style.left = ((this.pageMiniDistance * this.index) + this.pageMiniDistanceMove) + 'px'
-            if (this.active && this.tooltipMiniPage != null) { //make area bigger only when there is tooltip to be shown
+            if (this.active) { //make area bigger only when there is tooltip to be shown
                 style.width = this.activeDistance - 5 + 'px'
                 style.minWidth = this.activeDistance - 5 + 'px'
             }
@@ -60,15 +58,23 @@ export default {
         },
     },
     watch: {
-        // page() {
-        //     if (this.active) this.hideMiniPageEvent() //when changed --> hide active page
-        // }
+        pageId(value) { //page id changed --> make sure that shown page is still correctly shown
+            if(this.active && ((value === null && this.previousPageId != null) || (value != null && this.previousPageId === null))) {
+                if(this.tooltipTextMiniPageActive && this.$refs.tooltipTextMiniPage) { //hide text tooltip if shown
+                    this.tooltipTextMiniPageActive = false
+                    this.hideTooltip(this.$refs.tooltipTextMiniPage)
+                }
+                this.$nextTick(() => { //wait for changes apply
+                    this.showMiniPageEvent()
+                    this.$emit('show-connection-page', this)
+                })
+            }
+            this.previousPageId = value
+        },
     },
     mounted() {
-        this.miniPageRef = this.$refs.miniPage
-        this.tooltipMiniPage = this.$refs.tooltipMiniPage
-        this.tooltipTextMiniPage = this.$refs.tooltipTextMiniPage
         this.pageMiniWidth = this.$refs.miniPage.clientWidth
+        this.previousPageId = this.pageId
 
         if (this.index === 0) this.$emit('mini-page-update-width', this.pageMiniWidth)
     },
@@ -90,18 +96,18 @@ export default {
             //console.log('Mini pages - showing page number: ' + this.pageId);
 
             this.active = true
-            this.miniPageRef.classList.add('active-page')
-            this.showTooltip(this.tooltipMiniPage)
+            this.$refs.miniPage.classList.add('active-page')
+            this.showTooltip(this.$refs.tooltipMiniPage)
 
         },
         hideMiniPageEvent() {
             //console.log('Mini pages - hiding page number: ' + this.pageId)
-
+            
             this.active = false
-            this.miniPageRef.classList.remove('active-page')
-            this.hideTooltip(this.tooltipMiniPage)
+            this.$refs.miniPage.classList.remove('active-page')
+            this.hideTooltip(this.$refs.tooltipMiniPage)
             this.tooltipTextMiniPageActive = false
-            this.hideTooltip(this.tooltipTextMiniPage)
+            this.hideTooltip(this.$refs.tooltipTextMiniPage)
         },
         goToMiniPage(event) {
             if (event) event.stopPropagation()
@@ -114,15 +120,15 @@ export default {
 
                 if (this.tooltipTextMiniPageActive) { //enable to toogle text tooltip
                     this.tooltipTextMiniPageActive = false
-                    this.hideTooltip(this.tooltipTextMiniPage)
+                    this.hideTooltip(this.$refs.tooltipTextMiniPage)
                 } else {
                     this.tooltipTextMiniPageActive = true
-                    this.showTooltip(this.tooltipTextMiniPage)
+                    this.showTooltip(this.$refs.tooltipTextMiniPage)
                 }
             } else {
                 this.tooltipTextMiniPageActive = true
                 setTimeout(() => { //wait a bit before animation of activation is finished
-                    this.showTooltip(this.tooltipTextMiniPage)
+                    this.showTooltip(this.$refs.tooltipTextMiniPage)
                 }, 350)
             }
         },

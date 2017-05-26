@@ -109,7 +109,9 @@ export default {
         }
     },
     methods: {
-        newPage() {
+        newPage(event) {
+            if (event) event.stopPropagation()
+
             this.$router.push({ name: 'editor-new-page-default', query: {page:this.pageEditedId,action:this.model.id} })
         },
         deleteLinkAction(event) {
