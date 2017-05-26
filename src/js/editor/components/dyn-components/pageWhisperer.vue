@@ -22,6 +22,7 @@ import IScroll from 'iscroll'
 export default {
     props: {
         pageNumber: null,
+        editedPage: null,
         componentId: null,
         inputId: ''
     },
@@ -48,22 +49,23 @@ export default {
         pagesLocal() {
             let temp = [], key, i, text
             let pageNumberLocalStr = String(this.pageNumberLocal)
-
             if(pageNumberLocalStr === '' || pageNumberLocalStr === null) {
                 for(i=0;i<this.pagesOrder.length;i++) {
-                    if(this.pages[this.pagesOrder[i]].data.pageTittle != '' && this.pages[this.pagesOrder[i]].data.pageTittle != null) text = this.pages[this.pagesOrder[i]].data.pageTittle
-                    else text = String.sanitizeHTML(String.shaveHTML(this.pages[this.pagesOrder[i]].data.renderedText,this.whispererShaveHTML))
+                    if(this.editedPage != this.pages[this.pagesOrder[i]].data.pageNumber) {
+                        if(this.pages[this.pagesOrder[i]].data.pageTittle != '' && this.pages[this.pagesOrder[i]].data.pageTittle != null) text = this.pages[this.pagesOrder[i]].data.pageTittle
+                        else text = String.sanitizeHTML(String.shaveHTML(this.pages[this.pagesOrder[i]].data.renderedText,this.whispererShaveHTML))
 
-                    temp.push({
-                        'pageNumber': this.pages[this.pagesOrder[i]].data.pageNumber,
-                        'text': text
-                    })
-                    if(i>this.whispererLimit) break
+                        temp.push({
+                            'pageNumber': this.pages[this.pagesOrder[i]].data.pageNumber,
+                            'text': text
+                        })
+                        if(i>this.whispererLimit) break
+                    }
                 }
             } else {
                 i=0
                 for(key in this.pages) {
-                     if (String(this.pages[key].data.pageNumber).substr(0,pageNumberLocalStr.length) === pageNumberLocalStr) {
+                     if (this.pages[key].data.pageNumber != this.editedPage && String(this.pages[key].data.pageNumber).substr(0,pageNumberLocalStr.length) === pageNumberLocalStr) {
                         i++
 
                         if(this.pages[key].data.pageTittle != '' && this.pages[key].data.pageTittle != null) text = this.pages[key].data.pageTittle
