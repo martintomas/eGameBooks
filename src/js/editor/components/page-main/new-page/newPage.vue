@@ -1,8 +1,8 @@
 <template>
-    <div class='new-page-root'>
-        <div class='new-page-form'>
-            <div class='new-page-header'>{{String.doTranslationEditor('new-page-def')}}</div>
-            <div class='new-page-body'>
+    <div class='editor-main-form-root'>
+        <div class='editor-main-form-form'>
+            <div class='editor-main-form-header'>{{String.doTranslationEditor('new-page-def')}}</div>
+            <div class='editor-main-form-body'>
                 <label class="mainLabel">{{String.doTranslationEditor('method-page-number')}}<span class='required'>*</span>: </label>
                 <input class='horizontal-space'type="radio" id='newPageFirst' value="first" v-model="pageNumberMethod"><label class='horizontal-space vertical-proc-right-space' for="newPageFirst" >{{String.doTranslationEditor('first-suitable')}}</label>
                 &nbsp;&nbsp;
@@ -31,7 +31,7 @@
                 <input class='horizontal-space vertical-proc-left-space' type="radio" id="newPageStartingNo" value="no" v-model="startingPage"><label class='horizontal-space' for="newPageStartingNo" >{{String.doTranslationEditor('no')}} </label>
                 <br>
             </div>
-            <div class='new-page-footer'>
+            <div class='editor-main-form-footer'>
                 <span class='common-button' @click='saveNewPage'>{{String.doTranslationEditor('create')}}</span>
                 <span class='common-button' @click='closeNewPage'>{{String.doTranslationEditor('leave')}}</span>
             </div>
@@ -80,7 +80,8 @@ export default {
         }
     },
     mounted() {
-        this.pageNumber = this.getSuitablePageNumber(this.pageNumberMethod)
+        if(Number.isInteger(Number(this.pageId))) this.pageNumberMethod = 'optional'
+        else this.pageNumber = this.getSuitablePageNumber(this.pageNumberMethod)
     },
     beforeRouteEnter (to, from, next) {
         if(to.query.action && to.query.page) {
@@ -169,32 +170,5 @@ export default {
 </script>
 
 <style>
-.new-page-root {
-    border: black solid 1px;
-    width:100%;
-    min-width:15rem;
-}
-.new-page-form {
-    max-width:40rem;
-    width: 80%;
-    margin: 2rem auto 0 auto;
-    border: 1px solid black;
-    border-radius: 0.75rem;
-    padding: 1rem;
-}
-.new-page-body {
-    
-}
-.new-page-header {
-    font-size:155%;
-    font-weight:bold;
-    margin: 0 0 1rem 0;
-    border-bottom: solid black 1px;
-    background-color: darkgray;
-    padding: 0.2rem;
-}
-.new-page-footer {
-    text-align:center;
-    margin-top:0.5rem;
-}
+
 </style>

@@ -6,7 +6,8 @@ module.exports = {
         usedModules: [
             'item',
             'journal'
-        ]
+        ],
+        startingPage: 1,
     },
     pages: [{
         id: 1,

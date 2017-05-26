@@ -14,6 +14,7 @@ export const DELETE_ACTION = 'DELETE_ACTION'
 export const ADD_ACTION = 'ADD_ACTION'
 export const DELETE_LINK = 'DELETE_LINK'
 export const ADD_LINK = 'ADD_LINK'
+export const CHANGE_PAGE_SETTINGS = 'CHANGE_PAGE_SETTINGS'
 
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'

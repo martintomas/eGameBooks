@@ -76,6 +76,7 @@ export default {
             editorNotification.newInternalInfo('Starting processing initial pages of book',true)
 
             for(let key in initData.main) Vue.set(state.mainInfo,key,initData.main[key]) //load main info
+            state.startPage = initData.main.startingPage //set up starting page
 
             //prepare page data
             initData.pages.forEach(page => {
@@ -250,7 +251,7 @@ export default {
             }
         },
         [mutationTypes.CHANGE_STARTING_PAGE](state,pageId) {
-            if(pageId in state.pages) {
+            if(pageId in state.pages || pageId === null) {
                 state.startPage = pageId
                 editorNotification.newInternalInfo('Starting page was changed to: '+pageId)
             }
@@ -336,6 +337,15 @@ export default {
                     Vue.set(state.pages[args.pos.pageId].actions,args.pos.actionType,res)
                 }
                 editorNotification.newInternalInfo('Action was added properly')
+            }
+        },
+        [mutationTypes.CHANGE_PAGE_SETTINGS](state,args) {
+            //args should contain pageId and pageNewValues values
+            if(args.pageId in state.pages) {
+                if(args.pageNewValues.pageTittle || args.pageNewValues.pageTittle === null) 
+                    Vue.set(state.pages[args.pageId].data,'pageTittle',args.pageNewValues.pageTittle)
+
+                editorNotification.newExternalInfo(String.doTranslationEditor('notification-page-edited',args.pageId))
             }
         }
     },
@@ -470,7 +480,7 @@ export default {
                     }
                     if(validatedPages.length > 0) {
                         commit(mutationTypes.VALIDATE_BOOK,{
-                            pages:[localData.startingPage],
+                            pages:validatedPages,
                             actionType:null,
                             onlyId: true
                         })
@@ -608,6 +618,67 @@ export default {
                 'redo':false,
                 'runRedo':true
             })
+        },
+        changeSettingsPage({ commit, dispatch, state }, args) {
+            //args should contain page, pageTittle and isStartingPage arguments
+            let localData
+            localData =  {
+                pageId: args.page.data.id,
+                pageNewValues: {pageTittle: args.pageTittle}, //only tittle page is changed now
+                pageData: JSON.parse(JSON.stringify(args.page.data)), //remmeber old page data values
+                isStartingPage: args.isStartingPage,
+                startingPage: JSON.parse(JSON.stringify(state.startPage)), //remmeber old starting page
+            }
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.CHANGE_PAGE_SETTINGS,{
+                        pageId: localData.pageId,
+                        pageNewValues: localData.pageData
+                    })
+                    let validatedPages = []
+                    if(localData.isStartingPage && localData.pageId != localData.startingPage) {
+                        commit(mutationTypes.CHANGE_STARTING_PAGE,localData.startingPage)
+                        validatedPages.push(localData.pageId)
+                        validatedPages.push(localData.startingPage)
+                    } else if(!localData.isStartingPage && localData.pageId == localData.startingPage) {
+                        commit(mutationTypes.CHANGE_STARTING_PAGE,localData.pageId)
+                        validatedPages.push(localData.pageId)
+                    }
+                    if(validatedPages.length > 0) {
+                        commit(mutationTypes.VALIDATE_BOOK,{
+                            pages:validatedPages,
+                            actionType:null,
+                            onlyId: true
+                        })
+                    }
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.CHANGE_PAGE_SETTINGS,localData)
+                    let validatedPages = []
+                    if(localData.isStartingPage && localData.pageId != localData.startingPage) { //add start page atribute
+                        commit(mutationTypes.CHANGE_STARTING_PAGE,localData.pageId)
+                        validatedPages.push(localData.pageId)
+                        validatedPages.push(localData.startingPage)
+                    } else if(!localData.isStartingPage && localData.pageId == localData.startingPage) { //remove start page atribute
+                        commit(mutationTypes.CHANGE_STARTING_PAGE,null)
+                        validatedPages.push(localData.pageId)
+                    }
+                    if(validatedPages.length > 0) {
+                        commit(mutationTypes.VALIDATE_BOOK,{
+                            pages:validatedPages,
+                            actionType:null,
+                            onlyId: true
+                        })
+                    }
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+                'runRedo':true
+            })
+
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed

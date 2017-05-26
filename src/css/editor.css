@@ -271,6 +271,31 @@ body {
     height: 3rem;
     vertical-align: middle;
 }
+.editor-main-form-root {
+    border: black solid 1px;
+    width:100%;
+    min-width:15rem;
+}
+.editor-main-form-form {
+    max-width:40rem;
+    width: 80%;
+    margin: 2rem auto 0 auto;
+    border: 1px solid black;
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+.editor-main-form-header {
+    font-size:155%;
+    font-weight:bold;
+    margin: 0 0 1rem 0;
+    border-bottom: solid black 1px;
+    background-color: darkgray;
+    padding: 0.2rem;
+}
+.editor-main-form-footer {
+    text-align:center;
+    margin-top:0.5rem;
+}
 .helper i{
     font-size:140%;
     font-weight: bold;

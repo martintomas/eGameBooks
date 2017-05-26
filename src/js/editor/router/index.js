@@ -4,6 +4,7 @@ import PageMainContainer from 'editor/components/page-main/pageMainContainer.vue
 import PageView from 'editor/components/page-main/page-summary-view/pageView.vue'
 import PageEditorMain from 'editor/components/page-main/page-editor-view/pageEditorMain.vue'
 import NewPage from 'editor/components/page-main/new-page/newPage.vue'
+import EditPage from 'editor/components/page-main/new-page/editPage.vue'
 
 export const editorRoutes = [{
     path: '',
@@ -18,6 +19,13 @@ export const editorRoutes = [{
         name: 'editor-new-page-default',
         components: {
             'editor-page-view': NewPage
+        },
+        props: { 'editor-page-view': true }
+    },{
+        path: 'settings-page/:pageId',
+        name: 'editor-settings-page',
+        components: {
+            'editor-page-view': EditPage
         },
         props: { 'editor-page-view': true }
     },{

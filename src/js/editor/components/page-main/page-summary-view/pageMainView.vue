@@ -34,7 +34,7 @@
             <div class='page-main-buttons text-center'>
                 <ul>
                     <li><span class='page-main-button'>{{String.doTranslationEditor('edit')}}</span></li>
-                    <li><span class='page-main-button'>{{String.doTranslationEditor('settings')}}</span></li>
+                    <li><span class='page-main-button' @click='changeSettings'>{{String.doTranslationEditor('settings')}}</span></li>
                 </ul>
             </div>
         </div>
@@ -139,6 +139,9 @@ export default {
         toogleErrors(event) {
             if(this.showErrorsData) this.showErrorsData = false
             else this.showErrorsData = true
+        },
+        changeSettings() {
+            this.$router.push({ name: 'editor-settings-page', params: { pageId: this.pageId }})
         }
     }
 }
