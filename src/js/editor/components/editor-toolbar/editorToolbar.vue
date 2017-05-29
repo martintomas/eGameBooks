@@ -8,6 +8,9 @@
             <span class='editor-toolbar-button' @click='redoAction'>{{String.doTranslationEditor('redo')}} ({{redoActions.length}})</span>
         </div>
         <notification-line class='notification-line'></notification-line>
+        <div class='float-right'>
+            <span class='editor-toolbar-button' @click='editSettings'>{{String.doTranslationEditor('settings')}}</span>
+        </div>
     </div>
 </template>
 
@@ -43,6 +46,9 @@ export default {
         },
         newPageSimple(event) {
             this.$router.push({ name: 'editor-new-page-default' })
+        },
+        editSettings(event) {
+            this.$router.push({ name: 'editor-edit-settings' })
         }
     }
 

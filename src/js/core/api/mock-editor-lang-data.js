@@ -110,4 +110,13 @@ module.exports = {
     'set-up-link':'Set up link',
     'edit-link-action':'Edit link action',
     'page':'Page',
+    'change-book-settings':'Change book settings',
+    'book-name':'Book name',
+    'add-book-name':'Type book name. Required!',
+    'used-modules':'Used modules',
+    'settings-book-no-save':'Changes you have done in book settings are not saved. Do you really want to leave?',
+    'settings-book-no-empty-name':'Book name cannot be empty!',
+    'settings-book-no-unique-name':'Book name is not unique. Please choose different one.',
+    'settings-book-saved':'Book settings have been saved.',
+    'loader-checking-book-name':'Checking if book name is unique.',
 }

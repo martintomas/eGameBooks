@@ -7,6 +7,7 @@ import {editorNotification,editorNotificationWrapper,editorLoaderWrapper} from '
 import {buildRenderInfo} from 'editor/services/bookFuncs'
 import {isPageCorrect} from 'editor/services/validators'
 import {AllowedActions,ErrorImportance} from 'editor/constants'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 /*
 Structure of one page (state.pages)
@@ -347,6 +348,16 @@ export default {
 
                 editorNotification.newExternalInfo(String.doTranslationEditor('notification-page-edited',args.pageId))
             }
+        },
+        [mutationTypes.CHANGE_BOOK_NAME](state,bookName) {
+            if(bookName != '') {
+                Vue.set(state.mainInfo,'name',bookName)
+                editorNotification.newInternalInfo('Book name has been changed to '+bookName,true)
+            }
+        },
+        [mutationTypes.CHANGE_USED_MODULES](state,usedMobules) {
+            Vue.set(state.mainInfo,'usedModules',usedMobules)
+            editorNotification.newInternalInfo('Used modules has been changed to '+usedMobules,true)
         }
     },
     getters: {
@@ -679,6 +690,40 @@ export default {
                 'runRedo':true
             })
 
+        },
+        changeBookSettings({ commit, dispatch, state }, bookData) {
+            //bookData should contain name and usedModules variables
+            //!!! no undo/redo wrapper
+            dispatch('changeBookName',bookData.name).then(() => {
+                return dispatch('changeBookModules',bookData.usedModules)
+            }).then(() => {
+                messageBoxWrapper.showInformationMessage(commit,String.doTranslationEditor('settings-book-saved'))
+            }).catch((reason) => {
+                switch(reason) {
+                    case 'no-unique-name':
+                        messageBoxWrapper.showErrorMessage(commit,String.doTranslationEditor('settings-book-no-unique-name'))
+                        break
+                    default:
+                        console.log('Impossible to change book setting. Reason of error is: '+reason)
+                }
+            })
+        },
+        changeBookName({ commit, dispatch, state }, newName) {
+            if(newName != state.mainInfo.name && newName != '') {
+                editorLoaderWrapper.addLoader(commit,'book-name-unique',String.doTranslationEditor('loader-checking-book-name'))
+                return api.isBookNameUnique(newName).then((value) => {
+                    editorLoaderWrapper.removeLoader(commit,'book-name-unique')
+                    if(value) commit(mutationTypes.CHANGE_BOOK_NAME,newName)
+                    else throw 'no-unique-name'
+                }).catch((reason)=> {
+                    //error is resolved up, here only remove loader
+                    editorLoaderWrapper.removeLoader(commit,'book-name-unique')
+                    throw reason
+                })
+            }
+        },
+        changeBookModules({ commit, dispatch, state }, newModules) {
+            commit(mutationTypes.CHANGE_USED_MODULES,newModules)
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed

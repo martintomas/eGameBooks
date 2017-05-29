@@ -17,3 +17,11 @@ export function getModulesWorkspace(usedModules) {
         }, LATENCY)
     })
 }
+
+export function isBookNameUnique(bookName) {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            resolve(true)
+        }, LATENCY)
+    })
+}

@@ -5,6 +5,7 @@ import PageView from 'editor/components/page-main/page-summary-view/pageView.vue
 import PageEditorMain from 'editor/components/page-main/page-editor-view/pageEditorMain.vue'
 import NewPage from 'editor/components/page-main/new-page/newPage.vue'
 import EditPage from 'editor/components/page-main/new-page/editPage.vue'
+import SettingsBook from 'editor/components/page-main/new-page/settingsBook.vue'
 
 export const editorRoutes = [{
     path: '',
@@ -15,6 +16,13 @@ export const editorRoutes = [{
     },
     props: { 'editor-mini-page': true, 'editor-page-view-container': true, 'editor-elements-view': true },
     children: [{
+        path: 'settings',
+        name: 'editor-edit-settings',
+        components: {
+            'editor-page-view': SettingsBook
+        },
+        props: { 'editor-page-view': true }
+    },{
         path: 'new-page',
         name: 'editor-new-page-default',
         components: {
