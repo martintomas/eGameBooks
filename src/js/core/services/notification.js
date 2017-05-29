@@ -5,15 +5,12 @@ function constructInternalMessage(notificationType,args) {
         case 'info':
             if(args.debug) return notificationType+' INFO (debug): ' + args.message
             return notificationType+' INFO: ' + args.message
-            break
         case 'warn':
             if(args.debug) return notificationType+' WARN (debug): ' + args.message
             return notificationType+' WARN: ' + args.message
-            break
         case 'error':
             if(args.debug) return notificationType+' ERROR (debug): ' + args.message
             return notificationType+' ERROR: ' + args.message
-            break
     }
 }
 
