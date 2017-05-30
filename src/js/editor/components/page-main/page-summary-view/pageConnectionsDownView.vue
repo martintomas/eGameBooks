@@ -27,7 +27,7 @@
             <span slot='modalBody'>
                 <template v-if='editedLink != null'>
                     <label class="modalLabel" for='pageNumberEditLink'>{{String.doTranslationEditor('page-number')}}<span class='required'>*</span>: </label>
-                    <page-whisperer ref='linkEditPageWhisperer' :edited-page='pageId' :page-number='editedLink.pageId' :component-id="generateHash('page-con-down',0)" input-id='pageNumberEditLink'></page-whisperer>
+                    <page-whisperer ref='linkEditPageWhisperer' :edited-page='pageId' :page-number='editedLink.pageId' input-id='pageNumberEditLink'></page-whisperer>
                 </template>
             </span>
             <span slot='modalFooter'>

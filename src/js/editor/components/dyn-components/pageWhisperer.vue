@@ -18,16 +18,17 @@
 
 import {bus} from 'app.js'
 import IScroll from 'iscroll'
+import {generateHash} from 'defaults'
 
 export default {
     props: {
         pageNumber: null,
         editedPage: null,
-        componentId: null,
         inputId: ''
     },
     data() {
         return {
+             componentId:this.generateHash('page-con-down',0),
              dropdownWhisperer: null,
              pageNumberLocal: '',
              scrollWrapper: 'dropdownWhisperer',
@@ -121,17 +122,18 @@ export default {
         })
     },
     methods: {
+        generateHash,
         showWhisperer() {
-            if(!this.dropdownWhisperer.classList.contains("show-whisperer")) {
-                this.dropdownWhisperer.classList.add("show-whisperer")
+            if(!this.dropdownWhisperer.classList.contains("show-block")) {
+                this.dropdownWhisperer.classList.add("show-block")
                 setTimeout(() => { //actualize scroller based on new height (whisperer have to be shown)
                     this.scroller.refresh(); 
                 }, 200);
             }
         },
         hideWhisperer() {
-            if(this.dropdownWhisperer.classList.contains("show-whisperer")) {
-                this.dropdownWhisperer.classList.remove("show-whisperer")
+            if(this.dropdownWhisperer.classList.contains("show-block")) {
+                this.dropdownWhisperer.classList.remove("show-block")
             }
         },
         selectPage(pageNumber) {
@@ -184,8 +186,5 @@ export default {
 }
 .whisperer-content li:hover {
     background-color: #ddd;
-}
-.show-whisperer {
-    display: block;
 }
 </style>
