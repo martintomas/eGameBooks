@@ -119,4 +119,11 @@ module.exports = {
     'settings-book-no-unique-name':'Book name is not unique. Please choose different one.',
     'settings-book-saved':'Book settings have been saved.',
     'loader-checking-book-name':'Checking if book name is unique.',
+    'header':'Header',
+    'actions':'Actions',
+    'add-action-def':'Add new action',
+    'action-type':'Action type',
+    'add-action':'Add action',
+    'link-action-dev':'Link action definition',
+    'please-select-one':'Please select one',
 }

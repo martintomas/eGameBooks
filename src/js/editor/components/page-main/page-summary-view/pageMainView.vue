@@ -33,7 +33,7 @@
             </div>
             <div class='page-main-buttons text-center'>
                 <ul>
-                    <li><span class='page-main-button'>{{String.doTranslationEditor('edit')}}</span></li>
+                    <li><span class='page-main-button' @click='editPage'>{{String.doTranslationEditor('edit')}}</span></li>
                     <li><span class='page-main-button' @click='changeSettings'>{{String.doTranslationEditor('settings')}}</span></li>
                 </ul>
             </div>
@@ -142,6 +142,9 @@ export default {
         },
         changeSettings() {
             this.$router.push({ name: 'editor-settings-page', params: { pageId: this.pageId }})
+        },
+        editPage() {
+            this.$router.push({ name: 'editor-page-view-edit', params: { pageId: this.pageId }})
         }
     }
 }

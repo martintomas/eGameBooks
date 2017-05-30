@@ -315,3 +315,6 @@ body {
 .warning-color {
     color:yellow
 }
+.show-block {
+    display: block;
+}
