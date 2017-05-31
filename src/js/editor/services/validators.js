@@ -22,7 +22,8 @@ export function isRenderedActionCorrect(state,page,actionType,renderedActionId,r
         res[ErrorImportance.SEVERE].push({text:'missing-action-validation',args:[actionType,renderedActionId]})
     } else { //action exists
         let action = page.actions[actionType][renderedActionId]
-        isActionCorrect(actionType,action,res)
+        if(action) isActionCorrect(actionType,action,res)
+        else res[ErrorImportance.SEVERE].push({text:'missing-action-validation',args:[actionType,renderedActionId]})
     }
 
     return res

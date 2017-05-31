@@ -312,6 +312,9 @@ export default {
                 if(args.actionType in state.pages[args.pageId].actions) {
                     if(args.actionId in state.pages[args.pageId].actions[args.actionType]) {
                         Vue.delete(state.pages[args.pageId].actions[args.actionType],args.actionId)
+                        if(args.actionType in state.pages[args.pageId].renderInfo && args.actionId in state.pages[args.pageId].renderInfo[args.actionType]) { //change rendered info value --> action doenst exists
+                            Vue.set(state.pages[args.pageId].renderInfo[args.actionType][args.actionId],'exist',false)
+                        }
                         editorNotification.newInternalInfo('Action was deleted properly')
                         return
                     }
@@ -331,6 +334,9 @@ export default {
                         return
                     } else {
                         Vue.set(state.pages[args.pos.pageId].actions[args.pos.actionType],args.pos.actionId,args.action)
+                        if(args.pos.actionType in state.pages[args.pos.pageId].renderInfo && args.pos.actionId in state.pages[args.pos.pageId].renderInfo[args.pos.actionType]) { //change rendered info value --> action doenst exists
+                            Vue.set(state.pages[args.pos.pageId].renderInfo[args.pos.actionType][args.pos.actionId],'exist',true)
+                        }
                     }
                 } else { //create even actionType
                     let res = {}
@@ -544,14 +550,16 @@ export default {
                 'undoAction':function(localData) {
                     commit(mutationTypes.ADD_ACTION,localData)
                     commit(mutationTypes.MODULES_ACTION_ADDED,localData)
+                    let validatedBooks = [localData.pos.pageId]
                     if(localData.pos.actionType === 'link') {
+                        if(localData.action.pageId != null || localData.action.pageId != '') validatedBooks.push(localData.action.pageId)
                         commit(mutationTypes.ADD_LINK,{
                             pageId: localData.pos.pageId,
                             action:localData.action
                         })
                     }
                     commit(mutationTypes.VALIDATE_BOOK,{
-                        pages:[localData.pos.pageId],
+                        pages:validatedBooks,
                         actionType:null,
                         onlyId: true
                     })
@@ -561,14 +569,16 @@ export default {
                 'redoAction':function(localData) {
                     commit(mutationTypes.DELETE_ACTION,localData.pos)
                     commit(mutationTypes.MODULES_ACTION_DELETED,localData)
+                    let validatedBooks = [localData.pos.pageId]
                     if(localData.pos.actionType === 'link') {
+                        if(localData.action.pageId != null || localData.action.pageId != '') validatedBooks.push(localData.action.pageId)
                         commit(mutationTypes.DELETE_LINK,{
                             pageId: localData.pos.pageId,
                             action:localData.action
                         })
                     }
                     commit(mutationTypes.VALIDATE_BOOK,{
-                        pages:[localData.pos.pageId],
+                        pages:validatedBooks,
                         actionType:null,
                         onlyId: true
                     })

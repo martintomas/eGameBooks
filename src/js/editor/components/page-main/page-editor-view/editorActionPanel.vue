@@ -51,6 +51,7 @@ export default {
         },
         removeAction(values) {
             //take care of action removing
+            this.$store.dispatch('editor/deleteAction',values)
         },
         editAction(values) {
             //take care of action editing
