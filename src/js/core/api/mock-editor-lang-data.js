@@ -83,6 +83,7 @@ module.exports = {
     'message-delete-page':'You are about to delete this page. Are you sure about it?',
     'message-delete-item-module':'You are about to delete selected item. Are you sure about it?',
     'message-delete-page-link':'You are about to delete link action. Are you sure about it?',
+    'used-action-deletion-message':'Action you are about delete is used in text. Its deletion will lead to page error. Do you really want to delete this action?',
     'module-manager-open':'Open module manager',
     'edit-module-item':'Edit\xa0module item',
     'info-module-item':'Show\xa0information about module\xa0item',

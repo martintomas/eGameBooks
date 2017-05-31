@@ -14,6 +14,7 @@
 <script>
 
 import EditorActionLink from 'editor/components/page-main/page-editor-view/editorActionLink.vue'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 export default {
     components: {
@@ -51,7 +52,11 @@ export default {
         },
         removeAction(values) {
             //take care of action removing
-            this.$store.dispatch('editor/deleteAction',values)
+            messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('used-action-deletion-message'),
+                () => {
+                    this.$store.dispatch('editor/deleteAction',values)
+                }
+            )
         },
         editAction(values) {
             //take care of action editing
