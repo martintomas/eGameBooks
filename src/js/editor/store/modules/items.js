@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import * as mutationTypes from 'editor/store/mutationTypes'
-import {editorNotification,editorNotificationWrapper} from 'editor/services/defaults.js'
+import {editorNotification,editorNotificationWrapper,editorConditionGraph} from 'editor/services/defaults.js'
 import {getUniqueId} from 'defaults'
+import {AllowedActions} from 'editor/constants'
 
 export default {
     state: {
@@ -23,6 +24,7 @@ export default {
                 for(let i=0;i<initData.modules.item.length;i++) {
                     Vue.set(state.workspace.local,initData.modules.item[i].localId,initData.modules.item[i])
                     Vue.set(state.reverseInfo,initData.modules.item[i].localId,[]) //prepare arrays for reverse informations
+                    editorConditionGraph.addCompexConnection(AllowedActions.ITEM,initData.modules.item[i].name) //actualize conditions
                 }
                 editorNotification.newInternalInfo('Initial data for item module have been processed',true)
             }
@@ -77,11 +79,14 @@ export default {
             Vue.set(state.reverseInfo,newItem.localId,[]) //prepare reverse info --> it is empty at begging
             Vue.set(state.workspace.local,newItem.localId,item)
             state.selectedItem = newItem.localId //set new item as selected
+            editorConditionGraph.addCompexConnection(AllowedActions.ITEM,newItem.name) //actualize conditions
 
             editorNotification.newInternalInfo('New item with local id '+newItem.localId+' has been added',true)
         },
         [mutationTypes.DELETE_ITEM](state,localId) {
             if(state.selectedItem == localId) state.selectedItem = null
+            editorConditionGraph.removeCompexConnection(AllowedActions.ITEM,state.workspace.local[localId].name) //actualize conditions
+
             Vue.delete(state.workspace.local,localId)
             Vue.delete(state.reverseInfo,localId)
 

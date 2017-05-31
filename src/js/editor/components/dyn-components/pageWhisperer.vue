@@ -1,7 +1,7 @@
 <template>
     <div class='page-whisperer-root'>
         <input class="modalInput whisperer" :component-id="componentId" v-model.number="pageNumberLocal" type="number" :id="inputId" @focus='showWhisperer' @input='showWhisperer'>
-        <div class="whisperer-content" ref="dropdownWhisperer">
+        <div class="page-whisperer-content" ref="dropdownWhisperer">
             <div class="page-whisperer-scroller" ref="page-whisperer-scroller">
                 <ul>
                     <li v-for="(model,index) in pagesLocal" @click="selectPage(model.pageNumber)">
@@ -152,7 +152,7 @@ export default {
 .page-whisperer-root {
     display:inline-block;
 }
-.whisperer-content {
+.page-whisperer-content {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
@@ -170,12 +170,12 @@ export default {
     user-select: none;
     text-size-adjust: none;
 }
-.whisperer-content ul{
+.page-whisperer-content ul{
     list-style-type: none;
     padding-left: 0;
     margin:0;
 }
-.whisperer-content li {
+.page-whisperer-content li {
     float: none;
     color: black;
     padding: 0.2rem 0.7rem 0.2rem 0.7rem;
@@ -184,7 +184,7 @@ export default {
     text-align: left;
     cursor:pointer;
 }
-.whisperer-content li:hover {
+.page-whisperer-content li:hover {
     background-color: #ddd;
 }
 </style>

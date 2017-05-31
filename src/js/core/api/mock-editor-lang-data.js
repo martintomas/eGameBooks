@@ -56,6 +56,7 @@ module.exports = {
     'missing-action-validation':'Action of {0} type and id: {1} is missing. Please, create one and edit text appropriately.',
     'missing-link-pageid-validation':'Link action of id: {0} is missing destination page.',
     'missing-item-actionid-validation':'Item reference of action id {0} is missing',
+    'link-condition-wrong-validation':'Link action of id: {0} has wrong condition',
     'page-number':'Page number',
     'page-tittle':'Page tittle',
     'method-page-number':'Method of getting page number',
@@ -126,4 +127,7 @@ module.exports = {
     'add-action':'Add action',
     'link-action-dev':'Link action definition',
     'please-select-one':'Please select one',
+    'link-item-modal-header':'Link action information',
+    'used-in-text':'Used in text',
+    'link-id':'Link ID',
 }

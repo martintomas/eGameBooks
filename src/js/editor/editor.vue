@@ -53,6 +53,7 @@ export default {
         //prepare loader and notification
         defaults.editorNotificationWrapper.initializeNotification(store.commit)
         defaults.editorLoaderWrapper.initializeLoader(store.commit)
+        defaults.editorConditionGraph.initializeConditionGraph(store.commit)
 
         //load language
         if(!store.getters['core/languageExists'](constants.editorLangType)) {

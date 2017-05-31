@@ -2,7 +2,7 @@
     <div class='markdown-action-panel-root'>
         <div class='markdown-action-panel-buttons'>
             <div class='markdown-toolbar-button' @click='showLinkModal'>Links</div>
-            <div v-if="usedModules.indexOf('item')>=0" class='markdown-toolbar-button'>Items</div>
+            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button'>Items</div>
         </div>
         <div class='markdown-action-panel-result'>
             <editor-action-link ref='editorActionLink' :page-id='pageId' :link-data='linkData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-link>

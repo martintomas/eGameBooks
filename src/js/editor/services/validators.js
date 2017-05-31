@@ -1,4 +1,5 @@
 import {AllowedActions,ErrorImportance} from 'editor/constants'
+import {editorConditionGraph} from 'editor/services/defaults.js' 
 
 export function containsErrors(res,severinity=null) {
     if(severinity === null) {
@@ -36,9 +37,12 @@ export function isActionCorrect(actionType,action,res=null) {
 
     if(actionType === AllowedActions.LINK) { //do link specific validation
         if(action.pageId === null) res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[action.id]})
-        //if(action.condition) //do condition check in future !!!!
+        if(action.condition != null && action.condition != '') { //do condition check 
+            if(!editorConditionGraph.isValidString(action.condition)) res[ErrorImportance.SEVERE].push({text:'link-condition-wrong-validation',args:[action.id]})
+        }
     } else if(actionType === AllowedActions.ITEM) {
         if(action.ref === null) res[ErrorImportance.SEVERE].push({text:'missing-item-actionid-validation',args:[action.id]})
+
     }
 
     return res

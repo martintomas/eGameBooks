@@ -5,7 +5,6 @@ module.exports = {
         published: '10. 1. 2017',
         usedModules: [
             'item',
-            'journal'
         ],
         startingPage: 1,
     },
