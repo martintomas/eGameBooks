@@ -83,7 +83,7 @@ export default {
 }
 .mini-page-connection {
     height: 100%;
-    border: solid 0.1rem black;
+    border: solid 1px black;
     border-radius: 0.25rem;
     -webkit-border-radius: 0.25rem;
     -moz-border-radius: 0.25rem;
@@ -99,7 +99,7 @@ export default {
 .mini-page-connection-tittle {
     text-align: center;
     background-color: lightgray;
-    border-bottom: solid 0.1rem black;
+    border-bottom: solid 1px black;
     font-weight: bold;
     padding: 0.2rem 0.2rem 0.2rem 0.2rem;
 }
