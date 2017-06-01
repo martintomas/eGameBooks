@@ -233,20 +233,21 @@ body {
     vertical-align:top;
 }
 .modalLabelFull {
-    width:95%;
+    width:90%;
     max-width:40rem;
     min-width:10rem;
     margin-bottom:0.2rem;
     font-size:115%;
+    display:inline-block;
 }
 .modalInputFull {
-    width:95%;
+    width:90%;
     max-width:40rem;
     min-width:10rem;
     margin-bottom:0.2rem;
 }
 .modalTextArea {
-    width:95%;
+    width:90%;
     max-width:40rem;
     min-width:10rem;
     height:5rem;

@@ -18,21 +18,37 @@
             <dyn-modal ref='actionModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
                 <span slot='modalHeader'>{{String.doTranslationEditor('add-action-def')}}</span>
                 <span slot='modalBody'>
-                    <label for="markdown-toolbar-actionType" class="modalLabel">{{String.doTranslationEditor('action-type')}}<span class='required'>*</span>:</label>
+                    <label for="markdown-toolbar-actionType" class="modalLabel text-left">{{String.doTranslationEditor('action-type')}}<span class='required'>*</span>:</label>
                     <select v-model="selectedActionType" class="modalInput">
                         <option disabled value="">{{String.doTranslationEditor('please-select-one')}}</option>
                         <option v-for="option in actionTypes" v-bind:value="option" id="markdown-toolbar-actionType">
                             {{ option }}
                         </option>
                     </select>
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('select-action-type-help')}}</span>
+                    </dyn-tooltip>
                     <br />
-                    <label for="markdown-toolbar-actionId" class="modalLabel">{{String.doTranslationEditor('action-id')}}:</label>
+                    <label for="markdown-toolbar-actionId" class="modalLabel text-left">{{String.doTranslationEditor('action-id')}}<span class='required'>*</span>:</label>
                     <select v-model="selectedActionId" class="modalInput">
                         <option disabled value="">{{String.doTranslationEditor('please-select-one')}}</option>
                         <option v-for="option in actionIds" v-bind:value="option" id="markdown-toolbar-actionId">
                             {{ option }}
                         </option>
                     </select>
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('select-action-id-help')}}</span>
+                    </dyn-tooltip>
+                    <br>
+                    <label for="markdownToolbarActionText" class="modalLabelFull text-left">{{String.doTranslationEditor('action-text')}}: </label>
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip' :placeholder="String.doTranslationEditor('new-action-text-help')"></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('new-action-text-help')}}</span>
+                    </dyn-tooltip>
+                    <br>
+                    <input class="modalInputFull" v-model="actionText" type="text" id="markdownToolbarActionText" :placeholder="String.doTranslationEditor('new-action-text-help')">
                 </span>
                 <span slot='modalFooter' class='text-right'>
                     <span class='common-button' @click='addAction'>{{String.doTranslationEditor('add-action')}}</span>
@@ -50,10 +66,13 @@ import {bus} from 'app.js'
 import DynModal from 'editor/components/dyn-components/dynModal.vue'
 import {generateHash} from 'defaults'
 import {AllowedActions} from 'editor/constants'
+import DynTooltip from 'editor/components/dyn-components/dynTooltip.vue'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 export default {
     components: {
-        DynModal
+        DynModal,
+        DynTooltip,
     },
     props: {
         pageId:null,
@@ -65,6 +84,7 @@ export default {
             showModal: false,
             selectedActionType: '',
             selectedActionId: '',
+            actionText: '',
             previewShown: true,
         }
     },
@@ -115,20 +135,38 @@ export default {
         },
         addActionText() {
             this.showModal = true
+            this.actionText = ''
+            this.selectedActionType = ''
+            this.selectedActionId = ''
+
             this.$refs.actionModal.show()
         },
         addAction() {
-            let toolDict = {
-                before:':::'+this.selectedActionType+':'+this.selectedActionId+':',
-                after:':::'}
-            this.$emit('add-simple-text-textarea',toolDict)
-            this.selectedActionType = ''
-            this.selectedActionId = ''
-            this.$refs.actionModal.close()
+            if(this.actionValidation()) {
+                let toolDict = {
+                    before:':::'+this.selectedActionType+':'+this.selectedActionId+':'+this.actionText,
+                    after:':::'}
+                this.$emit('add-simple-text-textarea',toolDict)
+                this.selectedActionType = ''
+                this.selectedActionId = ''
+                this.$refs.actionModal.close()
+            }
+        },
+        actionValidation() {
+            if(this.selectedActionType === '' || this.actionTypes.indexOf(this.selectedActionType) === -1) {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-type-missing'))
+                return false
+            } else if(this.selectedActionId === '' || this.actionIds.indexOf(this.selectedActionId) === -1) {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-id-missing'))
+                return false
+            }
+            return true
         },
         closeAction() {
+            this.actionText = ''
             this.selectedActionType = ''
             this.selectedActionId = ''
+
             this.$refs.actionModal.close()
         },
         showDropDownHeader() {

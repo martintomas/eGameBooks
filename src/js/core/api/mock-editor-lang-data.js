@@ -96,6 +96,9 @@ module.exports = {
     'new-item-description-help':'Type\xa0description\xa0of the\xa0item. This field is optional.',
     'new-action-id-help':'Type\xa0unique\xa0number. Required!',
     'new-page-id-help':'Type\xa0page\xa0number. Required!',
+    'new-action-text-help':'Write\xa0action\xa0text. Optional!',
+    'select-action-type-help':'Select\xa0suitable\xa0action type.\xa0Required!',
+    'select-action-id-help':'Select\xa0suitable\xa0action\xa0ID. Required!',
     'new-item-no-save':'New item is not saved! Do you want to really close form?',
     'edit-item-no-save':'Changed values are not saved! Do you want to really close form?',
     'new-item-name-required':'Name of new item is required. This field have to be filled before new item can be saved!',
@@ -137,4 +140,7 @@ module.exports = {
     'new-action-pages-doesnt-exists':"Chossen page doesn't exists. Please select different one.",
     'new-action-page-missing':"Page is required field. Please select one.",
     'new-action-id-wrong-format':'Action ID has wrong format! It should be unique number.',
+    'new-action-type-missing':'Please select appropriate action type. This field is required!',
+    'new-action-id-missing':'Please select approprate action ID. This filed is required!',
+    'action-text':'Action text',
 }
