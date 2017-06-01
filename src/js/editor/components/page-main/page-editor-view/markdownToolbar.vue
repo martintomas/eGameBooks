@@ -16,7 +16,8 @@
         <span class='markdown-toolbar-button' @click=""><i class="fa fa-image" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' v-if="!previewShown" @click="showPreview()"><i class="fa fa-eye" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' v-if="previewShown" @click="hidePreview()"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
-        <span class='markdown-toolbar-button' @click="">{{String.doTranslationEditor('full-preview')}}</span>
+        <span class='markdown-toolbar-button' v-if="!simplePreview" @click="changePreview(true)">{{String.doTranslationEditor('full-preview')}}</span>
+        <span class='markdown-toolbar-button' v-if="simplePreview" @click="changePreview(false)">{{String.doTranslationEditor('simple-preview')}}</span>
 
         <template if='showModal'>
             <!--action modal-->
@@ -91,6 +92,7 @@ export default {
             selectedActionId: '',
             actionText: '',
             previewShown: true,
+            simplePreview: true,
         }
     },
     computed: {
@@ -189,6 +191,9 @@ export default {
         showPreview() {
             this.$emit('show-markdown-preview')
             this.previewShown = true
+        },
+        changePreview(value) {
+            this.simplePreview = value
         }
     }
 

@@ -146,4 +146,5 @@ module.exports = {
     'action-text':'Action text',
     'new-action-condition-not-valid':'Condition of action is not valid. Please delete or finish condition correctly.',
     'full-preview':'Full preview',
+    'simple-preview':'Simple preview',
 }
