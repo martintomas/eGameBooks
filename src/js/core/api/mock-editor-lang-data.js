@@ -145,4 +145,5 @@ module.exports = {
     'new-action-id-missing':'Please select approprate action ID. This filed is required!',
     'action-text':'Action text',
     'new-action-condition-not-valid':'Condition of action is not valid. Please delete or finish condition correctly.',
+    'full-preview':'Full preview',
 }
