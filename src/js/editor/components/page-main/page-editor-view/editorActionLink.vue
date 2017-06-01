@@ -24,8 +24,21 @@
             <dyn-modal ref='linkModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
                 <span slot='modalHeader'>{{String.doTranslationEditor('link-action-dev')}}</span>
                 <span slot='modalBody'>
+                    <template v-if='!editedNoNew'>
+                        <label class='modalLabel text-left' for='actionIdEditedLink'>{{String.doTranslationEditor('action-id')}}<span class='required'>*</span>:</label>
+                        <input class="modalInput" v-model="linkFormFields.id" type="number" id="actionIdEditedLink">
+                        <dyn-tooltip class='helper float-right'>
+                            <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                            <span slot='tooltipText'>{{String.doTranslationEditor('new-action-id-help')}}</span>
+                        </dyn-tooltip>
+                        <br>
+                    </template>
                     <label class="modalLabel text-left" for='pageNumberEditLink'>{{String.doTranslationEditor('page-number')}}<span class='required'>*</span>: </label>
                     <page-whisperer :edited-page='pageId' :page-number='linkFormFields.pageId' ref='pageWhisperer' input-id='pageNumberEditLink'></page-whisperer>
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('new-page-id-help')}}</span>
+                    </dyn-tooltip>
                     <br>
                     <dyn-condition ref='pageDynCondition' :pageCondition='linkFormFields.condition'></dyn-condition>
                 </span>
@@ -78,6 +91,7 @@ import PageWhisperer from 'editor/components/dyn-components/pageWhisperer.vue'
 import DynCondition from 'editor/components/page-main/page-editor-view/dynCondition.vue'
 import {getUniqueId, generateHash,clearDict} from 'defaults.js'
 import {AllowedActions} from 'editor/constants'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 export default {
     components: {
@@ -95,13 +109,24 @@ export default {
             linkFormFields: {'id':'','pageId':'','condition':''},
             showModal: false,
             openedLink: null,
+            editedNoNew: false,
+        }
+    },
+    computed: {
+        pages() {
+            return this.$store.state.editor.bookData.pages
         }
     },
     methods: {
         generateHash,
+        getUniqueId,
         showLinkModal() {
             this.clear()
+
             this.showModal = true
+            this.editedNoNew = false
+            Vue.set(this.linkFormFields,'id',this.getUniqueId(this.linkData)) //generete suitable id
+
             this.$refs.linkModal.show()
         },
         saveLinkAction() {
@@ -111,14 +136,31 @@ export default {
                 'condition':this.$refs.pageDynCondition.getDynConditionText()
             }
 
-            if(this.linkFormFields.id === '' || this.linkFormFields.id === null) {
-                this.$emit('add-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionData':linkData})
-            } else {
-                this.$emit('edit-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionId':this.linkFormFields.id,'actionData':linkData})
+            if(this.validationNewLink(linkData)) {
+                if(!this.editedNoNew) {
+                    this.$emit('add-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionData':linkData})
+                } else {
+                    this.$emit('edit-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionId':this.linkFormFields.id,'actionData':linkData})
+                }
+                this.clear()
+                this.$refs.linkModal.close()
             }
-
-            this.clear()
-            this.$refs.linkModal.close()
+        },
+        validationNewLink(linkData) {
+            if(linkData.id === null || linkData.id === '' || !Number.isInteger(linkData.id)) {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-id-wrong-format'))
+                return false
+            } else if(!this.editedNoNew && linkData.id in this.linkData) { //new link action but id already exists
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-id-not-unique'))
+                return false
+            } else if(linkData.pageId === null || linkData.pageId === '') {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-page-missing'))
+                return false
+            } else if(!(linkData.pageId in this.pages)) {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-pages-doesnt-exists'))
+                return false
+            }
+            return true
         },
         closeLinkAction() {
             this.clear()
@@ -130,6 +172,7 @@ export default {
             Vue.set(this.linkFormFields,'id',linkData['id'])
             Vue.set(this.linkFormFields,'pageId',linkData['pageId'])
             Vue.set(this.linkFormFields,'condition',linkData['condition'])
+            this.editedNoNew = true
 
             this.$refs.linkModal.show()
         },

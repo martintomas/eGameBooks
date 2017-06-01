@@ -94,6 +94,8 @@ module.exports = {
     'edit-item-modal-header':'Edit item values',
     'new-item-name-help':'Type\xa0name\xa0of\xa0the\xa0item. Required!',
     'new-item-description-help':'Type\xa0description\xa0of the\xa0item. This field is optional.',
+    'new-action-id-help':'Type\xa0unique\xa0number. Required!',
+    'new-page-id-help':'Type\xa0page\xa0number. Required!',
     'new-item-no-save':'New item is not saved! Do you want to really close form?',
     'edit-item-no-save':'Changed values are not saved! Do you want to really close form?',
     'new-item-name-required':'Name of new item is required. This field have to be filled before new item can be saved!',
@@ -131,4 +133,8 @@ module.exports = {
     'link-item-modal-header':'Link action information',
     'used-in-text':'Used in text',
     'link-id':'Link ID',
+    'new-action-id-not-unique':'Action ID is not unique, please select different one.',
+    'new-action-pages-doesnt-exists':"Chossen page doesn't exists. Please select different one.",
+    'new-action-page-missing':"Page is required field. Please select one.",
+    'new-action-id-wrong-format':'Action ID has wrong format! It should be unique number.',
 }
