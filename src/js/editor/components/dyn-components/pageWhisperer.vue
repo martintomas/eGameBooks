@@ -1,6 +1,6 @@
 <template>
-    <div class='page-whisperer-root'>
-        <input class="modalInput whisperer" :component-id="componentId" v-model.number="pageNumberLocal" type="number" :id="inputId" @focus='showWhisperer' @input='showWhisperer'>
+    <div class='page-whisperer-root modalInput'>
+        <input class="whisperer" :component-id="componentId" v-model.number="pageNumberLocal" type="number" :id="inputId" @focus='showWhisperer' @input='showWhisperer'>
         <div class="page-whisperer-content" ref="dropdownWhisperer">
             <div class="page-whisperer-scroller" ref="page-whisperer-scroller">
                 <ul>
