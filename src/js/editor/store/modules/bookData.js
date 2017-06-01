@@ -334,7 +334,8 @@ export default {
                         return
                     } else {
                         Vue.set(state.pages[args.pos.pageId].actions[args.pos.actionType],args.pos.actionId,args.action)
-                        if(args.pos.actionType in state.pages[args.pos.pageId].renderInfo && args.pos.actionId in state.pages[args.pos.pageId].renderInfo[args.pos.actionType]) { //change rendered info value --> action doenst exists
+                        if(args.pos.actionType in state.pages[args.pos.pageId].renderInfo && args.pos.actionId in state.pages[args.pos.pageId].renderInfo[args.pos.actionType]) { //change rendered info value --> action exists
+                            Vue.set(state.pages[args.pos.pageId].actions[args.pos.actionType][args.pos.actionId],'existsInText',true)
                             Vue.set(state.pages[args.pos.pageId].renderInfo[args.pos.actionType][args.pos.actionId],'exist',true)
                         }
                     }
@@ -345,6 +346,27 @@ export default {
                 }
                 editorNotification.newInternalInfo('Action was added properly')
             }
+        },
+        [mutationTypes.EDIT_ACTION](state,args) {
+            //args should contain pos and action variables
+            //action are new action values
+            //pos contains actionType, pageId and actionId values
+            if(args.pos.pageId in state.pages) {
+                if(args.pos.actionType in state.pages[args.pos.pageId].actions) {
+                    if(args.pos.actionId in state.pages[args.pos.pageId].actions[args.pos.actionType]) { //action exists
+                        let attrBlackList = {'pageId':null,'id':null}
+                        for(let key in args.action) {
+                            if(key in state.pages[args.pos.pageId].actions[args.pos.actionType][args.pos.actionId] && !(key in attrBlackList)) {
+                                Vue.set(state.pages[args.pos.pageId].actions[args.pos.actionType][args.pos.actionId],key,args.action[key])
+                            }
+                        }
+                    } else {
+                        editorNotification.newInternalError('Impossible to edit action. Action doesnt exists')
+                    }
+                }
+                editorNotification.newInternalInfo('Action was edited properly')
+            }
+
         },
         [mutationTypes.CHANGE_PAGE_SETTINGS](state,args) {
             //args should contain pageId and pageNewValues values
@@ -538,7 +560,7 @@ export default {
                 }
             }
             if(!valid) {
-                editorNotificationWrapper.newInternalInfo('Impossible to delete action. Action wasnt loaded properly')
+                editorNotificationWrapper.newInternalInfo(commit,'Impossible to delete action. Action wasnt loaded properly',false)
                 return
             }
             localData = {
@@ -591,13 +613,174 @@ export default {
             })
             
         },
+        newLinkAction({ commit, dispatch, state }, args) {
+            let valid = true
+            if(!(args.actionData.pageId in state.pages) || !(args.pageId in state.pages)) {
+                valid = false
+            } else if('link' in state.pages[args.pageId].actions) { //check if link action is there
+                if(args.actionData.id in state.pages[args.pageId].actions.link) { //check if action already exists
+                    valid = false
+                }
+            }
+
+            if(!valid) {
+                editorNotificationWrapper.newInternalInfo(commit,'Impossible to create appropriate link action',false)
+                return
+            }
+
+            let linkAction = {
+                id:args.actionData.id,
+                pageId: args.actionData.pageId,
+                condition: args.actionData.condition,
+                existsInText: false,
+            }
+
+            dispatch('newAction',{
+                'actionType':AllowedActions.LINK,
+                'pageId':args.pageId,
+                'action':linkAction
+            })
+        },
+        newAction({ commit, dispatch, state }, args) {
+            let localData = {
+                action: JSON.parse(JSON.stringify(args.action)),
+                pos: JSON.parse(JSON.stringify({
+                    'actionType':args.actionType,
+                    'pageId':args.pageId,
+                    'actionId':args.action.id,
+                }))
+            }
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.DELETE_ACTION,localData.pos)
+                    commit(mutationTypes.MODULES_ACTION_DELETED,localData)
+                    let validatedBooks = [localData.pos.pageId]
+                    if(localData.pos.actionType === 'link') {
+                        if(localData.action.pageId != null || localData.action.pageId != '') validatedBooks.push(localData.action.pageId)
+                        commit(mutationTypes.DELETE_LINK,{
+                            pageId: localData.pos.pageId,
+                            action:localData.action
+                        })
+                    }
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:validatedBooks,
+                        actionType:null,
+                        onlyId: true
+                    })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-action'),false)
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.ADD_ACTION,localData)
+                    commit(mutationTypes.MODULES_ACTION_ADDED,localData)
+                    let validatedBooks = [localData.pos.pageId]
+                    if(localData.pos.actionType === 'link') {
+                        if(localData.action.pageId != null || localData.action.pageId != '') validatedBooks.push(localData.action.pageId)
+                        commit(mutationTypes.ADD_LINK,{
+                            pageId: localData.pos.pageId,
+                            action:localData.action
+                        })
+                    }
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:validatedBooks,
+                        actionType:null,
+                        onlyId: true
+                    })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-action'),false)
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+                'runRedo':true
+            })
+        },
+        editAction({ commit, dispatch, state }, args) {
+            let valid = false
+            if(args.pageId in state.pages) {
+                if(args.actionType in state.pages[args.pageId].actions) {
+                    if(args.actionId in state.pages[args.pageId].actions[args.actionType]) valid = true
+                }
+            }
+
+            if(!valid) {
+                editorNotificationWrapper.newInternalInfo(commit,'Impossible to edit action. Action doesnt exists.',false)
+                return
+            }
+
+            let localData = {
+                action: JSON.parse(JSON.stringify(args.actionData)), //new action values
+                pos: JSON.parse(JSON.stringify({
+                    'actionType':args.actionType,
+                    'pageId':args.pageId,
+                    'actionId':args.actionId,
+                })),
+                oldAction: JSON.parse(JSON.stringify(state.pages[args.pageId].actions[args.actionType][args.actionId]))
+            }
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.EDIT_ACTION,{
+                        pos:localData.pos,
+                        action:localData.oldAction
+                    })
+                    let validatedBooks = [localData.pos.pageId]
+                    if(localData.pos.actionType === AllowedActions.LINK) {
+                        if(localData.action.pageId && localData.action.pageId != localData.oldAction.pageId) {
+                            if(localData.action.pageId != null || localData.action.pageId != '') validatedBooks.push(localData.action.pageId)
+                            if(localData.oldAction.pageId != null || localData.oldAction.pageId != '') validatedBooks.push(localData.oldAction.pageId)
+                            commit(mutationTypes.CHANGE_LINK_PAGEID,{
+                                pageId: localData.pos.pageId,
+                                actionId: localData.pos.actionId,
+                                value: localData.oldAction.pageId
+                            })
+                        }   
+                    }
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:validatedBooks,
+                        actionType:null,
+                        onlyId: true
+                    })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edit-action'),false)
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.EDIT_ACTION,localData)
+                    let validatedBooks = [localData.pos.pageId]
+                    if(localData.pos.actionType === AllowedActions.LINK) {
+                        if(localData.action.pageId && localData.action.pageId != localData.oldAction.pageId) {
+                            if(localData.action.pageId != null || localData.action.pageId != '') validatedBooks.push(localData.action.pageId)
+                            if(localData.oldAction.pageId != null || localData.oldAction.pageId != '') validatedBooks.push(localData.oldAction.pageId)
+                            commit(mutationTypes.CHANGE_LINK_PAGEID,{
+                                pageId: localData.pos.pageId,
+                                actionId: localData.pos.actionId,
+                                value: localData.action.pageId
+                            })
+                        }   
+                    }
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:validatedBooks,
+                        actionType:null,
+                        onlyId: true
+                    })
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edit-action'),false)
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+                'runRedo':true
+            })
+        },
         changeLinkPageId({ commit, dispatch, state }, args) {
             let valid = false, localData
 
             if(args.pageId in state.pages) {
                 if(args.actionId in state.pages[args.pageId].actions.link) valid = true
             }
-            if(!valid) editorNotificationWrapper.newInternalInfo('Impossible to change link pageId value')
+            if(!valid) {
+                editorNotificationWrapper.newInternalInfo(commit,'Impossible to change link pageId value',false)
+                return
+            }
 
             localData = {
                 newLink: JSON.parse(JSON.stringify(args)),

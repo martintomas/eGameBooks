@@ -46,6 +46,7 @@ module.exports = {
     'notification-deleted-action':'Action has been deleted',
     'notification-modify-link-action':'Link action has been modified',
     'notification-page-edited':'Settings of page {0} has been changed',
+    'notification-edit-action':'Action has been edited',
     'loader-loading-editor-language':'Loading editor language',
     'loader-loading-editor-book':'Loading book initial data',
     'loader-processing-editor-language':'Processing editor language',
@@ -143,4 +144,5 @@ module.exports = {
     'new-action-type-missing':'Please select appropriate action type. This field is required!',
     'new-action-id-missing':'Please select approprate action ID. This filed is required!',
     'action-text':'Action text',
+    'new-action-condition-not-valid':'Condition of action is not valid. Please delete or finish condition correctly.',
 }

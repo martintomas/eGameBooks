@@ -26,7 +26,7 @@
                 <span slot='modalBody'>
                     <template v-if='!editedNoNew'>
                         <label class='modalLabel text-left' for='actionIdEditedLink'>{{String.doTranslationEditor('action-id')}}<span class='required'>*</span>:</label>
-                        <input class="modalInput" v-model="linkFormFields.id" type="number" id="actionIdEditedLink">
+                        <input class="modalInput" v-model.number="linkFormFields.id" type="number" id="actionIdEditedLink">
                         <dyn-tooltip class='helper float-right'>
                             <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
                             <span slot='tooltipText'>{{String.doTranslationEditor('new-action-id-help')}}</span>
@@ -158,6 +158,9 @@ export default {
                 return false
             } else if(!(linkData.pageId in this.pages)) {
                 messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-pages-doesnt-exists'))
+                return false
+            } else if(!this.$refs.pageDynCondition.isSelectionValid) {
+                messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-condition-not-valid'))
                 return false
             }
             return true

@@ -15,6 +15,7 @@
 
 import EditorActionLink from 'editor/components/page-main/page-editor-view/editorActionLink.vue'
 import {messageBoxWrapper} from 'editor/services/defaults.js'
+import {AllowedActions} from 'editor/constants'
 
 export default {
     components: {
@@ -49,6 +50,16 @@ export default {
         },
         addAction(values) {
             //take care of action addding
+            switch(values.actionType) {
+                case AllowedActions.LINK:
+                    this.$store.dispatch('editor/newLinkAction',values)
+                    break
+                case AllowedActions.ITEM:
+                    this.$store.dispatch('editor/newItemAction',values)
+                    break
+                default:
+                    console.log('Action creation. Unknown action type!')
+            }
         },
         removeAction(values) {
             //take care of action removing
@@ -60,6 +71,7 @@ export default {
         },
         editAction(values) {
             //take care of action editing
+            this.$store.dispatch('editor/editAction',values)
         }
     }
 }

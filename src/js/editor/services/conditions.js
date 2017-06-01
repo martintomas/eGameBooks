@@ -204,23 +204,23 @@ class ConditionGraph {
     buildNodeTree(condString='',result=[this.getStartingResult()]) {
         condString = condString.trim()
         if(condString === '') {
-            return result //string was read complete
+            return [true,result] //string was read complete
         }
         let condStringOne, condStringTemp
         [condStringOne,condStringTemp] = this.getOneNodeDestription(condString) //get complex analysis of provided string
-
-        let condConn = result[result.length-1].condConn.findConnForString(condStringOne) //get connection
-        if(condConn === null) return null //exists connection --> check if it is valid condition
+        
+        let condConn = result[result.length-1].condNode.findConnForString(condStringOne) //get connection
+        if(condConn === null) return [false,result] //exists connection --> check if it is valid condition
 
         if(result.length > 0) result[result.length-1].condConn = condConn
         result.push(this.buildResultNode(condStringOne,condConn.destNode,null) ) //push node to result
-        return this.buildNodeTree({condString:condStringTemp,result:result}) //continue building nodes
+        return this.buildNodeTree(condStringTemp,result) //continue building nodes
     }
     isValidString(condString) {
         //check if cond is valid string --> we try to construct full node tree
-        let valRes = this.buildNodeTree(condString)
-        if(valRes === null) return false
-        return true
+        let valRes, res
+        [valRes,res] = this.buildNodeTree(condString)
+        return valRes
     }
     getStartingResult() {
         return this.buildResultNode('',this.startNode,null)

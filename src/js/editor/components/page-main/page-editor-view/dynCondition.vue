@@ -104,9 +104,10 @@ export default {
     watch: {
         pageCondition(value) {
             if(value != '') {
-                let tempNodes = editorConditionGraph.buildNodeTree({condString:val})
-                if(tempNodes != null) {
-                    this.selectedNodes = tempNodes
+                let validRes, res
+                [validRes,res] = editorConditionGraph.buildNodeTree(value)
+                if(res != null) {
+                    this.selectedNodes = res
                     this.condNode = this.selectedNodes[this.selectedNodes.length-1].condNode
                 } else {
                      this.clear()

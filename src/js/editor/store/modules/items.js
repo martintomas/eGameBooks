@@ -151,6 +151,8 @@ export default {
             if('item' === args.pos.actionType && args.action.ref != null) { //build reverse info
                 state.reverseInfo[args.action.ref].push({'pageId':args.pos.pageId,'actionId':args.pos.actionId})
             }
+        },
+        [mutationTypes.MODULES_ACTION_EDITED](state,args) {
         }
     },
     actions: {
@@ -239,6 +241,8 @@ export default {
                 'redo':false,
                 'runRedo':true
             })       
+        },
+        newItemAction({ commit, dispatch, state}, args) {
         }
     }
 }
