@@ -5,9 +5,9 @@
            <li v-for="(value,key,index) in linkData" :key="key">
                 <dyn-tooltip ref='tooltipLink' :tooltip-id="generateHash('link',index)" :reactToClick='true' :reactToHover='false'>
                     <span slot='tooltip' :component-id="generateHash('link',index)"  class='tooltip markdown-action-buttons markdown-action-buttons-links bold'>
-                    link:&nbsp;{{key}}&nbsp;
+                    {{String.doTranslationEditor('link-small')}}:&nbsp;{{key}}&nbsp;
                         <template v-if="value.pageId != '' && value.pageId != null">
-                            (page&nbsp;{{value.pageId}})
+                            ({{String.doTranslationEditor('page-small')}}&nbsp;{{value.pageId}})
                         </template>
                     </span>
                     <span slot='tooltipText'>

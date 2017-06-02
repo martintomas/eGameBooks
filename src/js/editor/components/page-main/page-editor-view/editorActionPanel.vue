@@ -1,8 +1,8 @@
 <template>
     <div class='markdown-action-panel-root'>
         <div class='markdown-action-panel-buttons'>
-            <div class='markdown-toolbar-button' @click='showLinkModal'>Links</div>
-            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button'>Items</div>
+            <div class='markdown-toolbar-button' @click='showLinkModal'>{{String.doTranslationEditor('link')}}</div>
+            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button'>{{String.doTranslationEditor('item')}}</div>
         </div>
         <div class='markdown-action-panel-result'>
             <editor-action-link ref='editorActionLink' :page-id='pageId' :link-data='linkData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-link>

@@ -118,6 +118,7 @@ module.exports = {
     'set-up-link':'Set up link',
     'edit-link-action':'Edit link action',
     'page':'Page',
+    'page-small':'page',
     'change-book-settings':'Change book settings',
     'book-name':'Book name',
     'add-book-name':'Type book name. Required!',
@@ -147,4 +148,7 @@ module.exports = {
     'new-action-condition-not-valid':'Condition of action is not valid. Please delete or finish condition correctly.',
     'full-preview':'Full preview',
     'simple-preview':'Simple preview',
+    'link-small':'link',
+    'link':'Link',
+    'item':'Item',
 }
