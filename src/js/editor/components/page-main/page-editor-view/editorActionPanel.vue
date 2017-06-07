@@ -116,6 +116,13 @@ export default {
   display:inline-block;
 }
 
+.markdown-action-panel-result li .used {
+    border-color: black;
+}
+.markdown-action-panel-result li .wrong-action {
+    border-color: red;
+}
+
 .markdown-action-buttons {
     display:inline-block;
     padding: 0.2rem 0.5rem 0.2rem 0.5rem;

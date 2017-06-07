@@ -58,6 +58,7 @@ module.exports = {
     'missing-link-pageid-validation':'Link action of id: {0} is missing destination page.',
     'missing-item-actionid-validation':'Item reference of action id {0} is missing',
     'link-condition-wrong-validation':'Link action of id: {0} has wrong condition',
+    'item-condition-wrong-validation':'Item action of id: {0} has wrong condition',
     'page-number':'Page number',
     'page-tittle':'Page tittle',
     'method-page-number':'Method of getting page number',

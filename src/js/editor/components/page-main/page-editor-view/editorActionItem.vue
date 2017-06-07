@@ -4,7 +4,7 @@
         <ul>
            <li v-for="(value,key,index) in localData" :key="key">
                 <dyn-tooltip ref='tooltipLink' :tooltip-id="generateHash('item',index)" :reactToClick='true' :reactToHover='false'>
-                    <span slot='tooltip' :component-id="generateHash('item',index)"  class='tooltip markdown-action-buttons markdown-action-buttons-items bold'>
+                    <span slot='tooltip' :component-id="generateHash('item',index)"  :class="[value.existsInText ? 'used':'',containsErrors(isActionCorrect('item',value)) ? 'wrong-action' : '','tooltip', 'markdown-action-buttons', 'markdown-action-buttons-items', 'bold']">
                     {{String.doTranslationEditor('item-small')}}:&nbsp;{{key}}&nbsp;
                         <template v-if="value.ref != '' && value.ref != null">
                             ({{String.doTranslationEditor('id')}}&nbsp;{{value.ref}})
@@ -123,6 +123,7 @@ import DynCondition from 'editor/components/page-main/page-editor-view/dynCondit
 import {getUniqueId, generateHash,clearDict,containArray} from 'defaults.js'
 import {AllowedActions} from 'editor/constants'
 import {messageBoxWrapper} from 'editor/services/defaults.js'
+import {containsErrors,isActionCorrect} from 'editor/services/validators'
 
 export default {
     components: {
@@ -160,6 +161,8 @@ export default {
     methods: {
         generateHash,
         getUniqueId,
+        containsErrors,
+        isActionCorrect,
         showModal() {
             this.clear()
 

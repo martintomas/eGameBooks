@@ -43,7 +43,9 @@ export function isActionCorrect(actionType,action,res=null) {
         }
     } else if(actionType === AllowedActions.ITEM) {
         if(action.ref === null) res[ErrorImportance.SEVERE].push({text:'missing-item-actionid-validation',args:[action.id]})
-
+        if(action.condition != null && action.condition != '') { //do condition check 
+            if(!editorConditionGraph.isValidString(action.condition)) res[ErrorImportance.SEVERE].push({text:'item-condition-wrong-validation',args:[action.id]})
+        }
     }
 
     return res
