@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <span>
 
         <ul>
            <li v-for="(value,key,index) in linkData" :key="key">
@@ -19,7 +19,7 @@
             </li>
         </ul>
 
-        <template if='showModal'>
+        <template if='shownModal'>
             <!--Link modal-->
             <dyn-modal ref='linkModal' body-specific='modal-body-form' footer-specific='modal-footer-form' content-specific='modal-content-form'>
                 <span slot='modalHeader'>{{String.doTranslationEditor('link-action-dev')}}</span>
@@ -71,7 +71,7 @@
                     <span class="modalInput">{{openedLink.condition}}</span>
                     <br>
                     <label class="text-left modalLabel">{{String.doTranslationEditor('used-in-text')}}: </label>
-                    <i class="fa fa-times-circle modalInput" v-if='openedLink.existsInText' aria-hidden="true" ></i>
+                    <i class="fa fa-times-circle modalInput" v-if='!openedLink.existsInText' aria-hidden="true" ></i>
                     <i class="fa fa-check modalInput" v-else aria-hidden="true" ></i>
                 </template>
             </span>
@@ -80,7 +80,7 @@
             </span>
         </dyn-modal>
 
-    </div>
+    </span>
 </template>
 
 <script>
@@ -107,7 +107,7 @@ export default {
     data() {
         return {
             linkFormFields: {'id':'','pageId':'','condition':''},
-            showModal: false,
+            shownModal: false,
             openedLink: null,
             editedNoNew: false,
         }
@@ -120,10 +120,10 @@ export default {
     methods: {
         generateHash,
         getUniqueId,
-        showLinkModal() {
+        showModal() {
             this.clear()
 
-            this.showModal = true
+            this.shownModal = true
             this.editedNoNew = false
             Vue.set(this.linkFormFields,'id',this.getUniqueId(this.linkData)) //generete suitable id
 

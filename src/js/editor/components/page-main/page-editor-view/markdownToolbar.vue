@@ -203,7 +203,7 @@ export default {
 
 <style>
 .markdown-toolbar-root {
-    height:2rem;
+    /*height:2rem;*/
     width:100%;
 }
 .dropdown-toolbar-header-content {

@@ -263,7 +263,7 @@ body {
 .modal-body-form {
     padding: 0.5rem;
     margin-bottom: 3rem;
-    text-align:center;
+    text-align:left;
 }
 .modal-footer-form {
     padding: 0.2rem 2%;
@@ -317,5 +317,43 @@ body {
     color:yellow
 }
 .show-block {
+    display: block !important;
+}
+.whisperer-root {
+    display:inline-block;
+}
+.whisperer-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    max-height:15rem;
+    max-width:25rem;
+    overflow:hidden;
+}
+
+.whisperer-scroller {
+    z-index: 1;
+    transform: translateZ(0);
+    user-select: none;
+    text-size-adjust: none;
+}
+.whisperer-content ul{
+    list-style-type: none;
+    padding-left: 0;
+    margin:0;
+}
+.whisperer-content li {
+    float: none;
+    color: black;
+    padding: 0.2rem 0.7rem 0.2rem 0.7rem;
+    text-decoration: none;
     display: block;
+    text-align: left;
+    cursor:pointer;
+}
+.whisperer-content li:hover {
+    background-color: #ddd;
 }

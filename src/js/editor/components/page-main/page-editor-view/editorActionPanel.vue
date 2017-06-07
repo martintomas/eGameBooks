@@ -1,11 +1,12 @@
 <template>
     <div class='markdown-action-panel-root'>
         <div class='markdown-action-panel-buttons'>
-            <div class='markdown-toolbar-button' @click='showLinkModal'>{{String.doTranslationEditor('link')}}</div>
-            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button'>{{String.doTranslationEditor('item')}}</div>
+            <div class='markdown-toolbar-button' @click="showModal('editorActionLink')">{{String.doTranslationEditor('link')}}</div>
+            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button' @click="showModal('editorActionItem')">{{String.doTranslationEditor('item')}}</div>
         </div>
         <div class='markdown-action-panel-result'>
             <editor-action-link ref='editorActionLink' :page-id='pageId' :link-data='linkData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-link>
+            <editor-action-item ref='editorActionItem' :page-id='pageId' :local-data='itemData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-item>
         </div>
 
     </div>
@@ -14,12 +15,14 @@
 <script>
 
 import EditorActionLink from 'editor/components/page-main/page-editor-view/editorActionLink.vue'
+import EditorActionItem from 'editor/components/page-main/page-editor-view/editorActionItem.vue'
 import {messageBoxWrapper} from 'editor/services/defaults.js'
 import {AllowedActions} from 'editor/constants'
 
 export default {
     components: {
-        EditorActionLink
+        EditorActionLink,
+        EditorActionItem,
     },
     props: {
         pageId: null,
@@ -43,10 +46,13 @@ export default {
         linkData() {
             return this.actions.link
         },
+        itemData() {
+            return this.actions.item
+        }
     },
     methods: {
-        showLinkModal() {
-            this.$refs.editorActionLink.showLinkModal()
+        showModal(ref) {
+            this.$refs[ref].showModal()
         },
         addAction(values) {
             //take care of action addding
@@ -84,9 +90,9 @@ export default {
     border: 1px solid gray;
     margin: 0 0 0.25rem 0;
     width: 100%;
-    height: 10%;
+    /*height: 10%;*/
     min-height: 5rem;
-    max-height: 10rem;
+    max-height: 15rem;
 }
 .markdown-action-panel-buttons {
     border-right:1px solid black;

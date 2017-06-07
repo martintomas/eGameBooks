@@ -9,6 +9,7 @@ export default {
         workspace: {'local':{}},
         reverseInfo: {},
         selectedItem: null,
+        possibleItemActions: ['add','remove']
     },
     mutations: {
         [mutationTypes.ADD_WORKSPACES](state, modulesWorkspace) {
@@ -153,6 +154,21 @@ export default {
             }
         },
         [mutationTypes.MODULES_ACTION_EDITED](state,args) {
+            //args should contain pos, action and oldAction variables
+            //action is copy of action
+            //pos contains actionType, pageId and actionId values
+            if('item' === args.pos.actionType && args.oldAction.ref != args.action.ref) { //delete old action rev
+                if(args.oldAction.ref != null) {
+                    for(let i=0;i<state.reverseInfo[args.oldAction.ref].length;i++) {
+                        if(state.reverseInfo[args.oldAction.ref][i].pageId == args.pos.pageId && state.reverseInfo[args.oldAction.ref][i].actionId == args.pos.actionId) {
+                            Vue.delete(state.reverseInfo[args.oldAction.ref],i)
+                        }
+                    }
+                }
+                if(args.action.ref != null) {
+                    state.reverseInfo[args.action.ref].push({'pageId':args.pos.pageId,'actionId':args.pos.actionId})
+                }
+            }
         }
     },
     actions: {
@@ -243,6 +259,24 @@ export default {
             })       
         },
         newItemAction({ commit, dispatch, state}, args) {
+            if(!args.actionData || !(args.actionData.ref in state.workspace.local)) {
+                editorNotificationWrapper.newInternalInfo(commit,'Impossible to obtain appropriate item with local id: '+args.actionData.ref,false)
+                return
+            }
+
+            let itemAction = {
+                id:args.actionData.id,
+                action: args.actionData.action,
+                ref: args.actionData.ref,
+                condition: args.actionData.condition,
+                existsInText: false,
+            }
+
+            dispatch('newAction',{
+                'actionType':AllowedActions.ITEM,
+                'pageId':args.pageId,
+                'action':itemAction
+            })
         }
     }
 }

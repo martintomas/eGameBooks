@@ -724,6 +724,11 @@ export default {
                         pos:localData.pos,
                         action:localData.oldAction
                     })
+                    commit(mutationTypes.MODULES_ACTION_EDITED, {
+                        pos: localData.pos,
+                        action: localData.oldAction,
+                        oldAction: localData.action,
+                    })
                     let validatedBooks = [localData.pos.pageId]
                     if(localData.pos.actionType === AllowedActions.LINK) {
                         if(localData.action.pageId && localData.action.pageId != localData.oldAction.pageId) {
@@ -746,6 +751,7 @@ export default {
                 'undoArgs':localData,
                 'redoAction':function(localData) {
                     commit(mutationTypes.EDIT_ACTION,localData)
+                    commit(mutationTypes.MODULES_ACTION_EDITED, localData)
                     let validatedBooks = [localData.pos.pageId]
                     if(localData.pos.actionType === AllowedActions.LINK) {
                         if(localData.action.pageId && localData.action.pageId != localData.oldAction.pageId) {

@@ -79,6 +79,14 @@ export function clearDict(dict,vue=null) {
     return dict
 }
 
+export function containArray(val,arr) {
+    let i,arrLengt = arr.length
+    for(i=0;i<arrLengt;i++) {
+        if(val == arr[i]) return true
+    }
+    return false
+}
+
 // interval function that call provided function after window resize is finished --> window has stable size for defined time period
 var windowResizeEndIntervalItems = {} //use global variable to remmember states
 var numResizeEndAttempsDefault = 10 //number to attemps before it is forced to end
