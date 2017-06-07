@@ -22,6 +22,7 @@ module.exports = {
     'settings': 'Settings',
     'missing-page': 'Page is missing',
     'missing-link': 'Link action is missing',
+    'missing-item-action':'Item action is missing',
     'save':'Save',
     'close':'Close',
     'create':'Create',
@@ -168,4 +169,9 @@ module.exports = {
     'add':'add',
     'remove':'remove',
     'missing-ref':'Module item reference is missing!',
+    'missing-item':'missing item',
+    'take-item':'Take item',
+    'remove-item':'Remove item',
+    'item-added-inventory':'Item <strong>{0}</strong> has been added to inventory!',
+    'item-removed-inventory':'Item <strong>{0}</strong> has been removed from inventory!',
 }

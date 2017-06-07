@@ -1,6 +1,7 @@
 import PageHtmlEditorParser from 'editor/services/pageHtmlEditorParser.js'
 
 import PageTextActionLink from 'editor/components/page-main/page-main-text/pageTextActionLink.vue'
+import PageTextActionItem from 'editor/components/page-main/page-main-text/pageTextActionItem.vue'
 
 export default {
     props: {
@@ -29,7 +30,8 @@ export default {
         const dynComponent = {
             template: '<div>'+self.parsedHtmlText+'</div>',
             components: {
-                PageTextActionLink
+                PageTextActionLink,
+                PageTextActionItem,
             },
             data() {
                 return {

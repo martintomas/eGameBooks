@@ -78,7 +78,7 @@ export default {
     },
     methods: {
         generateHash,
-        showPageDetail(events) {
+        showPageDetail(event) {
             //console.log('Continuing reading to page: ' + this.linkData.pageId)
             editorNotificationWrapper.newInternalInfo(this.$store.commit,'Continuing reading to page: ' + this.linkData.pageId,false)
             // this.$store.commit('editor/'+mutationTypes.NEW_NOTIFICATION,{type:'info',level:'internal',debug:false,

@@ -94,11 +94,15 @@ export default {
         },
         removeAction(values) {
             //take care of action removing
-            messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('used-action-deletion-message'),
-                () => {
-                    this.$store.dispatch('editor/deleteAction',values)
-                }
-            )
+            if(values.used) {
+                messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('used-action-deletion-message'),
+                    () => {
+                        this.$store.dispatch('editor/deleteAction',values)
+                    }
+                )
+            } else {
+                this.$store.dispatch('editor/deleteAction',values)
+            }
         },
         editAction(values) {
             //take care of action editing
