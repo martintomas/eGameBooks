@@ -28,7 +28,7 @@ export default {
         },
         tooltipBox: {
             default: null,
-            type: Object
+            type: String
         },
         allowAutomaticHidding: {
             default:true,
@@ -205,7 +205,7 @@ export default {
         },
         show(itemBorder = null,showSecond=false) {
             if(itemBorder === null || !itemBorder) {
-                if(this.tooltipBox != null) itemBorder = this.tooltipBox
+                if(this.tooltipBox != null) itemBorder = document.getElementById(this.tooltipBox)
                 else itemBorder = window
             }
             if(this.leftRightOrientation) {
@@ -216,7 +216,7 @@ export default {
         },
         showInline(posTop=null,posLeft=null,itemBorder = null) {
             if(itemBorder === null || !itemBorder) {
-                if(this.tooltipBox != null) itemBorder = this.tooltipBox
+                if(this.tooltipBox != null) itemBorder = document.getElementById(this.tooltipBox)
                 else itemBorder = window
             }
             this.showTopBottomInline(itemBorder,posTop,posLeft)
@@ -306,6 +306,8 @@ export default {
             var pos_top = offsets[0] - tooltiptext.clientHeight - 5
             let itemWidth = itemBorder.innerWidth
             if(!itemWidth) itemWidth = itemBorder.clientWidth
+            let itemHeight = itemBorder.innerHeight
+            if(!itemHeight) itemHeight = itemBorder.clientHeight
             let clientHeightTemp = tooltiptext.clientHeight
             let clientWidthTemp = tooltiptext.clientWidth
 
@@ -341,7 +343,7 @@ export default {
             }
 
             //position up or down
-            if( pos_top < 0 && !this.forceTop) {
+            if( pos_top < 0 && !this.forceTop && (itemHeight - (offsets[0] + this.tooltip.clientHeight + this.tooltiptext.clientHeight) > pos_top)) {
                 pos_top = offsets[0] + this.tooltip.clientHeight;
                 tooltiptext.classList.add('top') //arrow is at top -> text is at bottom
             } else {
