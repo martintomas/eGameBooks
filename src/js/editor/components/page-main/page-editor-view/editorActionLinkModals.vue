@@ -22,7 +22,7 @@
                         <span slot='tooltipText'>{{String.doTranslationEditor('new-page-id-help')}}</span>
                     </dyn-tooltip>
                     <br>
-                    <dyn-condition ref='pageDynCondition' :pageCondition='formFields.condition'></dyn-condition>
+                    <dyn-condition ref='actionDynCondition' :pageCondition='formFields.condition'></dyn-condition>
                 </span>
                 <span slot='modalFooter' class='text-right'>
                     <span class='common-button' @click='saveAction'>{{String.doTranslationEditor('save')}}</span>
@@ -139,7 +139,7 @@ export default {
             let localData = {
                 'id':this.formFields.id,
                 'pageId':this.$refs.pageWhisperer.pageNumberLocal,
-                'condition':this.$refs.pageDynCondition.getDynConditionText()
+                'condition':this.$refs.actionDynCondition.getDynConditionText()
             }
 
             if(this.validationNewLink(localData)) {
@@ -165,7 +165,7 @@ export default {
             } else if(!(localData.pageId in this.pages)) {
                 messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-pages-doesnt-exists'))
                 return false
-            } else if(!this.$refs.pageDynCondition.isSelectionValid) {
+            } else if(!this.$refs.actionDynCondition.isSelectionValid) {
                 messageBoxWrapper.showWarnMessage(this.$store.commit,String.doTranslationEditor('new-action-condition-not-valid'))
                 return false
             }
@@ -196,7 +196,7 @@ export default {
         clear() {
             clearDict(this.formFields,Vue)
             this.$refs.pageWhisperer.clear()
-            this.$refs.pageDynCondition.clear()
+            this.$refs.actionDynCondition.clear()
         },
     }
 }
