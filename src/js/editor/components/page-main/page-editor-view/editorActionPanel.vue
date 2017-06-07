@@ -4,16 +4,21 @@
             <div class='markdown-toolbar-button' @click="showModal('editorActionLink')">{{String.doTranslationEditor('link')}}</div>
             <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button' @click="showModal('editorActionItem')">{{String.doTranslationEditor('item')}}</div>
         </div>
-        <div class='markdown-action-panel-result'>
-            <editor-action-link ref='editorActionLink' :page-id='pageId' :link-data='linkData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-link>
-            <editor-action-item ref='editorActionItem' :page-id='pageId' :local-data='itemData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-item>
+        <div class='markdown-action-panel-result' id='editorMarkdownActionPanel'>
+            <div class='scroller-wrapper' ref="actionPanelWrapper">
+                <div class='scroller-box'>
+                    <editor-action-link ref='editorActionLink' :page-id='pageId' :link-data='linkData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-link>
+                    <editor-action-item ref='editorActionItem' :page-id='pageId' :local-data='itemData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-item>
+                </div>
+            </div>
         </div>
 
     </div>
 </template>
 
 <script>
-
+import IScroll from 'iscroll'
+import {busEditor} from 'editor/services/defaults.js'
 import EditorActionLink from 'editor/components/page-main/page-editor-view/editorActionLink.vue'
 import EditorActionItem from 'editor/components/page-main/page-editor-view/editorActionItem.vue'
 import {messageBoxWrapper} from 'editor/services/defaults.js'
@@ -29,7 +34,8 @@ export default {
     },
     data() {
         return {
-            
+            scroller: null,
+            scrollWrapper: 'actionPanelWrapper',
         }
     },
     computed: {
@@ -49,6 +55,25 @@ export default {
         itemData() {
             return this.actions.item
         }
+    },
+    created() {
+        busEditor.$on('editor-panel-resize', source => {
+            if(this.scroller != null) {
+                this.scroller.refresh()
+            }
+        })
+    },
+    mounted() {
+        this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
+            mouseWheel: true,
+            bounce: false,
+            interactiveScrollbars: true,
+            shrinkScrollbars: 'clip',
+            scrollbars: 'custom',
+        })
+        setTimeout(() => {
+            this.scroller.refresh();
+        }, 200);
     },
     methods: {
         showModal(ref) {
@@ -91,7 +116,7 @@ export default {
     margin: 0 0 0.25rem 0;
     width: 100%;
     /*height: 10%;*/
-    min-height: 5rem;
+    min-height: 6rem;
     max-height: 15rem;
 }
 .markdown-action-panel-buttons {
@@ -103,7 +128,7 @@ export default {
     flex: 0 0 auto;
 }
 .markdown-action-panel-result {
-    margin:0.2rem;
+    position:relative;
     flex-grow:2;
 }
 .markdown-action-panel-result ul {
@@ -127,9 +152,7 @@ export default {
     display:inline-block;
     padding: 0.2rem 0.5rem 0.2rem 0.5rem;
     margin: 0.2rem;
-     border-radius: 1rem;
-    -webkit-border-radius: 1rem;
-    -moz-border-radius: 1rem;
+    border-radius: 1rem;
 }
 
 </style>

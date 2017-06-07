@@ -3,7 +3,7 @@
 
         <ul>
            <li v-for="(value,key,index) in linkData" :key="key">
-                <dyn-tooltip ref='tooltipLink' :tooltip-id="generateHash('link',index)" :reactToClick='true' :reactToHover='false'>
+                <dyn-tooltip ref='tooltipLink' :tooltip-id="generateHash('link',index)" :react-to-click='true' :react-to-hover='false' tooltip-box='editorMarkdownActionPanel'>
                     <span slot='tooltip' :component-id="generateHash('link',index)"  :class="[value.existsInText ? 'used':'',containsErrors(isActionCorrect('link',value)) ? 'wrong-action' : '','tooltip', 'markdown-action-buttons', 'markdown-action-buttons-links', 'bold']">
                     {{String.doTranslationEditor('link-small')}}:&nbsp;{{key}}&nbsp;
                         <template v-if="value.pageId != '' && value.pageId != null">
