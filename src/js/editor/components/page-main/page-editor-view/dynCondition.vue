@@ -1,31 +1,31 @@
 <template>
     <div class='markdown-dyn-condition-root'>
             <template v-if="selectedNodes.length > 1">
-
-                <ul class='modalLabel'>
-                    <li v-for="(node,index) in selectedNodes">
-                        <template v-if="index>0"> <!-- ignore starting node -->
-                            <template v-if="selectedNodes.length-1 === index"> <!-- last node -->
-                                <dyn-tooltip ref='tooltipCond' :tooltip-id="generateHash('cond-modal',index)" :reactToHover='false' :reactToClick='true'>
-                                    <span :component-id="generateHash('cond-modal',index)" class='markdown-action-buttons markdown-actions-cond tooltip cursor' slot='tooltip'>{{node.stringPart}}</span>
-                                    <span slot='tooltipText'>
-                                        <i class="fa fa-times-circle unactive-icon" aria-hidden="true" @click="removeCond(index,$event)" ></i>
-                                    </span>
-                                </dyn-tooltip>
+                <div class='markdown-condition-list text-center'>
+                    <ul class='modalLabel'>
+                        <li v-for="(node,index) in selectedNodes">
+                            <template v-if="index>0"> <!-- ignore starting node -->
+                                <template v-if="selectedNodes.length-1 === index"> <!-- last node -->
+                                    <dyn-tooltip ref='tooltipCond' :tooltip-id="generateHash('cond-modal',index)" :reactToHover='false' :reactToClick='true'>
+                                        <span :component-id="generateHash('cond-modal',index)" class='markdown-action-buttons markdown-actions-cond tooltip cursor' slot='tooltip'>{{node.stringPart}}</span>
+                                        <span slot='tooltipText'>
+                                            <i class="fa fa-times-circle unactive-icon" aria-hidden="true" @click="removeCond(index,$event)" ></i>
+                                        </span>
+                                    </dyn-tooltip>
+                                </template>
+                                <template v-else>
+                                    <span class='markdown-action-buttons markdown-actions-cond no-cursor'>{{node.stringPart}}</span>
+                                </template>
                             </template>
-                            <template v-else>
-                                <span class='markdown-action-buttons markdown-actions-cond no-cursor'>{{node.stringPart}}</span>
-                            </template>
-                        </template>
-                    </li>
-                </ul>
-                <template v-if="!isSelectionValid">
-                    <i class="fa fa-times-circle markdown-condition-wrong-input" aria-hidden="true" ></i>
-                </template>
-                <template v-else>
-                    <i class="fa fa-check markdown-condition-right-input" aria-hidden="true" ></i>
-                </template>
-                <br>
+                        </li>
+                    </ul>
+                    <template v-if="!isSelectionValid">
+                        <i class="fa fa-times-circle markdown-condition-wrong-input" aria-hidden="true" ></i>
+                    </template>
+                    <template v-else>
+                        <i class="fa fa-check markdown-condition-right-input" aria-hidden="true" ></i>
+                    </template>
+                </div>
             </template>
         <label for="linkCondition" class="modalLabel text-left">Page show condition:</label>
         <div class='' style="display:inline-block">
@@ -207,16 +207,15 @@ export default {
 .markdown-dyn-condition-root {
 }
 .markdown-condition-list {
-    margin-top:0.5rem;
-    width:100%;
+    margin-top:0.2rem;
 }
-.markdown-condition-list ul {
+.markdown-dyn-condition-root ul {
   list-style-type: none;
   display:inline;
   padding-left:0px;
   overflow:auto;
 }
-.markdown-condition-list li {
+.markdown-dyn-condition-root li {
   display:inline-block;
 }
 .markdown-actions-cond {
