@@ -1,18 +1,20 @@
 <template>
     <div class='markdown-action-panel-root'>
         <div class='markdown-action-panel-buttons'>
-            <div class='markdown-toolbar-button' @click="showModal('editorActionLink')">{{String.doTranslationEditor('link')}}</div>
-            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button' @click="showModal('editorActionItem')">{{String.doTranslationEditor('item')}}</div>
+            <div class='markdown-toolbar-button' @click="showModal('editorActionLinkModals')">{{String.doTranslationEditor('link')}}</div>
+            <div v-if="usedModules && usedModules.indexOf('item')>=0" class='markdown-toolbar-button' @click="showModal('editorActionItemModals')">{{String.doTranslationEditor('item')}}</div>
         </div>
         <div class='markdown-action-panel-result' id='editorMarkdownActionPanel'>
             <div class='scroller-wrapper' ref="actionPanelWrapper">
                 <div class='scroller-box'>
-                    <editor-action-link ref='editorActionLink' :page-id='pageId' :link-data='linkData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-link>
-                    <editor-action-item ref='editorActionItem' :page-id='pageId' :local-data='itemData' @remove-action='removeAction' @add-action='addAction' @edit-action='editAction'></editor-action-item>
+                    <editor-action-link ref='editorActionLink' :page-id='pageId' @remove-action='removeAction' @modal-action='modalAction'></editor-action-link>
+                    <editor-action-item ref='editorActionItem' :page-id='pageId' @remove-action='removeAction' @modal-action='modalAction'></editor-action-item>
                 </div>
             </div>
         </div>
 
+        <editor-action-item-modals ref='editorActionItemModals' :page-id='pageId' :local-data='localData' @add-action='addAction' @edit-action='editAction'></editor-action-item-modals>
+        <editor-action-link-modals ref='editorActionLinkModals' :page-id='pageId' :local-data='localData' @add-action='addAction' @edit-action='editAction'></editor-action-link-modals>
     </div>
 </template>
 
@@ -21,13 +23,17 @@ import IScroll from 'iscroll'
 import {busEditor} from 'editor/services/defaults.js'
 import EditorActionLink from 'editor/components/page-main/page-editor-view/editorActionLink.vue'
 import EditorActionItem from 'editor/components/page-main/page-editor-view/editorActionItem.vue'
+import EditorActionItemModals from 'editor/components/page-main/page-editor-view/editorActionItemModals.vue'
+import EditorActionLinkModals from 'editor/components/page-main/page-editor-view/editorActionLinkModals.vue'
 import {messageBoxWrapper} from 'editor/services/defaults.js'
 import {AllowedActions} from 'editor/constants'
 
 export default {
     components: {
         EditorActionLink,
+        EditorActionLinkModals,
         EditorActionItem,
+        EditorActionItemModals,
     },
     props: {
         pageId: null,
@@ -36,25 +42,13 @@ export default {
         return {
             scroller: null,
             scrollWrapper: 'actionPanelWrapper',
+            localData: null,
         }
     },
     computed: {
-        pages() {
-            return this.$store.state.editor.bookData.pages
-        },
         usedModules() {
             return this.$store.state.editor.bookData.mainInfo.usedModules
         },
-        actions() {
-            if(this.pageId in this.pages) return this.pages[this.pageId].actions
-            return []
-        },
-        linkData() {
-            return this.actions.link
-        },
-        itemData() {
-            return this.actions.item
-        }
     },
     created() {
         busEditor.$on('editor-panel-resize', source => {
@@ -78,6 +72,9 @@ export default {
     methods: {
         showModal(ref) {
             this.$refs[ref].showModal()
+        },
+        modalAction(data) {
+            this.localData = data
         },
         addAction(values) {
             //take care of action addding
