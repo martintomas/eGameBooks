@@ -9,7 +9,7 @@
                         <i v-else-if="getFirstMessage.type === 'warn'" class="fa fa-warning fa-5x message-box-icon float-left" aria-hidden="true"></i>
                         <i v-else-if="getFirstMessage.type === 'error'" class="fa fa-exclamation-circle fa-5x message-box-icon float-left" aria-hidden="true"></i>
                         
-                        {{getFirstMessage.message}}
+                        <span v-html='getFirstMessage.message'></span>
                     
                     <span v-if="getFirstMessage.buttonType === 'ok'" class='message-box-buttons'>
                         <a href='#' class='message-box-button ok' @click='callFunc1'>{{String.doTranslationCore('ok')}}</a>
