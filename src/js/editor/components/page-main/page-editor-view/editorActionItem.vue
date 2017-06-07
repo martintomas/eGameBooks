@@ -231,7 +231,7 @@ export default {
             this.$refs.newActionModal.show()
         },
         removeAction(dataId) {
-            this.$emit('remove-action',{'actionType':AllowedActions.ITEM,'pageId':this.pageId,'actionId':dataId})
+            this.$emit('remove-action',{'actionType':AllowedActions.ITEM,'pageId':this.pageId,'actionId':dataId,'used':this.localData[dataId].existsInText})
         },
         showInfo(dataId) {
             this.openedData = this.localData[dataId]

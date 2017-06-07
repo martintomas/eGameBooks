@@ -183,7 +183,7 @@ export default {
             this.$refs.linkModal.show()
         },
         removeLink(linkId) {
-            this.$emit('remove-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionId':linkId})
+            this.$emit('remove-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionId':linkId,'used':this.linkData[linkId].existsInText})
         },
         showInfo(linkId) {
             this.openedLink = this.linkData[linkId]
