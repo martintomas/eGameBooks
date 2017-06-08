@@ -99,4 +99,8 @@ export default {
     text-decoration: underline;
     cursor: pointer
 }
+.link-text:after {
+    font-family: FontAwesome;
+    content: " \f0a4";
+}
 </style>

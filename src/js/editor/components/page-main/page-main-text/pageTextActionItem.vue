@@ -1,6 +1,6 @@
 <template>
     <dyn-tooltip :inline='true' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('main-text','item'+actionId)">
-        <span v-html='text' slot='tooltip' :class="[isCorrect ? '' : 'error-action', 'link-text', 'tooltip']" :component-id="generateHash('main-text','item'+actionId)"></span>
+        <span v-html='text' slot='tooltip' :class="[isCorrect ? '' : 'error-action', 'item-text', 'tooltip']" :component-id="generateHash('main-text','item'+actionId)"></span>
         <span slot='tooltipText'>
             <template v-if="renderType === 'main'">
                 {{String.doTranslationEditor('action-id')}}: {{actionId}}<br>
@@ -113,8 +113,12 @@ export default {
 </script>
 
 <style>
-.link-text {
+.item-text {
     text-decoration: underline;
     cursor: pointer
+}
+.item-text:after {
+    font-family: FontAwesome;
+    content: " \f255";
 }
 </style>
