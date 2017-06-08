@@ -188,7 +188,7 @@
         height: 15rem;
         min-height: 15rem;
 
-        transition: top 0.5s;
+        transition: top 0.2s;
     }
     
     .page-mini {

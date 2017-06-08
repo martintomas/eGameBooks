@@ -104,7 +104,7 @@ export default {
     border: 1px solid #888;
     border-radius: 1.2rem;
     animation-name: animatetop;
-    animation-duration: 0.4s;
+    animation-duration: 0.2s;
 }
 .modal-content-specific {
     background-color: #fefefe;

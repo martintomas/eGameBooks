@@ -76,7 +76,7 @@ export default {
     position: absolute;
     height:100%;
     
-    transition: left 0.5s;
+    transition: left 0.2s;
 }
 .mini-page-connection-tooltip {
     height:85%;
@@ -111,7 +111,7 @@ export default {
     text-align:center;
     font-size:130%;
 
-    transition: width 0.5s;
+    transition: width 0.2s;
 }
 .connection-icon .missing {
     color:red;
