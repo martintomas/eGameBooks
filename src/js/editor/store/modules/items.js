@@ -67,7 +67,6 @@ export default {
             if(itemId in state.workspace.local || itemId === null) {
                 state.selectedItem = itemId
                 editorNotification.newInternalInfo('Selected item has been changed to '+itemId,true)
-
             }           
         },
         [mutationTypes.ADD_NEW_ITEM](state,newItem) {
@@ -117,6 +116,7 @@ export default {
                         for(j=0;j<state.reverseInfo[page.actions.item[i].ref].length;j++) {
                             if(state.reverseInfo[page.actions.item[i].ref][j].pageId == page.data.id) {
                                 Vue.delete(state.reverseInfo[page.actions.item[i].ref],j)
+                                j--
                             }
                         }
                     }
@@ -141,6 +141,7 @@ export default {
                 for(let i=0;i<state.reverseInfo[args.action.ref].length;i++) {
                     if(state.reverseInfo[args.action.ref][i].pageId == args.pos.pageId && state.reverseInfo[args.action.ref][i].actionId == args.pos.actionId) {
                         Vue.delete(state.reverseInfo[args.action.ref],i)
+                        i--
                     }
                 }
             }
@@ -162,6 +163,7 @@ export default {
                     for(let i=0;i<state.reverseInfo[args.oldAction.ref].length;i++) {
                         if(state.reverseInfo[args.oldAction.ref][i].pageId == args.pos.pageId && state.reverseInfo[args.oldAction.ref][i].actionId == args.pos.actionId) {
                             Vue.delete(state.reverseInfo[args.oldAction.ref],i)
+                            i--
                         }
                     }
                 }

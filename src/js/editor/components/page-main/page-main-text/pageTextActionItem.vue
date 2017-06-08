@@ -1,9 +1,10 @@
 <template>
-    <dyn-tooltip :inline='true' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('main-text','link'+actionId)">
-        <span v-html='text' slot='tooltip' :class="[isCorrect ? '' : 'error-action', 'link-text', 'tooltip']" :component-id="generateHash('main-text','link'+actionId)"></span>
+    <dyn-tooltip :inline='true' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('main-text','item'+actionId)">
+        <span v-html='text' slot='tooltip' :class="[isCorrect ? '' : 'error-action', 'link-text', 'tooltip']" :component-id="generateHash('main-text','item'+actionId)"></span>
         <span slot='tooltipText'>
             <template v-if="renderType === 'main'">
                 {{String.doTranslationEditor('action-id')}}: {{actionId}}<br>
+                {{String.doTranslationEditor('action-type')}}: {{actionType}}<br>
             </template>
 
             <template v-if='itemAction != null'>
@@ -65,7 +66,7 @@ export default {
     },
     data() {
         return {
-            actionType: AllowedActions.Item,
+            actionType: AllowedActions.ITEM,
         }
     },
     computed: {

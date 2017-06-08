@@ -1,19 +1,27 @@
 <template>
     <div class='editor-markdown-root'>
-        <editor-action-panel :page-id='pageId' class='editor-action-panel'></editor-action-panel>
-        <markdown-toolbar :page-id='pageId' @add-simple-text-textarea='addSimpleTextTextarea' @hide-markdown-preview="hideMarkdownPreview" @show-markdown-preview="showMarkdownPreview" @change-preview-type='changePreviewType'></markdown-toolbar>
-        <div class='editor-markdown-main-part'>
-            <div class='div-markdown-textarea' ref='markdownTextareaRoot'><textarea class='markdown-textarea' ref='markdownTextarea' :value='editedText' @input="updateTextarea"></textarea></div>
-            
-            <div class='markdown-rendered-output' ref='markdownRenderedRoot'>
-                <div class='scroller-wrapper' ref="pageEditorMainWrapper">
-                    <div class='scroller-box'>
-                        <div v-if='simplePreview' class='' v-html="compiledMarkdown"></div>
-                        <page-main-text v-else class='' :page-data='pageData'></page-main-text>
+        <template v-if="editedPageExists">
+            <editor-action-panel :page-id='pageId' class='editor-action-panel'></editor-action-panel>
+            <markdown-toolbar :page-id='pageId' @add-simple-text-textarea='addSimpleTextTextarea' @hide-markdown-preview="hideMarkdownPreview" @show-markdown-preview="showMarkdownPreview" @change-preview-type='changePreviewType'></markdown-toolbar>
+            <div class='editor-markdown-main-part'>
+                <div class='div-markdown-textarea' ref='markdownTextareaRoot'><textarea class='markdown-textarea' ref='markdownTextarea' :value='editedText' @input="updateTextarea"></textarea></div>
+                
+                <div class='markdown-rendered-output' ref='markdownRenderedRoot'>
+                    <div class='scroller-wrapper' ref="pageEditorMainWrapper">
+                        <div class='scroller-box'>
+                            <div v-if='simplePreview' class='' v-html="renderedText"></div>
+                            <page-main-text v-else class='' :page-data='pageData'></page-main-text>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
+        <template v-else-if="pagesExists">
+            <div class='page-view-missing-page'>
+                {{String.doTranslationEditor('missing-page-error',pageId)}}
+                <span style='text-decoration:underline;cursor:pointer;' @click='createNewPage'>{{String.doTranslationEditor('missing-page-create-new')}}</span>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -62,6 +70,12 @@ export default {
         pageData() {
             return this.$store.state.editor.bookData.pages[this.pageId]
         },
+        pagesExists() {
+            return this.$store.state.editor.bookData.pagesOrder.length > 0
+        },
+        editedPageExists() {
+            return this.pageId in this.$store.state.editor.bookData.pages
+        },
         rawText() {
             if(this.pageId in this.pages) {
                 return this.pages[this.pageId].data.text
@@ -74,13 +88,6 @@ export default {
             }
             return ''
         },
-        compiledMarkdown() {
-            if(this.previewShown && this.rawText != this.editedText) { //do rendering only when render area is shown
-                let analysis = JSON.parse(JSON.stringify(markdownItAnalysis))
-                return this.markdownComp.render(this.editedText, { 'analysis': analysis, 'pageId': this.pageId })
-            }
-            return this.renderedText
-        },
         previewShown() {
             return this.$store.state.editor.editorStatus.editorShowPreview
         },
@@ -89,8 +96,14 @@ export default {
         }
     },
     watch: {
-        rawText() {
-            this.editedText = this.rawText
+        rawText(value) {
+            this.editedText = value
+            if(this.markdownTextarea) this.markdownTextarea.focus()
+        },
+        editedPageExists(value) {
+            if(value) {
+                this.initializeEditor()
+            }
         }
     },
     created() {
@@ -101,20 +114,14 @@ export default {
         })
     },
     mounted() {
+        this.initializeEditor()
+    },
+    beforeRouteEnter (to, from, next) {
+        next()
+    },
+    beforeRouteUpdate (to, from, next) {
         this.editedText = this.rawText
-        this.markdownTextarea = this.$refs.markdownTextarea //create shortcut for markdown textarea
-        this.markdownTextarea.focus()
-
-        this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
-            mouseWheel: true,
-            bounce: false,
-            interactiveScrollbars: true,
-            shrinkScrollbars: 'clip',
-            scrollbars: 'custom',
-        })
-        setTimeout(() => {
-            this.scroller.refresh();
-        }, 200)
+        next()
     },
     beforeRouteLeave (to, from, next) {
         this.editedText = this.rawText
@@ -124,10 +131,34 @@ export default {
         generateHash,
         updateTextarea: debounce(function (e) {
             this.editedText = e.target.value
+            this.$store.dispatch('editor/updatePageText', {
+                pageId: this.pageId,
+                text: e.target.value,
+            })
             setTimeout(() => {
                 this.scroller.refresh();
             }, 200)
-        }, 300),
+        }, 500),
+        initializeEditor() {
+            this.$nextTick(() => {
+                this.editedText = this.rawText
+                this.markdownTextarea = this.$refs.markdownTextarea //create shortcut for markdown textarea
+                if(this.markdownTextarea) this.markdownTextarea.focus()
+
+                if(this.$refs[this.scrollWrapper]) {
+                    this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
+                        mouseWheel: true,
+                        bounce: false,
+                        interactiveScrollbars: true,
+                        shrinkScrollbars: 'clip',
+                        scrollbars: 'custom',
+                    })
+                    setTimeout(() => {
+                        this.scroller.refresh();
+                    }, 200)
+                }
+            })
+        },
         addSimpleTextTextarea(data) { //emited by markdown toolbar           
             this.markdownTextarea.focus()
             let selStart = this.markdownTextarea.selectionStart
@@ -185,6 +216,9 @@ export default {
             setTimeout(() => {
                 this.scroller.refresh();
             }, 200)
+        },
+        createNewPage() {
+            this.$router.push({ name: 'editor-new-page', params: { pageId: this.pageId }})
         }
     }
 }

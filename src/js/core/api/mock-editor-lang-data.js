@@ -174,4 +174,7 @@ module.exports = {
     'remove-item':'Remove item',
     'item-added-inventory':'Item <strong>{0}</strong> has been added to inventory!',
     'item-removed-inventory':'Item <strong>{0}</strong> has been removed from inventory!',
+    'page-saved':'Page {0} has been saved',
+    'required':'Required',
+    'required-help':'If\xa0possible,\xa0user has\xa0to\xa0active\xa0action.'
 }

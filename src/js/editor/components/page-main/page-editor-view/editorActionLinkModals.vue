@@ -23,6 +23,16 @@
                     </dyn-tooltip>
                     <br>
                     <dyn-condition ref='actionDynCondition' :pageCondition='formFields.condition'></dyn-condition>
+                    <label class="modalLabel text-left">{{String.doTranslationEditor('required')}}<span class='required'>*</span>: </label>
+                    <div class='modalInput'>
+                        <input class='' type="radio" id='linkRequiredLinkTrue' value="true" v-model="formFields.required"><label class='' for="linkRequiredLinkTrue" >{{String.doTranslationEditor('yes')}}</label>
+                        &nbsp;&nbsp;
+                        <input class='' type="radio" id='linkRequiredLinkFalse' value="false" v-model="formFields.required"><label class='' for="linkRequiredLinkFalse" >{{String.doTranslationEditor('no')}}</label>
+                    </div>
+                    <dyn-tooltip class='helper float-right'>
+                        <i class="fa fa-question-circle unactive-icon tooltip" aria-hidden="true" slot='tooltip'></i>
+                        <span slot='tooltipText'>{{String.doTranslationEditor('required-help')}}</span>
+                    </dyn-tooltip>
                 </span>
                 <span slot='modalFooter' class='text-right'>
                     <span class='common-button' @click='saveAction'>{{String.doTranslationEditor('save')}}</span>
@@ -51,6 +61,10 @@
                     <br>
                     <label class="text-left modalLabel">{{String.doTranslationEditor('condition')}}: </label> 
                     <span class="modalInput">{{openedData.condition}}</span>
+                    <br>
+                    <label class="text-left modalLabel">{{String.doTranslationEditor('required')}}: </label> 
+                    <i class="fa fa-times-circle modalInput" v-if='!openedData.required' aria-hidden="true" ></i>
+                    <i class="fa fa-check modalInput" v-else aria-hidden="true" ></i>
                     <br>
                     <label class="text-left modalLabel">{{String.doTranslationEditor('used-in-text')}}: </label>
                     <i class="fa fa-times-circle modalInput" v-if='!openedData.existsInText' aria-hidden="true" ></i>
@@ -91,7 +105,7 @@ export default {
     },
     data() {
         return {
-            formFields: {'id':'','pageId':'','condition':''},
+            formFields: {'id':'','pageId':'','condition':'','required':false},
             shownModal: false,
             openedData: null,
             editedNoNew: false,
@@ -139,6 +153,7 @@ export default {
             let localData = {
                 'id':this.formFields.id,
                 'pageId':this.$refs.pageWhisperer.pageNumberLocal,
+                'required':(this.formFields.required == 'true'),
                 'condition':this.$refs.actionDynCondition.getDynConditionText()
             }
 
@@ -180,6 +195,7 @@ export default {
 
             Vue.set(this.formFields,'id',localData['id'])
             Vue.set(this.formFields,'pageId',localData['pageId'])
+            Vue.set(this.formFields,'required',localData['required'])
             Vue.set(this.formFields,'condition',localData['condition'])
             this.editedNoNew = true
 
@@ -195,6 +211,7 @@ export default {
         },
         clear() {
             clearDict(this.formFields,Vue)
+            Vue.set(this.formFields,'required',false)
             this.$refs.pageWhisperer.clear()
             this.$refs.actionDynCondition.clear()
         },

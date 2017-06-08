@@ -4,6 +4,7 @@
         <span slot='tooltipText'>
             <template v-if="renderType === 'main'">
                 {{String.doTranslationEditor('action-id')}}: {{actionId}}<br>
+                {{String.doTranslationEditor('action-type')}}: {{actionType}}<br>
             </template>
 
             <template v-if="linkData != null">

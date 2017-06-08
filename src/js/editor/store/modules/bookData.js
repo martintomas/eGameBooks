@@ -45,7 +45,7 @@ function processActions(actionInfo) { //set up by default for all actions that t
     for (let key in actionInfo) {
         res[key] = {}
         for (let i = 0; i < actionInfo[key].length; i++) {
-            actionInfo[key][i]['existsInText'] = false
+            Vue.set(actionInfo[key][i],'existsInText',false)
             Vue.set(res[key],actionInfo[key][i].id,actionInfo[key][i])
         }
     }
@@ -94,7 +94,7 @@ export default {
                 let analysis = JSON.parse(JSON.stringify(markdownItAnalysis)) //deep copy of markdownItAnalysis
                 Vue.set(state.pages[page.id].data, 'renderedText', state.markdownCompDefault.render(page.text, { 'analysis': analysis, 'pageId': page.id })) //render text
                 Vue.set(state.pages[page.id], 'actions', processActions(page.actions))
-                Vue.set(state.pages[page.id], 'renderInfo', buildRenderInfo(analysis, page.actions)) //build complete render info
+                Vue.set(state.pages[page.id], 'renderInfo', buildRenderInfo(analysis, state.pages[page.id].actions)) //build complete render info
 
                 //update reverse links
                 for (let i = 0; i < page.actions.link.length; i++) {
@@ -133,9 +133,18 @@ export default {
 
             editorNotification.newInternalInfo('Pages of book ('+Object.keys(pages)+') have been validated',true)
         },
-        [mutationTypes.RENDER_PAGE](state, page) {
-            //console.log('STORE: rendering text for page number ' + page.id)
-            editorNotification.newInternalInfo('Rendering text for page number ' + page.id,true)
+        [mutationTypes.RENDER_PAGE](state, args) {
+            //args should contain pageId and text
+            if(args.pageId in state.pages) {
+                //editorNotification.newInternalInfo('Rendering text for page number ' + args.pageId,true)
+
+                Vue.set(state.pages[args.pageId].data,'text',args.text)
+                let analysis = JSON.parse(JSON.stringify(markdownItAnalysis)) //deep copy of markdownItAnalysis
+                Vue.set(state.pages[args.pageId].data, 'renderedText', state.markdownCompDefault.render(args.text, { 'analysis': analysis, 'pageId': args.pageId })) //render text
+                Vue.set(state.pages[args.pageId], 'renderInfo', buildRenderInfo(analysis, state.pages[args.pageId].actions)) //build complete render info
+
+                editorNotification.newInternalInfo('Text for page number ' + args.pageId + ' has been rendered',true)
+            }
         },
         [mutationTypes.SELECT_PAGE](state, pageId) {
             //console.log('STORE: selecting new page ' + pageId)
@@ -178,6 +187,7 @@ export default {
                     for(let i=0;i<reverseLinks.length;i++) { //find appropriate reverse link
                         if(reverseLinks[i].pageId === pageId && reverseLinks[i].actionId === state.pages[pageId].actions.link[key].id) {
                             Vue.delete(reverseLinks,i)
+                            i--
                         }
                     }
                 }
@@ -215,7 +225,10 @@ export default {
                         Vue.set(links[page.reverseLink[i].actionId],'pageId',page.data.id)  
                     }
                 }
-                if(!valid) Vue.delete(page.reverseLink,i)
+                if(!valid) {
+                    Vue.delete(page.reverseLink,i)
+                    i--
+                }
             }
 
             //build reverse info for other pages
@@ -268,6 +281,7 @@ export default {
                             for(let i=0;i<state.pages[oldValue].reverseLink.length;i++) {
                                 if(state.pages[oldValue].reverseLink[i].pageId == args.pageId && state.pages[oldValue].reverseLink[i].actionId == args.actionId) {
                                     Vue.delete(state.pages[oldValue].reverseLink,i)
+                                    i--
                                 }
                             }
                         }
@@ -293,6 +307,7 @@ export default {
                 for(let i=0;i<state.pages[args.action.pageId].reverseLink.length;i++) {
                     if(state.pages[args.action.pageId].reverseLink[i].pageId == args.pageId && state.pages[args.action.pageId].reverseLink[i].actionId == args.action.id) {
                         Vue.delete(state.pages[args.action.pageId].reverseLink,i)
+                        i--
                     }
                 }
             }
@@ -423,6 +438,47 @@ export default {
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been not loaded. Reason is: '+reason,true)
                 editorLoaderWrapper.removeLoader(commit,'page-load')
             })
+        },
+        updatePageText({ commit, dispatch, state }, args) {
+            //args should contain pageId and text
+            if(!(args.pageId in state.pages)) {
+                editorNotificationWrapper.newInternalError(commit,'Impossible to update page text. Page is missing!',false)
+                return
+            }
+
+            let localData =  {
+                pageId: args.pageId,
+                text: args.text,
+                oldText: state.pages[args.pageId].data.text,
+            }
+
+            dispatch('undoRedoWrapper',{
+                'undoAction':function(localData) {
+                    commit(mutationTypes.RENDER_PAGE,{
+                        pageId: localData.pageId,
+                        text: localData.oldText
+                    })
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:[localData.pageId],
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'undoArgs':localData,
+                'redoAction':function(localData) {
+                    commit(mutationTypes.RENDER_PAGE,localData)
+                    commit(mutationTypes.VALIDATE_BOOK,{
+                        pages:[localData.pageId],
+                        actionType:null,
+                        onlyId: true
+                    })
+                },
+                'redoArgs':localData,
+                'undo':true,
+                'redo':false,
+                'runRedo':true
+            })
+
         },
         deletePage({ commit, dispatch, state }, pageId) {
             let i,key, localData, pageToBeValidated = {}
@@ -612,6 +668,9 @@ export default {
                 'runRedo':true
             })
             
+        },
+        savePage({ commit, dispatch, state }, pageId) { 
+            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('page-saved',pageId),false)
         },
         newLinkAction({ commit, dispatch, state }, args) {
             let valid = true

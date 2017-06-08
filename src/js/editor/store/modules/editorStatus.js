@@ -84,9 +84,10 @@ export default {
                 editorNotification.newInternalInfo('Redo action with id: '+index+' has been removed',true)
             } else {
                 //index is null -> delete all redo actions
-                for(let i=0;i<state.redoActions.length;i++) {
-                    Vue.delete(state.redoActions,i)
-                }
+                // for(let i=0;i<state.redoActions.length;i++) {
+                //     Vue.delete(state.redoActions,i)
+                // }
+                state.redoActions = []
 
                 editorNotification.newInternalInfo('All redo actions has been removed',true)
             }
@@ -118,7 +119,7 @@ export default {
             //args should be undoAction,redoAction,undo,redo
             if(args.undo) {
                 commit(mutationTypes.ADD_UNDO_ACTION,args)
-                commit(mutationTypes.REMOVE_REDO_ACTION)
+                commit(mutationTypes.REMOVE_REDO_ACTION,null)
             }
             if(args.runRedo) {
                 args.redoAction(args.redoArgs)

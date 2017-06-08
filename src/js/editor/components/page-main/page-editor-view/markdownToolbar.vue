@@ -1,8 +1,8 @@
 <template>
     <div class='markdown-toolbar-root'>
-        <span class='markdown-toolbar-button' @click=""><i class="fa fa-save" aria-hidden="true"></i></span>
-        <span class='markdown-toolbar-button' @click=""><i class="fa fa-mail-reply" aria-hidden="true"></i></span>
-        <span class='markdown-toolbar-button' @click=""><i class="fa fa-mail-forward" aria-hidden="true"></i></span>
+        <span class='markdown-toolbar-button' @click="savePage"><i class="fa fa-save" aria-hidden="true"></i></span>
+        <!--<span class='markdown-toolbar-button' @click=""><i class="fa fa-mail-reply" aria-hidden="true"></i></span>-->
+        <!--<span class='markdown-toolbar-button' @click=""><i class="fa fa-mail-forward" aria-hidden="true"></i></span>-->
         <span class='markdown-toolbar-button' @click="addDoubleText('**','**')"><i class="fa fa-bold" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' @click="addDoubleText('*','*')"><i class="fa fa-italic" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button dropbtn' style='display:inline-block;' :component-id="headerComponentId" @click='showDropDownHeader'><i :component-id="headerComponentId" class="fa fa-header dropbtn" aria-hidden="true"></i>
@@ -16,8 +16,9 @@
         <span class='markdown-toolbar-button' @click=""><i class="fa fa-image" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' v-if="!previewShown" @click="showPreview()"><i class="fa fa-eye" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' v-if="previewShown" @click="hidePreview()"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
-        <span class='markdown-toolbar-button' v-if="!simplePreview" @click="changePreview(true)">{{String.doTranslationEditor('full-preview')}}</span>
-        <span class='markdown-toolbar-button' v-if="simplePreview" @click="changePreview(false)">{{String.doTranslationEditor('simple-preview')}}</span>
+        <span class='markdown-toolbar-button' v-if="simplePreview" @click="changePreview(false)">{{String.doTranslationEditor('full-preview')}}</span>
+        <span class='markdown-toolbar-button' v-if="!simplePreview" @click="changePreview(true)">{{String.doTranslationEditor('simple-preview')}}</span>
+        <span class='markdown-toolbar-button float-right' @click='closeEditor'>{{String.doTranslationEditor('close')}}</span>
 
         <template if='showModal'>
             <!--action modal-->
@@ -195,6 +196,12 @@ export default {
         },
         changePreview(value) {
             this.$emit('change-preview-type',value)
+        },
+        savePage() {
+            this.$store.dispatch('editor/savePage',this.pageId)
+        },
+        closeEditor() {
+            this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
         }
     }
 

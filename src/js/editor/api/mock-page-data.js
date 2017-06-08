@@ -18,35 +18,42 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':true,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 3,
                 'pageId': null,
-                'condition': ''
+                'condition': '',
+                'required':true,
             }, {
                 'id': 4,
                 'pageId': null,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }],
             'item': [{
                 'id':1,
                 'ref':1,
                 'action':'add',
-                'condition':''
+                'condition':'',
+                'required':false,
             },{
                 'id':2,
                 'ref':2,
                 'action':'remove',
-                'condition':''
+                'condition':'',
+                'required':false,
             }],
             'journal': [{
                 'id':1,
                 'ref':1,
-                'condition':''
+                'condition':'',
+                'required':false,
             }]
         }
     }, {
@@ -59,38 +66,46 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 3,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 3,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 4,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 5,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 6,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }],
             'item': [{
                 'id':1,
                 'ref':1,
                 'action':'add',
-                'condition':''
+                'condition':'',
+                'required':false,
             },{
                 'id':2,
                 'ref':2,
                 'action':'remove',
-                'condition':''
+                'condition':'',
+                'required':false,
             }],
         }
     }, {
@@ -103,11 +118,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -120,11 +137,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -146,11 +165,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -163,11 +184,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -180,11 +203,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -197,11 +222,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -214,11 +241,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -231,11 +260,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }, {
@@ -248,11 +279,13 @@ module.exports = {
             'link': [{
                 'id': 1,
                 'pageId': 1,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }, {
                 'id': 2,
                 'pageId': 2,
-                'condition': ''
+                'condition': '',
+                'required':false,
             }]
         },
     }],
