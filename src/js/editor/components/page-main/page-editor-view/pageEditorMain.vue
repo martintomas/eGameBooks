@@ -32,7 +32,7 @@ import MarkdownToolbar from 'editor/components/page-main/page-editor-view/markdo
 import EditorActionPanel from 'editor/components/page-main/page-editor-view/editorActionPanel.vue'
 import {MarkdownComp} from 'editor/services/markdown-it/markdownComp.js'
 import {AllowedActions} from 'editor/constants'
-import {debounce,generateHash} from 'defaults.js'
+import {debounce,generateHash,setCss3Style} from 'defaults.js'
 import * as mutationTypes from 'editor/store/mutationTypes' 
 import PageMainText from 'editor/components/page-main/page-main-text/pageMainText.vue'
 
@@ -147,6 +147,7 @@ export default {
                 this.editedText = this.rawText
                 this.markdownTextarea = this.$refs.markdownTextarea //create shortcut for markdown textarea
                 if(this.markdownTextarea) this.markdownTextarea.focus()
+                if(!this.previewShown) this.hideMarkdownPreviewImmidiately()
 
                 if(this.$refs[this.scrollWrapper]) {
                     this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
@@ -196,6 +197,20 @@ export default {
                     this.scroller.refresh();
                 }, 200)
             }, 500)
+        },
+        hideMarkdownPreviewImmidiately() {
+            setCss3Style(this.$refs.markdownTextareaRoot,'transition','width 0s')
+            setCss3Style(this.$refs.markdownRenderedRoot,'transition','width 0s')
+
+            this.$refs.markdownRenderedRoot.style.overflow = 'hidden'
+            this.$refs.markdownRenderedRoot.style.display = 'none'
+            this.$refs.markdownRenderedRoot.style.width = '0%'
+            this.$refs.markdownTextareaRoot.style.width = '100%'
+
+            setTimeout(() => {
+                setCss3Style(this.$refs.markdownTextareaRoot,'transition','width 0.3s')
+                setCss3Style(this.$refs.markdownRenderedRoot,'transition','width 0.3s')
+            },250)
         },
         showMarkdownPreview() {
             //console.log('showing markdown preview')
