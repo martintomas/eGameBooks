@@ -91,8 +91,6 @@ export default {
             selectedActionType: '',
             selectedActionId: '',
             actionText: '',
-            previewShown: true,
-            simplePreview: true,
         }
     },
     computed: {
@@ -111,7 +109,12 @@ export default {
             }
             return []
         },
-        
+        previewShown() {
+            return this.$store.state.editor.editorStatus.editorShowPreview
+        },
+        simplePreview() {
+            return this.$store.state.editor.editorStatus.editorSimplePreview
+        }
     },
     created() {
         bus.$on('automatic-hide', source => {
@@ -186,14 +189,12 @@ export default {
         },
         hidePreview() {
             this.$emit('hide-markdown-preview')
-            this.previewShown = false
         },
         showPreview() {
             this.$emit('show-markdown-preview')
-            this.previewShown = true
         },
         changePreview(value) {
-            this.simplePreview = value
+            this.$emit('change-preview-type',value)
         }
     }
 

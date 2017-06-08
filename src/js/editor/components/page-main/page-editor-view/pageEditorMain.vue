@@ -1,20 +1,32 @@
 <template>
     <div class='editor-markdown-root'>
         <editor-action-panel :page-id='pageId' class='editor-action-panel'></editor-action-panel>
-        <markdown-toolbar :page-id='pageId' @add-simple-text-textarea='addSimpleTextTextarea' @hide-markdown-preview="hideMarkdownPreview" @show-markdown-preview="showMarkdownPreview"></markdown-toolbar>
+        <markdown-toolbar :page-id='pageId' @add-simple-text-textarea='addSimpleTextTextarea' @hide-markdown-preview="hideMarkdownPreview" @show-markdown-preview="showMarkdownPreview" @change-preview-type='changePreviewType'></markdown-toolbar>
         <div class='editor-markdown-main-part'>
             <div class='div-markdown-textarea' ref='markdownTextareaRoot'><textarea class='markdown-textarea' ref='markdownTextarea' :value='editedText' @input="updateTextarea"></textarea></div>
-            <div class='markdown-rendered-output' ref='markdownRenderedRoot' v-html="compiledMarkdown"></div>
+            
+            <div class='markdown-rendered-output' ref='markdownRenderedRoot'>
+                <div class='scroller-wrapper' ref="pageEditorMainWrapper">
+                    <div class='scroller-box'>
+                        <div v-if='simplePreview' class='' v-html="compiledMarkdown"></div>
+                        <page-main-text v-else class='' :page-data='pageData'></page-main-text>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import IScroll from 'iscroll'
+import {busEditor} from 'editor/services/defaults.js'
 import MarkdownToolbar from 'editor/components/page-main/page-editor-view/markdownToolbar.vue'
 import EditorActionPanel from 'editor/components/page-main/page-editor-view/editorActionPanel.vue'
 import {MarkdownComp} from 'editor/services/markdown-it/markdownComp.js'
 import {AllowedActions} from 'editor/constants'
 import {debounce,generateHash} from 'defaults.js'
+import * as mutationTypes from 'editor/store/mutationTypes' 
+import PageMainText from 'editor/components/page-main/page-main-text/pageMainText.vue'
 
 var markdownItAllowedActions = []
 for(let key in AllowedActions) markdownItAllowedActions.push(AllowedActions[key]) //provide array of allowed actions
@@ -26,7 +38,8 @@ markdownItAnalysis[AllowedActions.ITEM] = []
 export default {
     components: {
         MarkdownToolbar,
-        EditorActionPanel
+        EditorActionPanel,
+        PageMainText,
     },
     props: {
         pageId: 0
@@ -36,14 +49,18 @@ export default {
             markdownComp: new MarkdownComp(markdownItAnalysis), //local markdown
             markdownInputText: '',
             markdownTextarea: null,
-            showRenderArea: true,
             editedText: '',
             windowChangingTimeout: null,
+            scrollWrapper: 'pageEditorMainWrapper',
+            scroller: null,
         }
     },
     computed: {
         pages() {
             return this.$store.state.editor.bookData.pages
+        },
+        pageData() {
+            return this.$store.state.editor.bookData.pages[this.pageId]
         },
         rawText() {
             if(this.pageId in this.pages) {
@@ -58,11 +75,17 @@ export default {
             return ''
         },
         compiledMarkdown() {
-            if(this.showRenderArea && this.rawText != this.editedText) { //do rendering only when render area is shown
+            if(this.previewShown && this.rawText != this.editedText) { //do rendering only when render area is shown
                 let analysis = JSON.parse(JSON.stringify(markdownItAnalysis))
                 return this.markdownComp.render(this.editedText, { 'analysis': analysis, 'pageId': this.pageId })
             }
             return this.renderedText
+        },
+        previewShown() {
+            return this.$store.state.editor.editorStatus.editorShowPreview
+        },
+        simplePreview() {
+            return this.$store.state.editor.editorStatus.editorSimplePreview
         }
     },
     watch: {
@@ -70,10 +93,28 @@ export default {
             this.editedText = this.rawText
         }
     },
+    created() {
+        busEditor.$on('editor-panel-resize', source => {
+            if(this.scroller != null) {
+                this.scroller.refresh()
+            }
+        })
+    },
     mounted() {
         this.editedText = this.rawText
         this.markdownTextarea = this.$refs.markdownTextarea //create shortcut for markdown textarea
         this.markdownTextarea.focus()
+
+        this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
+            mouseWheel: true,
+            bounce: false,
+            interactiveScrollbars: true,
+            shrinkScrollbars: 'clip',
+            scrollbars: 'custom',
+        })
+        setTimeout(() => {
+            this.scroller.refresh();
+        }, 200)
     },
     beforeRouteLeave (to, from, next) {
         this.editedText = this.rawText
@@ -83,6 +124,9 @@ export default {
         generateHash,
         updateTextarea: debounce(function (e) {
             this.editedText = e.target.value
+            setTimeout(() => {
+                this.scroller.refresh();
+            }, 200)
         }, 300),
         addSimpleTextTextarea(data) { //emited by markdown toolbar           
             this.markdownTextarea.focus()
@@ -103,6 +147,9 @@ export default {
         },
         hideMarkdownPreview() {
             //console.log('hidding markdown preview')
+
+            this.$store.commit('editor/'+mutationTypes.CHANGE_EDITOR_SHOW_PREVIEW,false)
+
             this.$refs.markdownRenderedRoot.style.overflow = 'hidden'
             this.$refs.markdownRenderedRoot.style.width = '0%'
             this.$refs.markdownTextareaRoot.style.width = '100%'
@@ -110,21 +157,34 @@ export default {
             clearTimeout(this.windowChangingTimeout)
             this.windowChangingTimeout = setTimeout(() => {
                 this.$refs.markdownRenderedRoot.style.display = 'none' //hide after transition is done
-                this.showRenderArea = false
+                setTimeout(() => {
+                    this.scroller.refresh();
+                }, 200)
             }, 500)
         },
         showMarkdownPreview() {
             //console.log('showing markdown preview')
+
+            this.$store.commit('editor/'+mutationTypes.CHANGE_EDITOR_SHOW_PREVIEW,true)
+
             this.$refs.markdownTextareaRoot.style.width = 'calc(50% - 0.6rem)' 
             this.$refs.markdownRenderedRoot.style.width = 'calc(50% - 0.6rem)'
             this.$refs.markdownRenderedRoot.style.display = 'block'
 
-            this.showRenderArea = true
-
             clearTimeout(this.windowChangingTimeout)
             this.windowChangingTimeout = setTimeout(() => {
                 this.$refs.markdownRenderedRoot.style.overflow = 'auto'
+                setTimeout(() => {
+                    this.scroller.refresh();
+                }, 200)
             },500)
+        },
+        changePreviewType(value) {
+            this.$store.commit('editor/'+mutationTypes.CHANGE_EDITOR_SIMPLE_PREVIEW,value)
+
+            setTimeout(() => {
+                this.scroller.refresh();
+            }, 200)
         }
     }
 }
@@ -159,7 +219,7 @@ export default {
     height: 100%;
     box-sizing: border-box;
 
-    transition: width 1s
+    transition: width 0.3s
 }
 .markdown-textarea {
     resize: none;
@@ -169,6 +229,7 @@ export default {
     padding: 0;
 }
 .markdown-rendered-output {
+    position:relative;
     padding: 0.2rem 0.2rem 0.2rem 0.2rem;
     margin: 0.1rem 0 0 0.5rem;
     width: calc(50% - 0.6rem);
@@ -179,7 +240,23 @@ export default {
     overflow: auto;
     background-color: white;
 
-    transition: width 1s
+    transition: width 0.3s
+}
+.markdown-rendered-output .item {
+    text-decoration: underline;
+    cursor:pointer;
+}
+.markdown-rendered-output .item:after {
+    font-family: FontAwesome;
+    content: " \f255";
+}
+.markdown-rendered-output .link {
+    text-decoration: underline;
+    cursor:pointer;
+}
+.markdown-rendered-output .link:after {
+    font-family: FontAwesome;
+    content: " \f0a4";
 }
 .markdown-toolbar-button {
     padding: 0.25rem 0.25rem 0.25rem 0.25rem;
@@ -194,4 +271,5 @@ export default {
     /*opacity: 0.7;*/
     /*filter: alpha(opacity=70);*/
 }
+
 </style>

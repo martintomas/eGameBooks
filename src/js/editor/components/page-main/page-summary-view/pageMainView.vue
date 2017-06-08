@@ -193,7 +193,8 @@ export default {
         user-select: none;
         text-size-adjust: none;
         position: relative;
-        top:2%;
+        top:0.5rem;
+        padding-bottom: 1rem;
     }
     .scroller-error-box {
         transform: translateZ(0);

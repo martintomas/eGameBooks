@@ -8,6 +8,8 @@ export default {
         miniPageMultiPages: false,
         elementsListShow: true,
         onlyErrorMiniPageList: false,
+        editorShowPreview: true,
+        editorSimplePreview: true,
         undoActions: [],
         redoActions: [],
     },
@@ -90,6 +92,26 @@ export default {
             }
             
         },
+        [mutationTypes.CHANGE_EDITOR_SHOW_PREVIEW](state, status) {
+            if (status) {
+                editorNotification.newInternalInfo('Editor preview is shown',true)
+            }
+            else {
+                editorNotification.newInternalInfo('Editor preview is hidden',true)
+            }
+
+            state.editorShowPreview = status
+        },
+        [mutationTypes.CHANGE_EDITOR_SIMPLE_PREVIEW](state, status) {
+            if (status) {
+                editorNotification.newInternalInfo('Editor simple preview is shown',true)
+            }
+            else {
+                editorNotification.newInternalInfo('Editor complex preview is shown',true)
+            }
+
+            state.editorSimplePreview = status
+        }
     },
     actions: {
         undoRedoWrapper({ commit, dispatch, state }, args) {
