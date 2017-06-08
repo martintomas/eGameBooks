@@ -131,14 +131,17 @@ export default {
         generateHash,
         updateTextarea: debounce(function (e) {
             this.editedText = e.target.value
+            this.updateRenderedText(e.target.value)
+        }, 500),
+        updateRenderedText(text) {
             this.$store.dispatch('editor/updatePageText', {
                 pageId: this.pageId,
-                text: e.target.value,
+                text: text,
             })
             setTimeout(() => {
                 this.scroller.refresh();
             }, 200)
-        }, 500),
+        },
         initializeEditor() {
             this.$nextTick(() => {
                 this.editedText = this.rawText
@@ -165,6 +168,7 @@ export default {
             let selEnd = this.markdownTextarea.selectionEnd           
 
             this.editedText = this.editedText.substring(0, selStart) + data['before'] + this.editedText.substring(selStart, selEnd) + data['after'] + this.editedText.substring(selEnd)
+            this.updateRenderedText(this.editedText)
             this.markdownTextarea.focus()
 
             this.$nextTick(() => { //wait for next tick --> so text inside textarea is already updated
@@ -233,6 +237,7 @@ export default {
     border: black solid 1px;
     width:100%;
     min-width:15rem;
+    min-height:35rem;
     padding: 1rem;
     box-sizing: border-box;
 }
