@@ -8,13 +8,13 @@
             <div class='scroller-wrapper' ref="actionPanelWrapper">
                 <div class='scroller-box'>
                     <editor-action-link ref='editorActionLink' :page-id='pageId' @remove-action='removeAction' @modal-action='modalAction'></editor-action-link>
-                    <editor-action-item ref='editorActionItem' :page-id='pageId' @remove-action='removeAction' @modal-action='modalAction'></editor-action-item>
+                    <editor-action-item v-if="usedModules && usedModules.indexOf('item')>=0" ref='editorActionItem' :page-id='pageId' @remove-action='removeAction' @modal-action='modalAction'></editor-action-item>
                 </div>
             </div>
         </div>
 
         <editor-action-item-modals ref='editorActionItemModals' :page-id='pageId' :local-data='localData' @add-action='addAction' @edit-action='editAction'></editor-action-item-modals>
-        <editor-action-link-modals ref='editorActionLinkModals' :page-id='pageId' :local-data='localData' @add-action='addAction' @edit-action='editAction'></editor-action-link-modals>
+        <editor-action-link-modals v-if="usedModules && usedModules.indexOf('item')>=0" ref='editorActionLinkModals' :page-id='pageId' :local-data='localData' @add-action='addAction' @edit-action='editAction'></editor-action-link-modals>
     </div>
 </template>
 
