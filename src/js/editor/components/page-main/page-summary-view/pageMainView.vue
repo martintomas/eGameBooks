@@ -216,7 +216,8 @@ export default {
         margin:0;
     }
     .page-main-errors-box li {
-        padding:0.2rem 0 0.2 0;
+        padding:0.2rem 0 0.2rem 0;
+        display:block;
     }
     .page-main-page-number {
         display:block;
