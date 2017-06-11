@@ -20,14 +20,12 @@ export const editorStore = {
     actions: {
         load({ dispatch, commit, state }, args) {
             return dispatch('loadBook', args.bookId).then(() => {
-                dispatch('loadModulesWorspace',state.bookData.mainInfo.usedModules)
+                return dispatch('loadModulesWorspace',state.bookData.mainInfo.usedModules)
             })
         },
         loadModulesWorspace({dispatch,commit,state},usedModules) {
             return api.getModulesWorkspace(usedModules).then((modulesWorkspace) => {
                 commit(mutationTypes.ADD_WORKSPACES,modulesWorkspace) //every modules that uses workspaces should implement this mutation
-            }).catch((reason) => {
-
             })
         }
     },

@@ -71,6 +71,9 @@ export default {
         selectedPage: null,
         editedPage: null,
         lastSave: null,
+        shouldBeSavedBook: false,
+        savingInterval: 1000*60*1, //every 5 minutes
+        savingIntervalObject: null
     },
     mutations: {
         [mutationTypes.LOAD_BOOK_DATA](state, initData) {
@@ -110,6 +113,17 @@ export default {
             state.pagesOrder = state.pagesOrder.sort((a,b) => a - b) //sort pages
 
             editorNotification.newInternalInfo('Initial pages of book have been processed',true)
+        },
+        [mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE](state,value) {
+            if(value != state.shouldBeSavedBook) {
+                state.shouldBeSavedBook = value
+                editorNotification.newInternalInfo('Automatic book saving has been changed to: '+value,true)
+            }
+        },
+        [mutationTypes.MODIFY_SAVE_INTERVAL_OBJECT](state,func) {
+            if(state.savingIntervalObject != null) clearInterval(state.savingIntervalObject)
+
+            state.savingIntervalObject = setInterval(func,state.savingInterval)
         },
         [mutationTypes.VALIDATE_BOOK](state, args) {
             //args should contains pages and actionType arguments
@@ -268,6 +282,8 @@ export default {
         [mutationTypes.CHANGE_STARTING_PAGE](state,pageId) {
             if(pageId in state.pages || pageId === null) {
                 state.startPage = pageId
+
+                state.shouldBeSavedBook = true
                 editorNotification.newInternalInfo('Starting page was changed to: '+pageId)
             }
         },
@@ -295,6 +311,7 @@ export default {
                             })
                         }
                     }
+
                     editorNotification.newInternalInfo('Link pageId value was changed to: '+args.value)
                     return
                 }
@@ -399,9 +416,12 @@ export default {
                 editorNotification.newInternalInfo('Book name has been changed to '+bookName,true)
             }
         },
-        [mutationTypes.CHANGE_USED_MODULES](state,usedMobules) {
-            Vue.set(state.mainInfo,'usedModules',usedMobules)
-            editorNotification.newInternalInfo('Used modules has been changed to '+usedMobules,true)
+        [mutationTypes.CHANGE_USED_MODULES](state,usedModules) {
+            if(JSON.stringify(state.mainInfo.usedModules) != JSON.stringify(usedModules)) {
+                Vue.set(state.mainInfo,'usedModules',usedModules)
+                state.shouldBeSavedBook = true
+                editorNotification.newInternalInfo('Used modules has been changed to '+usedModules,true)
+            }
         },
         [mutationTypes.UPDATE_LAST_SAVE](state,newTime) {
             Vue.set(state,'lastSave',newTime)
@@ -418,6 +438,7 @@ export default {
             Vue.set(state,'selectedPage',null)
             Vue.set(state,'editedPage',null)
             Vue.set(state,'lastSave',null)
+            if(state.savingIntervalObject != null) clearInterval(state.savingIntervalObject)
         }
     },
     getters: {
@@ -427,7 +448,7 @@ export default {
         },
     },
     actions: {
-        loadBook({ commit, state }, bookId) {
+        loadBook({ commit, dispatch, state }, bookId) {
             editorNotificationWrapper.newInternalInfo(commit,'Starting loading initial data of book',true)
 
             editorLoaderWrapper.addLoader(commit,'page-load',String.doTranslationEditor('loader-loading-editor-book'))
@@ -447,6 +468,7 @@ export default {
                     pages:null,
                     actionType:null
                 }) //do validation after pages and module data are prepared
+                dispatch('createSavingWorker')
 
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been processed',true)
                 editorLoaderWrapper.removeLoader(commit,'page-process')
@@ -454,6 +476,17 @@ export default {
             }).catch((reason) => {
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been not loaded. Reason is: '+reason,true)
                 editorLoaderWrapper.removeLoader(commit,'page-load')
+                editorLoaderWrapper.removeLoader(commit,'page-process')
+                throw reason
+            })
+        },
+        createSavingWorker({ commit, dispatch, state }) {
+            commit(mutationTypes.MODIFY_SAVE_INTERVAL_OBJECT, () => {
+                if(state.shouldBeSavedBook) {
+                    dispatch('saveBook','autosave').then(() => {
+                        commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,false)
+                    })
+                }
             })
         },
         updatePageText({ commit, dispatch, state }, args) {
@@ -480,6 +513,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
@@ -489,6 +523,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'redoArgs':localData,
                 'undo':true,
@@ -523,6 +558,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
@@ -533,6 +569,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'redoArgs':localData,
                 'undo':true,
@@ -597,6 +634,7 @@ export default {
                             onlyId: true
                         })
                     }
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
@@ -617,6 +655,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'redoArgs':localData,
                 'undo':true,
@@ -658,6 +697,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-action'),false)
                 },
                 'undoArgs':localData,
@@ -677,6 +717,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-action'),false)
                 },
                 'redoArgs':localData,
@@ -695,12 +736,13 @@ export default {
                 })
             }
         },
-        saveBook({ commit, dispatch, state }) { 
+        saveBook({ commit, dispatch, state },saveType) { 
             let res,key,pageRes
 
             //prepare main
             res = {
                 main: {
+                    id:state.mainInfo.id,
                     name: state.mainInfo.name,
                     author: state.mainInfo.author,
                     published: state.mainInfo.published,
@@ -719,12 +761,18 @@ export default {
             //prepare modules
             res.modules = {}
             dispatch('saveModules',res).then(() => {
-                return api.saveBook(res) //save book data
+                return api.saveBook(saveType,res) //save book data
             }).then(() => {
                 commit(mutationTypes.UPDATE_LAST_SAVE,new Date().timeNow())
                 editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('book-saved'),false)
             }).catch((reason) => {
                 editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('book-no-saved',reason),false)
+            })
+        },
+        updateBookName({ commit, dispatch, state }, bookName) {
+            return api.updateBookName({
+                bookId:state.mainInfo.id,
+                bookName: bookName
             })
         },
         newLinkAction({ commit, dispatch, state }, args) {
@@ -782,6 +830,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-action'),false)
                 },
                 'undoArgs':localData,
@@ -801,6 +850,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-action'),false)
                 },
                 'redoArgs':localData,
@@ -860,6 +910,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edit-action'),false)
                 },
                 'undoArgs':localData,
@@ -883,6 +934,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edit-action'),false)
                 },
                 'redoArgs':localData,
@@ -922,6 +974,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-modify-link-action'),false)
                 },
                 'undoArgs':localData,
@@ -935,6 +988,7 @@ export default {
                         actionType:null,
                         onlyId: true
                     })
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-modify-link-action'),false)
                 },
                 'redoArgs':localData,
@@ -976,6 +1030,7 @@ export default {
                             onlyId: true
                         })
                     }
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
@@ -996,6 +1051,7 @@ export default {
                             onlyId: true
                         })
                     }
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 },
                 'redoArgs':localData,
                 'undo':true,
@@ -1024,10 +1080,9 @@ export default {
         changeBookName({ commit, dispatch, state }, newName) {
             if(newName != state.mainInfo.name && newName != '') {
                 editorLoaderWrapper.addLoader(commit,'book-name-unique',String.doTranslationEditor('loader-checking-book-name'))
-                return api.isBookNameUnique(newName).then((value) => {
+                return api.updateBookName(newName).then((value) => {
                     editorLoaderWrapper.removeLoader(commit,'book-name-unique')
-                    if(value) commit(mutationTypes.CHANGE_BOOK_NAME,newName)
-                    else throw 'no-unique-name'
+                    commit(mutationTypes.CHANGE_BOOK_NAME,newName)
                 }).catch((reason)=> {
                     //error is resolved up, here only remove loader
                     editorLoaderWrapper.removeLoader(commit,'book-name-unique')

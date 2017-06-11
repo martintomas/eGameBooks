@@ -185,11 +185,13 @@ export default {
             dispatch('undoRedoWrapper',{
                 'undoAction':function(localData) {
                     commit(mutationTypes.DELETE_ITEM,localData.localId)
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.localId))
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
                     commit(mutationTypes.ADD_NEW_ITEM,localData)
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-new-item',localData.localId))
                 },
                 'redoArgs':localData,
@@ -212,6 +214,7 @@ export default {
                         rev:localData.reverseInfo,
                         localId:localData.item.localId,
                     }).then(() => {
+                        commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                         editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.item.localId))
                     }).catch((reason) => {
                         console.log(reason)
@@ -224,6 +227,7 @@ export default {
                         moduleName:'item',
                         rev:localData.reverseInfo
                     }).then(() => {
+                        commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                         editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-deleted-item',localData.item.localId))
                     }).catch((reason) => {
                         console.log(reason)
@@ -252,11 +256,13 @@ export default {
             dispatch('undoRedoWrapper',{
                 'undoAction':function(localData) {
                     commit(mutationTypes.EDIT_ITEM,localData)
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edited-item'))
                 },
                 'undoArgs':localData,
                 'redoAction':function(localDataEdit) {
                     commit(mutationTypes.EDIT_ITEM,localDataEdit)
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('notification-edited-item'))
                 },
                 'redoArgs':localDataEdit,

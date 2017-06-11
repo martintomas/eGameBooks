@@ -19,9 +19,10 @@ export function getModulesWorkspace(usedModules) {
 }
 
 export function isBookNameUnique(bookName) {
+    //can reject with no-unique-name string
     return new Promise((resolve,reject) => {
         setTimeout(() => {
-            resolve(true)
+            resolve()
         }, LATENCY)
     })
 }
@@ -34,7 +35,17 @@ export function savePage(pageData) {
     })
 }
 
-export function saveBook(bookData) {
+export function saveBook(saveType,bookData) {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            resolve()
+        }, LATENCY)
+    })
+}
+
+export function updateBookName(args) {
+    //args shoudl contain bookId and bookName
+    //can reject with no-unique-name string
     return new Promise((resolve,reject) => {
         setTimeout(() => {
             resolve()

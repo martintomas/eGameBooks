@@ -30,6 +30,9 @@ export default {
         },
         redoActions() {
             return this.$store.state.editor.editorStatus.redoActions
+        },
+        shouldBeSavedBook() {
+            return this.$store.state.editor.bookData.shouldBeSavedBook
         }
     },
     methods: {
@@ -52,19 +55,23 @@ export default {
             this.$router.push({ name: 'editor-edit-settings' })
         },
         saveBook() {
-            this.$store.dispatch('editor/saveBook')
+            this.$store.dispatch('editor/saveBook','user')
         },
         closeEditor() {
-            messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('save-book-editor-exit'),
-                () => {
-                    this.$store.dispatch('editor/saveBook').then(() => {
+            if(this.shouldBeSavedBook) {
+                messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('save-book-editor-exit'),
+                    () => {
+                        this.$store.dispatch('editor/saveBook').then(() => {
+                            this.$router.push({ name: 'main-view' })
+                        })
+                    },null,
+                    () => {
                         this.$router.push({ name: 'main-view' })
-                    })
-                },null,
-                () => {
-                    this.$router.push({ name: 'main-view' })
-                }
-            )
+                    }
+                )
+            } else {
+                this.$router.push({ name: 'main-view' })
+            }
         }
     }
 
