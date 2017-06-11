@@ -73,9 +73,10 @@ export default {
     },
     methods: {
         updateBookChecked: debounce(function(value) {
-            return isBookNameUnique(this.bookName).then((value) => {
-                this.bookNameChecked = value
+            return isBookNameUnique(this.bookName).then(() => {
+                this.bookNameChecked = true
             }).catch((reason) => {
+                this.bookNameChecked = false
                 console.log('Impossible to check if book name is unique. Reason of error is: '+reason)
             })
         },250),
