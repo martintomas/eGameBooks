@@ -688,8 +688,7 @@ export default {
         },
         savePage({ commit, dispatch, state }, pageId) { 
             if(pageId in state.pages) {
-                res = getPageJson(state.pages[pageId])
-                api.savePage(res).then(() => {
+                api.savePage(getPageJson(state.pages[pageId])).then(() => {
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('page-saved',pageId),false)
                 }).catch((reason) => {
                     editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('page-no-saved',pageId,reason),false)
