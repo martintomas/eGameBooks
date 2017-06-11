@@ -13,7 +13,7 @@
             </div>
         </span>
         <span class='markdown-toolbar-button bold' @click="addActionText">{{String.doTranslationEditor('actions')}}</span>
-        <span class='markdown-toolbar-button' @click=""><i class="fa fa-image" aria-hidden="true"></i></span>
+        <!--<span class='markdown-toolbar-button' @click=""><i class="fa fa-image" aria-hidden="true"></i></span>-->
         <span class='markdown-toolbar-button' v-if="!previewShown" @click="showPreview()"><i class="fa fa-eye" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' v-if="previewShown" @click="hidePreview()"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
         <span class='markdown-toolbar-button' v-if="simplePreview" @click="changePreview(false)">{{String.doTranslationEditor('full-preview')}}</span>
