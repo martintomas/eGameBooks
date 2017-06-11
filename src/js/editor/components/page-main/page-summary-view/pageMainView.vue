@@ -212,11 +212,11 @@ export default {
     }
     .page-main-errors-box ul {
         list-style:none;
-        padding:0.2rem 0.5rem 0 0.5rem;
+        padding:0;
         margin:0;
     }
     .page-main-errors-box li {
-        padding:0.2rem 0 0.2rem 0;
+        padding-left:0.2rem;
         display:block;
     }
     .page-main-page-number {
