@@ -18,6 +18,8 @@ export const ADD_LINK = 'ADD_LINK'
 export const CHANGE_PAGE_SETTINGS = 'CHANGE_PAGE_SETTINGS'
 export const CHANGE_BOOK_NAME = 'CHANGE_BOOK_NAME'
 export const CHANGE_USED_MODULES = 'CHANGE_USED_MODULES'
+export const UPDATE_LAST_SAVE = 'UPDATE_LAST_SAVE'
+export const BOOK_CLEAR = 'BOOK_CLEAR'
 
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'
@@ -41,6 +43,7 @@ export const MODULES_PAGE_ADDED = 'MODULES_PAGE_ADDED'
 export const MODULES_ACTION_DELETED = 'MODULES_ACTION_DELETED'
 export const MODULES_ACTION_ADDED = 'MODULES_ACTION_ADDED'
 export const MODULES_ACTION_EDITED = 'MODULES_ACTION_EDITED'
+export const MODULES_CLEAR = 'MODULES_CLEAR'
 
 //Item module mutations
 export const ADD_NEW_ITEM = 'ADD_NEW_ITEM'

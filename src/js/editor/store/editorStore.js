@@ -19,7 +19,7 @@ export const editorStore = {
     mutations: {},
     actions: {
         load({ dispatch, commit, state }, args) {
-            return dispatch('loadBook', args.book).then(() => {
+            return dispatch('loadBook', args.bookId).then(() => {
                 dispatch('loadModulesWorspace',state.bookData.mainInfo.usedModules)
             })
         },

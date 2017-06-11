@@ -1,8 +1,8 @@
 <template>
     <div class='editor-toolbar-root'>
         <div class='editor-toolbars-buttons'>
-            <span class='editor-toolbar-button'>{{String.doTranslationEditor('save')}}</span>
-            <span class='editor-toolbar-button'>{{String.doTranslationEditor('close')}}</span>
+            <span class='editor-toolbar-button' @click='saveBook'>{{String.doTranslationEditor('save')}}</span>
+            <span class='editor-toolbar-button' @click='closeEditor'>{{String.doTranslationEditor('close')}}</span>
             <span class='editor-toolbar-button' @click='newPageSimple'>{{String.doTranslationEditor('new-page-simple')}}</span>
             <span class='editor-toolbar-button' @click='undoAction'>{{String.doTranslationEditor('undo')}} ({{undoActions.length}})</span>
             <span class='editor-toolbar-button' @click='redoAction'>{{String.doTranslationEditor('redo')}} ({{redoActions.length}})</span>
@@ -18,6 +18,7 @@
 
 import * as mutationTypes from 'editor/store/mutationTypes'
 import NotificationLine from 'editor/components/editor-toolbar/notificationLine.vue'
+import {messageBoxWrapper} from 'editor/services/defaults.js'
 
 export default {
     components: {
@@ -49,6 +50,21 @@ export default {
         },
         editSettings(event) {
             this.$router.push({ name: 'editor-edit-settings' })
+        },
+        saveBook() {
+            this.$store.dispatch('editor/saveBook')
+        },
+        closeEditor() {
+            messageBoxWrapper.showChoiceMessage(this.$store.commit,String.doTranslationEditor('save-book-editor-exit'),
+                () => {
+                    this.$store.dispatch('editor/saveBook').then(() => {
+                        this.$router.push({ name: 'main-view' })
+                    })
+                },null,
+                () => {
+                    this.$router.push({ name: 'main-view' })
+                }
+            )
         }
     }
 

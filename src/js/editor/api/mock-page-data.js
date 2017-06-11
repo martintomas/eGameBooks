@@ -1,8 +1,10 @@
 module.exports = {
     main: {
+        id:120565,
         name: 'Testing book',
         author: 'Martin Tomas',
         published: '10. 1. 2017',
+        lastSave: '10. 2. 2017',
         usedModules: [
             'item',
         ],
@@ -11,7 +13,7 @@ module.exports = {
     pages: [{
         id: 1,
         pageNumber: 1,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for *testing* pur<span>poses</span>. Pokračujte na :::link:1:další stránku:::. Tohle je :::link:5:nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link nikam nevedouci link::: :::link:3:chybejici stranka:::. A mame tady dalsi :::item:1:tohle je super item::: a :::item:2:super dalsi item:::",
         actions: {
@@ -59,7 +61,7 @@ module.exports = {
     }, {
         id: 2,
         pageNumber: 2,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for **testing** pur :::item:1:item::: poses. Pokračujte na :::link:1:další stránku::: nebo na :::link:2:předchozí stránku:::. This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.This is text for testing purposes.",
         actions: {
@@ -111,7 +113,7 @@ module.exports = {
     }, {
         id: 3,
         pageNumber: 3,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -130,7 +132,7 @@ module.exports = {
     }, {
         id: 4,
         pageNumber: 4,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -149,7 +151,7 @@ module.exports = {
     }, {
         id: 5,
         pageNumber: 5,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -158,7 +160,7 @@ module.exports = {
     }, {
         id: 6,
         pageNumber: 6,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -177,7 +179,7 @@ module.exports = {
     }, {
         id: 7,
         pageNumber: 7,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -196,7 +198,7 @@ module.exports = {
     }, {
         id: 8,
         pageNumber: 8,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -215,7 +217,7 @@ module.exports = {
     }, {
         id: 9,
         pageNumber: 9,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -234,7 +236,7 @@ module.exports = {
     }, {
         id: 10,
         pageNumber: 10,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -253,7 +255,7 @@ module.exports = {
     }, {
         id: 11,
         pageNumber: 11,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {
@@ -272,7 +274,7 @@ module.exports = {
     }, {
         id: 12,
         pageNumber: 12,
-        type: 'text',
+        pageType: 'text',
         pageTittle: null,
         text: "This is text for testing purposes. Jdi na :::link:1:začátek This is text for **testing** purposes This is text for **testing** purposes This is text for **testing** purposes::: nebo na :::link:2:předchozí stránku:::.",
         actions: {

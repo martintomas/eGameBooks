@@ -28,3 +28,33 @@ export function buildRenderInfo(renderInfo, actionInfo) { //even validation is d
     }
     return res
 }
+
+export function getPageJson(page) {
+    let res = {
+        id: page.data.id,
+        pageNumber: page.data.pageNumber,
+        pageType: page.data.pageType,
+        pageTittle: page.data.pageTittle,
+        text: page.data.text,
+    }
+    return getJsonPageActions(page,res)
+}
+
+export function getJsonPageActions(page,res={}) { //return json response for one page
+    let key,key2,key3,i
+    res.actions = {}
+    for(key in page.actions) {
+        i=0
+        res.actions[key] = []
+        for(key2 in page.actions[key]) {
+            res.actions[key].push({})
+            for(key3 in page.actions[key][key2]) {
+                if(key3 != 'existsInText') {
+                    res.actions[key][i][key3] = page.actions[key][key2][key3]
+                }
+            }
+            i++
+        }
+    }
+    return res
+}

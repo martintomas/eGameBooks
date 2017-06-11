@@ -171,6 +171,11 @@ export default {
                     state.reverseInfo[args.action.ref].push({'pageId':args.pos.pageId,'actionId':args.pos.actionId})
                 }
             }
+        },
+        [mutationTypes.MODULES_CLEAR](state) {
+            Vue.set(state.workspace,'local',{})
+            Vue.set(state,'reverseInfo',{})
+            Vue.set(state,'selectedItem',null)
         }
     },
     actions: {
@@ -279,6 +284,17 @@ export default {
                 'pageId':args.pageId,
                 'action':itemAction
             })
+        },
+        saveModules({ commit, dispatch, state}, res) {
+            let key,key2,i=0
+            res.modules[AllowedActions.ITEM] = []
+            for(key in state.workspace.local) {
+                res.modules[AllowedActions.ITEM].push({})
+                for(key2 in state.workspace.local[key]) {
+                    res.modules[AllowedActions.ITEM][i][key2] = state.workspace.local[key][key2]
+                }
+                i++
+            }
         }
     }
 }

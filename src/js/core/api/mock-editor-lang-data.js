@@ -175,6 +175,12 @@ module.exports = {
     'item-added-inventory':'Item <strong>{0}</strong> has been added to inventory!',
     'item-removed-inventory':'Item <strong>{0}</strong> has been removed from inventory!',
     'page-saved':'Page {0} has been saved',
+    'page-no-saved':'Error during page {0} saving. Error was: {1}.',
+    'book-saved':'Book has been saved',
+    'book-no-saved':'Error during book saving. Error was: {0}.',
     'required':'Required',
-    'required-help':'If\xa0possible,\xa0user has\xa0to\xa0active\xa0action.'
+    'required-help':'If\xa0possible,\xa0user has\xa0to\xa0active\xa0action.',
+    'save-book-editor-exit':'Do you wish to save book before leaving editor?',
+    'editor-no-load':'Error during editor loading. Reason of error is {0}.',
+    'editor-leave-error':'Errro during editor leaving. Text of error is {0}.',
 }

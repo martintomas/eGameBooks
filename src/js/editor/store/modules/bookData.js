@@ -4,7 +4,7 @@ import { MarkdownComp } from 'editor/services/markdown-it/markdownComp.js'
 import Vue from 'vue' //use Vue.set for manipulation with dict/array --> it is reactive
 
 import {editorNotification,editorNotificationWrapper,editorLoaderWrapper} from 'editor/services/defaults.js'
-import {buildRenderInfo} from 'editor/services/bookFuncs'
+import {buildRenderInfo,getPageJson} from 'editor/services/bookFuncs'
 import {isPageCorrect} from 'editor/services/validators'
 import {AllowedActions,ErrorImportance} from 'editor/constants'
 import {messageBoxWrapper} from 'editor/services/defaults.js'
@@ -69,7 +69,8 @@ export default {
         pagesSevereError: {}, //page can have severe and minor error --> can be at both arrays
         pagesMinorError:{},
         selectedPage: null,
-        editedPage: null
+        editedPage: null,
+        lastSave: null,
     },
     mutations: {
         [mutationTypes.LOAD_BOOK_DATA](state, initData) {
@@ -401,6 +402,22 @@ export default {
         [mutationTypes.CHANGE_USED_MODULES](state,usedMobules) {
             Vue.set(state.mainInfo,'usedModules',usedMobules)
             editorNotification.newInternalInfo('Used modules has been changed to '+usedMobules,true)
+        },
+        [mutationTypes.UPDATE_LAST_SAVE](state,newTime) {
+            Vue.set(state,'lastSave',newTime)
+
+            editorNotification.newInternalInfo('Last save was change to '+newTime,true)
+        },
+        [mutationTypes.BOOK_CLEAR](state) {
+            Vue.set(state,'mainInfo',{})
+            Vue.set(state,'pages',{})
+            Vue.set(state,'pagesOrder',[])
+            Vue.set(state,'startPage',1)
+            Vue.set(state,'pagesSevereError',{})
+            Vue.set(state,'pagesMinorError',{})
+            Vue.set(state,'selectedPage',null)
+            Vue.set(state,'editedPage',null)
+            Vue.set(state,'lastSave',null)
         }
     },
     getters: {
@@ -410,12 +427,12 @@ export default {
         },
     },
     actions: {
-        loadBook({ commit, state }, bookName) {
+        loadBook({ commit, state }, bookId) {
             editorNotificationWrapper.newInternalInfo(commit,'Starting loading initial data of book',true)
 
             editorLoaderWrapper.addLoader(commit,'page-load',String.doTranslationEditor('loader-loading-editor-book'))
 
-            return api.getInitialBookData(bookName).then((initData) => {
+            return api.getInitialBookData(bookId).then((initData) => {
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been loaded',true)
                 editorLoaderWrapper.removeLoader(commit,'page-load')
 
@@ -670,7 +687,46 @@ export default {
             
         },
         savePage({ commit, dispatch, state }, pageId) { 
-            editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('page-saved',pageId),false)
+            if(pageId in state.pages) {
+                res = getPageJson(state.pages[pageId])
+                api.savePage(res).then(() => {
+                    editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('page-saved',pageId),false)
+                }).catch((reason) => {
+                    editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('page-no-saved',pageId,reason),false)
+                })
+            }
+        },
+        saveBook({ commit, dispatch, state }) { 
+            let res,key,pageRes
+
+            //prepare main
+            res = {
+                main: {
+                    name: state.mainInfo.name,
+                    author: state.mainInfo.author,
+                    published: state.mainInfo.published,
+                    lastSave: state.mainInfo.lastSave,
+                    usedModules: state.mainInfo.usedModules,
+                    startingPage: state.startPage,
+                },
+            }
+
+            //prepare pages
+            res.pages = []
+            for(key in state.pages) {
+                res.pages.push(getPageJson(state.pages[key]))
+            }
+
+            //prepare modules
+            res.modules = {}
+            dispatch('saveModules',res).then(() => {
+                return api.saveBook(res) //save book data
+            }).then(() => {
+                commit(mutationTypes.UPDATE_LAST_SAVE,new Date().timeNow())
+                editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('book-saved'),false)
+            }).catch((reason) => {
+                editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('book-no-saved',reason),false)
+            })
         },
         newLinkAction({ commit, dispatch, state }, args) {
             let valid = true
@@ -1027,6 +1083,10 @@ export default {
                 pages:pages,
                 actionType:null
             }) //run validation after rev has been deleted
+        },
+        clear({ commit, dispatch, state }) {
+            commit(mutationTypes.MODULES_CLEAR)
+            commit(mutationTypes.BOOK_CLEAR)
         }
     }
 }

@@ -20,7 +20,7 @@ export const router = new VueRouter({
             name: 'main-view',
             //children: mainRoutes
         }, {
-            path: '/:book/editor',
+            path: '/book/:bookId/editor',
             components: {
                 'main-center-view':Editor,
             },

@@ -2,7 +2,7 @@ const pageData = require('./mock-page-data')
 const modulesWorkspace = require('./mock-modules-workspace-data')
 const LATENCY = 300
 
-export function getInitialBookData(bookName) {
+export function getInitialBookData(bookId) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve(pageData)
@@ -22,6 +22,22 @@ export function isBookNameUnique(bookName) {
     return new Promise((resolve,reject) => {
         setTimeout(() => {
             resolve(true)
+        }, LATENCY)
+    })
+}
+
+export function savePage(pageData) {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            resolve()
+        }, LATENCY)
+    })
+}
+
+export function saveBook(bookData) {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            resolve()
         }, LATENCY)
     })
 }

@@ -47,6 +47,10 @@ export default {
         usedModules() {
             if('usedModules' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.usedModules
             return []
+        },
+        bookId() {
+            if('name' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.id
+            return null
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -69,22 +73,40 @@ export default {
         }
 
         let prom2 = store.dispatch('editor/load', { //load book
-            book: to.params.book
+            bookId: to.params.bookId
         }).then(() => {
-            
-        }).catch((reason) => {
-            console.log(reason)
 
-            //!!!!show message box for users in future
+        }).catch((reason) => {
+            defaults.editorNotificationWrapper.newInternalError(store.commit,'Error during editor shown. Reason of error is: '+reason,true)
+            defaults.messageBoxWrapper.showWarnMessage(store.commit,String.doTranslationEditor('editor-no-load',reason))
         })
 
     },
     beforeRouteUpdate (to, from, next) {
-        //load book
-        next()
+        if(this.bookId != to.params.bookId) { //load new book
+            this.$store.dispatch('editor/clear').then(() => {
+                return this.$store.dispatch('editor/load', { //load book
+                    bookId: to.params.bookId
+                })
+            }).then(() => {
+                next()
+            }).catch((reason) => {
+                defaults.editorNotificationWrapper.newInternalError(this.$store.commit,'Error during editor shown. Reason of error is: '+reason,true)
+                defaults.messageBoxWrapper.showErrorMessage(this.$store.commit,String.doTranslationEditor('editor-no-load',reason))
+                next()
+            })
+        } else {
+            next()
+        }
     },
     beforeRouteLeave (to, from, next) {
         //clear data from editor vuex instance
+        this.$store.dispatch('editor/clear').then(() => {
+            next()
+        }).catch((reason) => {
+            defaults.messageBoxWrapper.showErrorMessage(this.$store.commit,String.doTranslationEditor('editor-leave-error',reason))
+            next()
+        })
     },
     mounted() {
     },
