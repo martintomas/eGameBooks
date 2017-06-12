@@ -3,6 +3,7 @@
         <dyn-tooltip class='module-name' :reactToClick='true' :reactToHover='false' :tooltip-id="generateHash('item-module','main-items')">
             <span class="tooltip module-name-text" slot='tooltip' :component-id="generateHash('item-module','main-items')">
                 {{String.doTranslationEditor('item-module')}}
+                <span :class="[itemsCount>=itemsLimit ? 'error-color': '', 'float-right']">{{itemsCount}}/{{itemsLimit}}</span>
             </span>
             <span slot='tooltipText'>
                 <dyn-tooltip class='dyn-tooltip'>
@@ -106,6 +107,12 @@ export default {
         },
         activeModuleItem() {
             return this.$store.state.editor.items.selectedItem
+        },
+        itemsLimit() {
+            return this.$store.state.editor.items.maxItemLimit
+        },
+        itemsCount() {
+            return Object.keys(this.localItems).length
         }
     },
     watch: {
@@ -169,10 +176,14 @@ export default {
     methods: {
         generateHash,
         newItem(event) {
-            this.$emit('active-item-workspace',{
-                module:'item',
-                type:'new-item'
-            })
+            if(this.itemsCount >= this.itemsLimit) {
+                messageBoxWrapper.showErrorMessage(this.$store.commit,String.doTranslationEditor('new-item-hit-limit'))
+            } else {
+                this.$emit('active-item-workspace',{
+                    module:'item',
+                    type:'new-item'
+                })
+            }
         },
         getKeyIndex(localId) {
             let index = 0

@@ -1,3 +1,6 @@
+//Editor mutations
+export const SET_UP_LIMITS = 'SET_UP_LIMITS'
+
 //Book data mutations
 export const LOAD_BOOK_DATA = 'LOAD_BOOK_DATA'
 export const VALIDATE_BOOK = 'VALIDATE_BOOK'

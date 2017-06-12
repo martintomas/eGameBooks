@@ -72,8 +72,10 @@ export default {
         editedPage: null,
         lastSave: null,
         shouldBeSavedBook: false,
-        savingInterval: 1000*60*1, //every 5 minutes
-        savingIntervalObject: null
+        savingInterval: 1000*60*5, //every 5 minutes
+        savingIntervalObject: null,
+        maxPageLimit: 0,
+        maxSaveLimit:0,
     },
     mutations: {
         [mutationTypes.LOAD_BOOK_DATA](state, initData) {
@@ -439,6 +441,12 @@ export default {
             Vue.set(state,'editedPage',null)
             Vue.set(state,'lastSave',null)
             if(state.savingIntervalObject != null) clearInterval(state.savingIntervalObject)
+        },
+        [mutationTypes.SET_UP_LIMITS](state,limits) {
+            if(limits.page) state.maxPageLimit = limits.page
+            if(limits.save) state.maxSaveLimit = limits.save
+
+            editorNotification.newInternalInfo('Editor limits have been set up.',true)
         }
     },
     getters: {
@@ -1063,9 +1071,9 @@ export default {
         changeBookSettings({ commit, dispatch, state }, bookData) {
             //bookData should contain name and usedModules variables
             //!!! no undo/redo wrapper
-            dispatch('changeBookName',bookData.name).then(() => {
-                return dispatch('changeBookModules',bookData.usedModules)
-            }).then(() => {
+            let p1 = dispatch('changeBookName',bookData.name)
+            let p2 = dispatch('changeBookModules',bookData.usedModules)
+            Promise.all([p1,p2]).then(() => {
                 messageBoxWrapper.showInformationMessage(commit,String.doTranslationEditor('settings-book-saved'))
             }).catch((reason) => {
                 switch(reason) {
@@ -1073,6 +1081,7 @@ export default {
                         messageBoxWrapper.showErrorMessage(commit,String.doTranslationEditor('settings-book-no-unique-name'))
                         break
                     default:
+                        messageBoxWrapper.showErrorMessage(commit,String.doTranslationEditor('settings-book-error',reason))
                         console.log('Impossible to change book setting. Reason of error is: '+reason)
                 }
             })
@@ -1091,7 +1100,16 @@ export default {
             }
         },
         changeBookModules({ commit, dispatch, state }, newModules) {
-            commit(mutationTypes.CHANGE_USED_MODULES,newModules)
+            if(JSON.stringify(state.mainInfo.usedModules) != JSON.stringify(newModules)) {
+                editorLoaderWrapper.addLoader(commit,'module-workspace',String.doTranslationEditor('loader-module-workspace'))
+                return dispatch('loadModulesWorkspace',newModules).then(() => {
+                    editorLoaderWrapper.removeLoader(commit,'module-workspace')
+                    commit(mutationTypes.CHANGE_USED_MODULES,newModules)
+                }).catch((reason) => {
+                    editorLoaderWrapper.removeLoader(commit,'module-workspace')
+                    throw reason
+                })
+            }
         },
         moduleRefAdded({ commit, dispatch, state }, args) {
             //args should contain moduleName, localId and rev (reverseInfo) --> how the ref actions should be changed

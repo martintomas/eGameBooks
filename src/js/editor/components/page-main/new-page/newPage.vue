@@ -1,7 +1,10 @@
 <template>
     <div class='editor-main-form-root'>
         <div class='editor-main-form-form'>
-            <div class='editor-main-form-header'>{{String.doTranslationEditor('new-page-def')}}</div>
+            <div class='editor-main-form-header'>
+                {{String.doTranslationEditor('new-page-def')}}
+                <span :class="[pagesCount>=pagesLimit ? 'error-color': '', 'float-right']">{{pagesCount}}/{{pagesLimit}}</span>
+            </div>
             <div class='editor-main-form-body'>
                 <label class="mainLabel">{{String.doTranslationEditor('method-page-number')}}<span class='required'>*</span>: </label>
                 <input class='horizontal-space'type="radio" id='newPageFirst' value="first" v-model="pageNumberMethod"><label class='horizontal-space vertical-proc-right-space' for="newPageFirst" >{{String.doTranslationEditor('first-suitable')}}</label>
@@ -65,6 +68,12 @@ export default {
         },
         pagesOrder() {
             return this.$store.state.editor.bookData.pagesOrder
+        },
+        pagesCount() {
+            return this.$store.state.editor.bookData.pagesOrder.length
+        },
+        pagesLimit() {
+            return this.$store.state.editor.bookData.maxPageLimit
         }
     },
     watch: {
@@ -122,6 +131,11 @@ export default {
             }
         },
         saveNewPage() {
+            if(this.pagesCount >= this.pagesLimit) {
+                messageBoxWrapper.showErrorMessage(this.$store.commit,String.doTranslationEditor('new-page-hit-limit'))
+                return
+            }
+
             let newPage, linkData = null, setLinkAction = false
             if(this.setActionId != null && this.setPageId != null) {
                 setLinkAction = true

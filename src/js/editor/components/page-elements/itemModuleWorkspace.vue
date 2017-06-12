@@ -142,6 +142,12 @@ export default {
         localItems() {
             return this.items.workspace.local
         },
+        itemsLimit() {
+            return this.$store.state.editor.items.maxItemLimit
+        },
+        itemsCount() {
+            return Object.keys(this.localItems).length
+        }
     },
     watch: {
         itemData(value) {
@@ -212,6 +218,11 @@ export default {
             }
         },
         saveNewItem() {
+            if(this.itemsCount >= this.itemsLimit) {
+                messageBoxWrapper.showErrorMessage(this.$store.commit,String.doTranslationEditor('new-item-hit-limit'))
+                return
+            }
+
             if(this.newItemValidation(this.newItem)) {
                 this.newItem.localId = getUniqueId(this.localItems)
 

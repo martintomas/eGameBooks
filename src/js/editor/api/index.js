@@ -1,5 +1,6 @@
 const pageData = require('./mock-page-data')
 const modulesWorkspace = require('./mock-modules-workspace-data')
+const editorLimits = require('./mock-editor-limits-data')
 const LATENCY = 300
 
 export function getInitialBookData(bookId) {
@@ -14,6 +15,14 @@ export function getModulesWorkspace(usedModules) {
     return new Promise((resolve,reject) => {
         setTimeout(() => {
             resolve(modulesWorkspace)
+        }, LATENCY)
+    })
+}
+
+export function getEditorLimits() {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            resolve(editorLimits)
         }, LATENCY)
     })
 }

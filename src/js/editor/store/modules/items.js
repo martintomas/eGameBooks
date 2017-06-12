@@ -9,13 +9,14 @@ export default {
         workspace: {'local':{}},
         reverseInfo: {},
         selectedItem: null,
-        possibleItemActions: ['add','remove']
+        possibleItemActions: ['add','remove'],
+        maxItemLimit: 0,
     },
     mutations: {
         [mutationTypes.ADD_WORKSPACES](state, modulesWorkspace) {
             if('item' in modulesWorkspace) {
                 for(let i=0;i<modulesWorkspace.item.length;i++) {
-                    Vue.set(state.workspace,modulesWorkspace.item[i],{})
+                    if(!(modulesWorkspace.item[i] in state.workspace)) Vue.set(state.workspace,modulesWorkspace.item[i],{})
                 }
                 editorNotification.newInternalInfo('Workspace for item module have been actualized',true)
             }
@@ -176,6 +177,11 @@ export default {
             Vue.set(state.workspace,'local',{})
             Vue.set(state,'reverseInfo',{})
             Vue.set(state,'selectedItem',null)
+        },
+        [mutationTypes.SET_UP_LIMITS](state,limits) {
+            if(limits.item) state.maxItemLimit = limits.item
+
+            editorNotification.newInternalInfo('Item module limits have been set up.',true)
         }
     },
     actions: {

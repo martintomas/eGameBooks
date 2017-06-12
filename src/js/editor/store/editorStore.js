@@ -19,11 +19,18 @@ export const editorStore = {
     mutations: {},
     actions: {
         load({ dispatch, commit, state }, args) {
-            return dispatch('loadBook', args.bookId).then(() => {
-                return dispatch('loadModulesWorspace',state.bookData.mainInfo.usedModules)
+            let p1 = dispatch('loadBook', args.bookId).then(() => {
+                return dispatch('loadModulesWorkspace',state.bookData.mainInfo.usedModules)
+            })
+            let p2 = dispatch('loadEditorLimits')
+            return Promise.all([p1,p2])
+        },
+        loadEditorLimits({dispatch,commit,state}) {
+            return api.getEditorLimits().then((editorLimits) => {
+                commit(mutationTypes.SET_UP_LIMITS,editorLimits)
             })
         },
-        loadModulesWorspace({dispatch,commit,state},usedModules) {
+        loadModulesWorkspace({dispatch,commit,state},usedModules) {
             return api.getModulesWorkspace(usedModules).then((modulesWorkspace) => {
                 commit(mutationTypes.ADD_WORKSPACES,modulesWorkspace) //every modules that uses workspaces should implement this mutation
             })
