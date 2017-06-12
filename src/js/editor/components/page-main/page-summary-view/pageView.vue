@@ -7,7 +7,7 @@
         </template>
         <template v-else-if="pagesExists">
             <div class='page-view-missing-page'>
-                {{String.doTranslationEditor('missing-page-error',pageId)}}
+                {{String.doTranslationEditor('missing-page-error',editedPageId)}}
                 <span style='text-decoration:underline;cursor:pointer;' @click='createNewPage'>{{String.doTranslationEditor('missing-page-create-new')}}</span>
             </div>
         </template>
