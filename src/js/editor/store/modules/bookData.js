@@ -511,6 +511,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-page-update-text',localData.pageId),
                 'undoAction':function(localData) {
                     commit(mutationTypes.RENDER_PAGE,{
                         pageId: localData.pageId,
@@ -552,11 +553,13 @@ export default {
             }
 
             localData =  {
+                pageId: pageId,
                 pageData: JSON.parse(JSON.stringify(state.pages[pageId])),
                 validatePages: Object.keys(pageToBeValidated), //remmember just 
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-page-deleted',localData.pageId),
                 'undoAction':function(localData) {
                     commit(mutationTypes.ADD_PAGE,localData.pageData)
                     commit(mutationTypes.MODULES_PAGE_ADDED,localData.pageData)
@@ -622,6 +625,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-page-added',localData.page.data.id),
                 'undoAction':function(localData) {
                     commit(mutationTypes.DELETE_PAGE,localData.page.data.id)
                     commit(mutationTypes.MODULES_PAGE_DELETED,localData.page)
@@ -689,6 +693,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-delete-action',[localData.pos.pageId,localData.pos.actionId]),
                 'undoAction':function(localData) {
                     commit(mutationTypes.ADD_ACTION,localData)
                     commit(mutationTypes.MODULES_ACTION_ADDED,localData)
@@ -822,6 +827,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-add-action',[localData.pos.pageId,localData.pos.actionId]),
                 'undoAction':function(localData) {
                     commit(mutationTypes.DELETE_ACTION,localData.pos)
                     commit(mutationTypes.MODULES_ACTION_DELETED,localData)
@@ -891,6 +897,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-edit-action',[localData.pos.pageId,localData.pos.actionId]),
                 'undoAction':function(localData) {
                     commit(mutationTypes.EDIT_ACTION,{
                         pos:localData.pos,
@@ -963,11 +970,14 @@ export default {
             }
 
             localData = {
+                pageId: args.pageId,
+                actionId: args.actionId,
                 newLink: JSON.parse(JSON.stringify(args)),
                 oldPageId: state.pages[args.pageId].actions.link[args.actionId].pageId
             }
             
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-link-pageId-change',[localData.pageId,localData.actionId]),
                 'undoAction':function(localData) {
                     commit(mutationTypes.CHANGE_LINK_PAGEID,{
                         pageId: localData.newLink.pageId,
@@ -1017,6 +1027,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-page-settings',localData.pageId),
                 'undoAction':function(localData) {
                     commit(mutationTypes.CHANGE_PAGE_SETTINGS,{
                         pageId: localData.pageId,

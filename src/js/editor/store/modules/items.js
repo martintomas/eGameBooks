@@ -189,6 +189,7 @@ export default {
             let localData = JSON.parse(JSON.stringify(newItem))
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-new-item',localData.localId),
                 'undoAction':function(localData) {
                     commit(mutationTypes.DELETE_ITEM,localData.localId)
                     commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
@@ -213,6 +214,7 @@ export default {
             }
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-item-deleted',localData.item.localId),
                 'undoAction':function(localData) {
                     commit(mutationTypes.ADD_NEW_ITEM,localData.item)
                     dispatch('moduleRefAdded',{
@@ -228,7 +230,7 @@ export default {
                 },
                 'undoArgs':localData,
                 'redoAction':function(localData) {
-                    commit(mutationTypes.DELETE_ITEM,localId)
+                    commit(mutationTypes.DELETE_ITEM,localData.item.localId)
                     dispatch('moduleRefDeleted',{
                         moduleName:'item',
                         rev:localData.reverseInfo
@@ -260,6 +262,7 @@ export default {
             localData = JSON.parse(JSON.stringify(localData))
 
             dispatch('undoRedoWrapper',{
+                'name':String.doTranslationEditor('undo-item-edited',localData.localId),
                 'undoAction':function(localData) {
                     commit(mutationTypes.EDIT_ITEM,localData)
                     commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)

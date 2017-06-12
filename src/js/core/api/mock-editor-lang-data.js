@@ -187,4 +187,16 @@ module.exports = {
     'editor-no-load':'Error during editor loading. Reason of error is {0}.',
     'editor-leave-error':'Error during editor leaving. Text of error is {0}.',
     'settings-book-error':'Error during book settings change. Text of error is {0}.',
+    'undo-page-added':'Page {0}: created',
+    'undo-page-deleted':'Page {0}: deleted',
+    'undo-page-update-text':'Page {0}: text update',
+    'undo-delete-action':'Page {0}: action {1} deleted',
+    'undo-add-action':'Page {0}: action {1} created',
+    'undo-edit-action':'Page {0}: action {1} edited',
+    'undo-link-pageId-change':'Page {0}: link action {1} edited',
+    'undo-page-settings':'Page {0}: settings edited',
+    'undo-new-item':'Item {0}: created',
+    'undo-item-deleted':'Item {0}: deleted',
+    'undo-item-edited':'Item {0}: edited',
+    
 }

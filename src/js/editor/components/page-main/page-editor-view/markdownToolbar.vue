@@ -214,25 +214,4 @@ export default {
     /*height:2rem;*/
     width:100%;
 }
-.dropdown-toolbar-header-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    overflow:auto;
-}
-
-.dropdown-toolbar-header-content a {
-    float: none;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-}
-.dropdown-toolbar-header-content a:hover {
-    background-color: #ddd;
-}
 </style>
