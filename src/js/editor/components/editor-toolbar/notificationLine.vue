@@ -48,8 +48,10 @@ export default {
                     clearTimeout(this.inlineTimeout)
 
                     this.inlineTimeout = setTimeout(() => {
-                        this.$refs.notificationRoot.classList.add('fade')
-                        this.$refs.notificationRoot.classList.remove('no-fade')
+                        if('notificationRoot' in this.$refs && this.$refs.notificationRoot) {
+                            this.$refs.notificationRoot.classList.add('fade')
+                            this.$refs.notificationRoot.classList.remove('no-fade')
+                        }
                     },1000*10)
                 },800)
             }
