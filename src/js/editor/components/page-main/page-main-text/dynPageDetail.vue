@@ -16,7 +16,7 @@
             </span>
         </div>
         <div class="page-detail-text float-left" ref="pageDetailWrapper">
-            <div class="page-detail-scroller" ref="pageDetailScroller">
+            <div class="page-detail-scroller">
                 <dyn-text-renderer v-if='pageData != null' :page-data='pageData' render-type='pageDetail'></dyn-text-renderer>
             </div>
         </div>
@@ -52,9 +52,9 @@ export default {
     },
     data() {
         return {
-            scrollWrapper: 'pageDetailWrapper',
-            scrollContainer: 'pageDetailScroller',
+            scrollWrapper: null,
             scroller: null,
+            dynPageDetail: null,
             pageId:0,
         }
     },
@@ -88,11 +88,14 @@ export default {
     created() {
         busEditor.$on('show-page-detail',pageId => {
             this.pageId = pageId
-            this.$refs.dynPageDetail.show()
+            if(this.dynPageDetail != null) this.dynPageDetail.show()
         })
     },
     mounted() {
-        this.scroller = new IScroll(this.$refs[this.scrollWrapper], {
+        this.scrollWrapper = this.$refs.pageDetailWrapper
+        this.dynPageDetail = this.$refs.dynPageDetail
+
+        this.scroller = new IScroll(this.scrollWrapper, {
             mouseWheel: true,
             bounce: false,
             interactiveScrollbars: true,
@@ -111,7 +114,7 @@ export default {
             this.pageId = this.closestBiggerPage.data.id
         },
         loadPage() {
-            this.$refs.dynPageDetail.close()
+            this.dynPageDetail.close()
             this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
         }
     }

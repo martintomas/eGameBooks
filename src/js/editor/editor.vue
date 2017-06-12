@@ -12,8 +12,6 @@
         </div>
 
         <dyn-page-detail></dyn-page-detail>
-        
-        <!-- -->
 
     </div>
 </template>

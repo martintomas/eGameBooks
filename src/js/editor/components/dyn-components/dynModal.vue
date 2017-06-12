@@ -40,6 +40,12 @@ export default {
             type: String
         },
     },
+    data() {
+        return {
+            dynModal: null,
+            dynModalCenter: null,
+        }
+    },
     created() {
         bus.$on('automatic-hide',source => { //listen for indirect event for hidding modal
             if(source.target == this.$refs.dynModal || source.target == this.$refs.dynModalCenter) {
@@ -47,12 +53,16 @@ export default {
             }
         })
     },
+    mounted() {
+        this.dynModal = this.$refs.dynModal
+        this.dynModalCenter = this.$refs.dynModalCenter
+    },
     methods: {
         show() {
-            this.$refs.dynModal.style.display = "table"
+            this.dynModal.style.display = "table"
         },
         close() {
-            this.$refs.dynModal.style.display = "none"
+            this.dynModal.style.display = "none"
         }
     }
 }
