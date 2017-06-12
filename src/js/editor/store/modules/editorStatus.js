@@ -112,7 +112,11 @@ export default {
             }
 
             state.editorSimplePreview = status
-        }
+        },
+        [mutationTypes.MODULES_CLEAR](state) {
+            Vue.set(state,'undoActions',[])
+            Vue.set(state,'redoActions',[])
+        },
     },
     actions: {
         undoRedoWrapper({ commit, dispatch, state }, args) {
