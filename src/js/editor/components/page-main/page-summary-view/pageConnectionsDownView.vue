@@ -80,13 +80,17 @@ export default {
             this.$refs.linkEditModal.show()
         },
         saveEditedLink() {
-            this.$store.dispatch('editor/changeLinkPageId',{
-                pageId: this.pageId,
-                actionId: this.editedLink.id,
-                value:this.$refs.linkEditPageWhisperer.pageNumberLocal
-            }).then(() => {
+            if(this.$refs.linkEditPageWhisperer.pageNumberLocal != this.editedLink.pageId) {
+                this.$store.dispatch('editor/changeLinkPageId',{
+                    pageId: this.pageId,
+                    actionId: this.editedLink.id,
+                    value:this.$refs.linkEditPageWhisperer.pageNumberLocal
+                }).then(() => {
+                    this.closeEditedLink()
+                })
+            } else {
                 this.closeEditedLink()
-            })
+            }
         },
         closeEditedLink() {
             this.$refs.linkEditPageWhisperer.clear()

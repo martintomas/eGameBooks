@@ -158,10 +158,12 @@ export default {
             }
 
             if(this.validationNewLink(localData)) {
-                if(!this.editedNoNew) {
-                    this.$emit('add-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionData':localData})
-                } else {
-                    this.$emit('edit-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionId':this.formFields.id,'actionData':localData})
+                if(localData.id != this.localData.data.id || localData.pageId != this.localData.data.pageId || localData.required != this.localData.data.required || localData.condition != this.localData.data.condition) { //save only when there is change
+                    if(!this.editedNoNew) {
+                        this.$emit('add-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionData':localData})
+                    } else {
+                        this.$emit('edit-action',{'actionType':AllowedActions.LINK,'pageId':this.pageId,'actionId':this.formFields.id,'actionData':localData})
+                    }
                 }
                 this.clear()
                 this.$refs.newActionModal.close()

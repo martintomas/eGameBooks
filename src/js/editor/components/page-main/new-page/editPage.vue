@@ -89,9 +89,13 @@ export default {
             }
 
             if(this.editedPageValidation(editedArgs)) {
-                this.$store.dispatch('editor/changeSettingsPage',editedArgs).then(() => {
+                if(this.isStartingPage != editedArgs.isStartingPage || this.pageTittleOrig != editedArgs.pageTittle) {
+                    this.$store.dispatch('editor/changeSettingsPage',editedArgs).then(() => {
+                        this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
+                    })
+                } else {
                     this.$router.push({ name: 'editor-page-view', params: { pageId: this.pageId }})
-                })
+                }
             }
         },
         editedPageValidation(editedArgs) {

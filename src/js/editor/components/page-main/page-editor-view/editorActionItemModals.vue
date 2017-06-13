@@ -193,10 +193,12 @@ export default {
             }
 
             if(this.validationNewItem(localData)) {
-                if(!this.editedNoNew) {
-                    this.$emit('add-action',{'actionType':AllowedActions.ITEM,'pageId':this.pageId,'actionData':localData})
-                } else {
-                    this.$emit('edit-action',{'actionType':AllowedActions.ITEM,'pageId':this.pageId,'actionId':this.formFields.id,'actionData':localData})
+                if(localData.id != this.localData.data.id || localData.ref != this.localData.data.ref || localData.action != this.localData.data.action || localData.required != this.localData.data.required || localData.condition != this.localData.data.condition) {
+                    if(!this.editedNoNew) {
+                        this.$emit('add-action',{'actionType':AllowedActions.ITEM,'pageId':this.pageId,'actionData':localData})
+                    } else {
+                        this.$emit('edit-action',{'actionType':AllowedActions.ITEM,'pageId':this.pageId,'actionId':this.formFields.id,'actionData':localData})
+                    }
                 }
                 this.clear()
                 this.$refs.newActionModal.close()

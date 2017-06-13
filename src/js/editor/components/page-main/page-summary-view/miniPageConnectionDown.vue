@@ -127,7 +127,7 @@ export default {
         },
         editMiniPage(event) {
             if (event) event.stopPropagation()
-            
+
             this.$emit('edit-link-action',this.model.id)
         }
     }
