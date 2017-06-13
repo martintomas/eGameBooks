@@ -177,6 +177,7 @@ export default {
             Vue.set(state.workspace,'local',{})
             Vue.set(state,'reverseInfo',{})
             Vue.set(state,'selectedItem',null)
+            editorConditionGraph.clearComplexConnection(AllowedActions.ITEM)
         },
         [mutationTypes.SET_UP_LIMITS](state,limits) {
             if(limits.item) state.maxItemLimit = limits.item

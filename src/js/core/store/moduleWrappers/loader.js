@@ -4,13 +4,18 @@ import {coreStorePrefix} from 'core/constants'
 class LoaderStoreWrapper {
     constructor(loaderType) {
         this.storePrefix = coreStorePrefix
-        this.loaderType = loaderType        
+        this.loaderType = loaderType     
+        this.initialized = false
     }
     initializeLoader(commit) {
-        //add new queue to Vuex store
-        commit(this.storePrefix +'/'+mutationTypes.ADD_NEW_LOADER_SOURCE,{
-            loaderType:this.loaderType,
-        },{root:true})
+        if(!this.initialized) {
+            //add new queue to Vuex store
+            commit(this.storePrefix +'/'+mutationTypes.ADD_NEW_LOADER_SOURCE,{
+                loaderType:this.loaderType,
+            },{root:true})
+
+            this.initialized = true
+        }
     }
     addLoader(commit,id,text) {
         commit(this.storePrefix +'/'+mutationTypes.ADD_LOADER, {id:id,text:text,loaderType:this.loaderType},{root:true})

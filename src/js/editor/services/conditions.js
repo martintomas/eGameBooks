@@ -141,30 +141,34 @@ class ConditionGraph {
 
         this.startNode = new CondNode().isEnd()
         this.commit = null
+        this.initialized = false
     }
     initializeConditionGraph(commit) {
-        let tempNode, tempConn
+        if(!this.initialized) {
+            let tempNode, tempConn
 
-        this.commit = commit
+            this.commit = commit
 
-        this.startNode.addConnectionOut(this.connDict['If'])
+            this.startNode.addConnectionOut(this.connDict['If'])
 
-        tempNode = new CondNode().addConnectionOut(this.connDict['you'])
-        this.connDict['If'].setDestNode(tempNode)
+            tempNode = new CondNode().addConnectionOut(this.connDict['you'])
+            this.connDict['If'].setDestNode(tempNode)
 
-        tempNode = new CondNode().addConnectionOut(this.connDict['has']).addConnectionOut(this.connDict["hasn't"])
-        this.connDict['you'].setDestNode(tempNode)
+            tempNode = new CondNode().addConnectionOut(this.connDict['has']).addConnectionOut(this.connDict["hasn't"])
+            this.connDict['you'].setDestNode(tempNode)
 
-        tempNode = new CondNode().addConnectionOut(this.connDict[AllowedActions.ITEM])
-        this.connDict['has'].setDestNode(tempNode)
+            tempNode = new CondNode().addConnectionOut(this.connDict[AllowedActions.ITEM])
+            this.connDict['has'].setDestNode(tempNode)
 
-        tempNode = new CondNode().addConnectionOut(this.connDict[AllowedActions.ITEM])
-        this.connDict["hasn't"].setDestNode(tempNode)
+            tempNode = new CondNode().addConnectionOut(this.connDict[AllowedActions.ITEM])
+            this.connDict["hasn't"].setDestNode(tempNode)
 
-        tempNode = new CondNode().isEnd()
-        this.connDict[AllowedActions.ITEM].setDestNode(tempNode)
-        this.connDict[AllowedActions.ITEM].setDestNode(tempNode)
+            tempNode = new CondNode().isEnd()
+            this.connDict[AllowedActions.ITEM].setDestNode(tempNode)
+            this.connDict[AllowedActions.ITEM].setDestNode(tempNode)
 
+            this.initialized = true
+        }
     }
     updatedComplexConnections(nodeType,newValues=[]) {
         if(nodeType in this.connDict) {
@@ -185,6 +189,13 @@ class ConditionGraph {
     addCompexConnection(nodeType,newValue) {
         if(nodeType in this.connDict) {
             this.connDict[nodeType].names.push(newValue)
+        } else {
+            console.log('Cond node of type '+nodeType+' doesnt exists')
+        }
+    }
+    clearComplexConnection(nodeType) {
+        if(nodeType in this.connDict) {
+            this.connDict[nodeType].names = []
         } else {
             console.log('Cond node of type '+nodeType+' doesnt exists')
         }

@@ -6,14 +6,18 @@ class NotificationStoreWrapper {
         this.storePrefix = coreStorePrefix
         this.notificationType = notificationType
         this.notification = notification
-
+        this.initialized = false
     }
     initializeNotification(commit) {
-        //add new queue to Vuex store
-        commit(this.storePrefix +'/'+mutationTypes.ADD_NEW_NOTIFICATION_SOURCE,{
-            notificationType:this.notificationType,
-            notification: this.notification
-        },{root:true})
+        if(!this.initialized) {
+            //add new queue to Vuex store
+            commit(this.storePrefix +'/'+mutationTypes.ADD_NEW_NOTIFICATION_SOURCE,{
+                notificationType:this.notificationType,
+                notification: this.notification
+            },{root:true})
+
+            this.initialized = true
+        }
     }
     newInternalInfo(commit,message,debug=false) {
         this.newNotification(commit,{message:message,debug:debug,level:'internal',type:'info'})
