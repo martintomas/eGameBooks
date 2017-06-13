@@ -37,12 +37,12 @@ export function isActionCorrect(actionType,action,res=null) {
     }
 
     if(actionType === AllowedActions.LINK) { //do link specific validation
-        if(action.pageId === null) res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[action.id]})
+        if(action.pageId === null || action.pageId === '') res[ErrorImportance.SEVERE].push({text:'missing-link-pageid-validation',args:[action.id]})
         if(action.condition != null && action.condition != '') { //do condition check 
             if(!editorConditionGraph.isValidString(action.condition)) res[ErrorImportance.SEVERE].push({text:'link-condition-wrong-validation',args:[action.id]})
         }
     } else if(actionType === AllowedActions.ITEM) {
-        if(action.ref === null) res[ErrorImportance.SEVERE].push({text:'missing-item-actionid-validation',args:[action.id]})
+        if(action.ref === null || action.ref === '') res[ErrorImportance.SEVERE].push({text:'missing-item-actionid-validation',args:[action.id]})
         if(action.condition != null && action.condition != '') { //do condition check 
             if(!editorConditionGraph.isValidString(action.condition)) res[ErrorImportance.SEVERE].push({text:'item-condition-wrong-validation',args:[action.id]})
         }
