@@ -2,6 +2,8 @@ module.exports = {
     main: {
         id:120565,
         saveId:10,
+        saveName:'interesting test',
+        saveType:'save',
         name: 'Testing book',
         author: 'Martin Tomas',
         published: '10. 1. 2017',

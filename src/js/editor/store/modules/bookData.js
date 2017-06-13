@@ -758,6 +758,7 @@ export default {
                 main: {
                     id:state.mainInfo.id,
                     saveId: state.mainInfo.saveId,
+                    saveType: state.mainInfo.saveType,
                     name: state.mainInfo.name,
                     author: state.mainInfo.author,
                     published: state.mainInfo.published,
