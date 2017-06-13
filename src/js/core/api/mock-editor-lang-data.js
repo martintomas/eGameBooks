@@ -198,5 +198,6 @@ module.exports = {
     'undo-new-item':'Item {0}: created',
     'undo-item-deleted':'Item {0}: deleted',
     'undo-item-edited':'Item {0}: edited',
-    
+    'load':'Load',
+    'save-as':'Save as',
 }

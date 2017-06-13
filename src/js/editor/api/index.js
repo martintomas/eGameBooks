@@ -3,7 +3,8 @@ const modulesWorkspace = require('./mock-modules-workspace-data')
 const editorLimits = require('./mock-editor-limits-data')
 const LATENCY = 300
 
-export function getInitialBookData(bookId) {
+export function getInitialBookData(args) {
+    //args should contain bookId and saveId for same cases
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve(pageData)
@@ -36,7 +37,7 @@ export function isBookNameUnique(bookName) {
     })
 }
 
-export function savePage(pageData) {
+export function savePage(pageData,bookId,saveId) {
     return new Promise((resolve,reject) => {
         setTimeout(() => {
             resolve()

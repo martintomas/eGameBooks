@@ -2,7 +2,8 @@
     <div class='editor-toolbar-root'>
         <div class='editor-toolbars-buttons'>
             <span class='editor-toolbar-button' @click='saveBook'>{{String.doTranslationEditor('save')}}</span>
-            <span class='editor-toolbar-button' @click='closeEditor'>{{String.doTranslationEditor('close')}}</span>
+            <span class='editor-toolbar-button' @click='saveAsBook'>{{String.doTranslationEditor('save-as')}}</span>
+            <span class='editor-toolbar-button' @click='loadBook'>{{String.doTranslationEditor('load')}}</span>
             <span class='editor-toolbar-button' @click='newPageSimple'>{{String.doTranslationEditor('new-page-simple')}}</span>
             <span class='editor-toolbar-button' @click='undoAction'>
                 {{String.doTranslationEditor('undo')}}&nbsp;({{undoActions.length}})
@@ -31,6 +32,7 @@
         <notification-line class='notification-line'></notification-line>
         <div class='float-right'>
             <span class='editor-toolbar-button' @click='editSettings'>{{String.doTranslationEditor('settings')}}</span>
+            <span class='editor-toolbar-button' @click='closeEditor'>{{String.doTranslationEditor('close')}}</span>
         </div>
     </div>
 </template>
@@ -178,6 +180,12 @@ export default {
         },
         saveBook() {
             this.$store.dispatch('editor/saveBook','user')
+        },
+        saveAsBook() {
+
+        },
+        loadBook() {
+
         },
         closeEditor() {
             if(this.shouldBeSavedBook) {

@@ -49,6 +49,10 @@ export default {
         bookId() {
             if('name' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.id
             return null
+        },
+        saveId() {
+            if('saveId' in this.$store.state.editor.bookData.mainInfo) return this.$store.state.editor.bookData.mainInfo.saveId
+            return null
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -70,8 +74,10 @@ export default {
             next()
         }
 
+        let saveId = to.params.saveId ? to.params.saveId : null
         let prom2 = store.dispatch('editor/load', { //load book
-            bookId: to.params.bookId
+            bookId: to.params.bookId,
+            saveId: saveId
         }).then(() => {
 
         }).catch((reason) => {
@@ -81,10 +87,12 @@ export default {
 
     },
     beforeRouteUpdate (to, from, next) {
-        if(this.bookId != to.params.bookId) { //load new book
+        if(this.bookId != to.params.bookId || (to.params.saveId && this.saveId != to.params.saveId)) { //load new book
             this.$store.dispatch('editor/clear').then(() => {
+                let saveId = to.params.saveId ? to.params.saveId : null
                 return this.$store.dispatch('editor/load', { //load book
-                    bookId: to.params.bookId
+                    bookId: to.params.bookId,
+                    saveId: saveId
                 })
             }).then(() => {
                 next()

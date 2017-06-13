@@ -24,7 +24,6 @@ export const router = new VueRouter({
             components: {
                 'main-center-view':Editor,
             },
-            //name: 'editor-view',
             props: { 'main-center-view': true },
             children: editorRoutes
         }

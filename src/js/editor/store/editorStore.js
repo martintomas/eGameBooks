@@ -19,7 +19,7 @@ export const editorStore = {
     mutations: {},
     actions: {
         load({ dispatch, commit, state }, args) {
-            let p1 = dispatch('loadBook', args.bookId).then(() => {
+            let p1 = dispatch('loadBook', args).then(() => {
                 return dispatch('loadModulesWorkspace',state.bookData.mainInfo.usedModules)
             })
             let p2 = dispatch('loadEditorLimits')

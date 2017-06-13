@@ -456,12 +456,13 @@ export default {
         },
     },
     actions: {
-        loadBook({ commit, dispatch, state }, bookId) {
+        loadBook({ commit, dispatch, state }, args) {
+            //args should contain bookId and saveId for same cases
             editorNotificationWrapper.newInternalInfo(commit,'Starting loading initial data of book',true)
 
             editorLoaderWrapper.addLoader(commit,'page-load',String.doTranslationEditor('loader-loading-editor-book'))
 
-            return api.getInitialBookData(bookId).then((initData) => {
+            return api.getInitialBookData(args).then((initData) => {
                 editorNotificationWrapper.newInternalInfo(commit,'Initial data of book have been loaded',true)
                 editorLoaderWrapper.removeLoader(commit,'page-load')
 
@@ -742,7 +743,7 @@ export default {
         },
         savePage({ commit, dispatch, state }, pageId) { 
             if(pageId in state.pages) {
-                api.savePage(getPageJson(state.pages[pageId])).then(() => {
+                api.savePage(getPageJson(state.pages[pageId]),state.mainInfo.id,state.mainInfo.saveId).then(() => {
                     editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('page-saved',pageId),false)
                 }).catch((reason) => {
                     editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('page-no-saved',pageId,reason),false)
@@ -756,6 +757,7 @@ export default {
             res = {
                 main: {
                     id:state.mainInfo.id,
+                    saveId: state.mainInfo.saveId,
                     name: state.mainInfo.name,
                     author: state.mainInfo.author,
                     published: state.mainInfo.published,
