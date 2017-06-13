@@ -119,7 +119,7 @@ export default {
         [mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE](state,value) {
             if(value != state.shouldBeSavedBook) {
                 state.shouldBeSavedBook = value
-                editorNotification.newInternalInfo('Automatic book saving has been changed to: '+value,true)
+                editorNotification.newInternalInfo('Automatic book saving has been changed to: '+value+'.',true)
             }
         },
         [mutationTypes.MODIFY_SAVE_INTERVAL_OBJECT](state,func) {
@@ -285,7 +285,6 @@ export default {
             if(pageId in state.pages || pageId === null) {
                 state.startPage = pageId
 
-                state.shouldBeSavedBook = true
                 editorNotification.newInternalInfo('Starting page was changed to: '+pageId)
             }
         },
@@ -421,7 +420,7 @@ export default {
         [mutationTypes.CHANGE_USED_MODULES](state,usedModules) {
             if(JSON.stringify(state.mainInfo.usedModules) != JSON.stringify(usedModules)) {
                 Vue.set(state.mainInfo,'usedModules',usedModules)
-                state.shouldBeSavedBook = true
+
                 editorNotification.newInternalInfo('Used modules has been changed to '+usedModules,true)
             }
         },
@@ -440,6 +439,7 @@ export default {
             Vue.set(state,'selectedPage',null)
             Vue.set(state,'editedPage',null)
             Vue.set(state,'lastSave',null)
+            Vue.set(state,'shouldBeSavedBook',false)
             if(state.savingIntervalObject != null) clearInterval(state.savingIntervalObject)
         },
         [mutationTypes.SET_UP_LIMITS](state,limits) {
@@ -1119,6 +1119,7 @@ export default {
                 return dispatch('loadModulesWorkspace',newModules).then(() => {
                     editorLoaderWrapper.removeLoader(commit,'module-workspace')
                     commit(mutationTypes.CHANGE_USED_MODULES,newModules)
+                    commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,true)
                 }).catch((reason) => {
                     editorLoaderWrapper.removeLoader(commit,'module-workspace')
                     throw reason
