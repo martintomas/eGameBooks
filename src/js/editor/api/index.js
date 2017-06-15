@@ -1,6 +1,7 @@
 const pageData = require('./mock-page-data')
 const modulesWorkspace = require('./mock-modules-workspace-data')
 const editorLimits = require('./mock-editor-limits-data')
+const bookSaves = require('./mock-book-saves-data')
 const LATENCY = 300
 
 export function getInitialBookData(args) {
@@ -49,6 +50,7 @@ export function saveBook(saveType,bookData) {
     return new Promise((resolve,reject) => {
         setTimeout(() => {
             resolve()
+            //reject('bla')
         }, LATENCY)
     })
 }
@@ -59,6 +61,14 @@ export function updateBookName(args) {
     return new Promise((resolve,reject) => {
         setTimeout(() => {
             resolve()
+        }, LATENCY)
+    })
+}
+
+export function getBookSaves(bookId) {
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            resolve(bookSaves)
         }, LATENCY)
     })
 }

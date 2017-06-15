@@ -25,6 +25,7 @@ export const UPDATE_LAST_SAVE = 'UPDATE_LAST_SAVE'
 export const BOOK_CLEAR = 'BOOK_CLEAR'
 export const CHANGE_AUTOMATIC_BOOK_SAVE = 'CHANGE_AUTOMATIC_BOOK_SAVE'
 export const MODIFY_SAVE_INTERVAL_OBJECT = 'MODIFY_SAVE_INTERVAL_OBJECT'
+export const UPDATE_SAVE_DATA = 'UPDATE_SAVE_DATA'
 
 //Editor status mutations -- keeps info about editor (what is open, edited, history, etc)
 export const CHANGE_MINI_PAGE_LIST_STATUS = 'CHANGE_MINI_PAGE_LIST_STATUS'

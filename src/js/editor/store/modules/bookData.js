@@ -447,6 +447,14 @@ export default {
             if(limits.save) state.maxSaveLimit = limits.save
 
             editorNotification.newInternalInfo('Editor limits have been set up.',true)
+        },
+        [mutationTypes.UPDATE_SAVE_DATA](state,args) {
+            //args should containt saveId, saveType and saveName values
+            if(args.saveId) state.mainInfo.saveId = args.saveId
+            if(args.saveType) state.mainInfo.saveType = args.saveType
+            if(args.saveName) state.mainInfo.saveName = args.saveName
+
+            editorNotification.newInternalInfo('Save data has been updated.',true)
         }
     },
     getters: {
@@ -776,13 +784,21 @@ export default {
 
             //prepare modules
             res.modules = {}
-            dispatch('saveModules',res).then(() => {
+
+            return dispatch('saveModules',res).then(() => {
+                if(saveType != 'autosave') editorLoaderWrapper.addLoader(commit,'book-save',String.doTranslationEditor('loader-saving-book'))
                 return api.saveBook(saveType,res) //save book data
             }).then(() => {
+                if(saveType != 'autosave') editorLoaderWrapper.removeLoader(commit,'book-save')
+
                 commit(mutationTypes.UPDATE_LAST_SAVE,new Date().timeNow())
+                commit(mutationTypes.CHANGE_AUTOMATIC_BOOK_SAVE,false)
                 editorNotificationWrapper.newExternalInfo(commit,String.doTranslationEditor('book-saved'),false)
             }).catch((reason) => {
+                if(saveType != 'autosave') editorLoaderWrapper.removeLoader(commit,'book-save')
+                
                 editorNotificationWrapper.newExternalError(commit,String.doTranslationEditor('book-no-saved',reason),false)
+                throw reason
             })
         },
         updateBookName({ commit, dispatch, state }, bookName) {
