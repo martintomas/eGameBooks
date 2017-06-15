@@ -12,6 +12,7 @@ export default {
         editorSimplePreview: true,
         undoActions: [],
         redoActions: [],
+        maxRedoUndoActions: 20,
     },
     mutations: {
         [mutationTypes.CHANGE_MINI_PAGE_LIST_STATUS](state, status) {
@@ -63,6 +64,7 @@ export default {
             state.onlyErrorMiniPageList = status
         },
         [mutationTypes.ADD_UNDO_ACTION](state, undoAction) {
+            if(state.undoActions.length >= state.maxRedoUndoActions) Vue.delete(state.undoActions,state.undoActions.length-1)
             state.undoActions.push(undoAction)
 
             editorNotification.newInternalInfo('New undo action has been added',true)
@@ -73,6 +75,7 @@ export default {
             editorNotification.newInternalInfo('Undo action with id: '+index+' has been removed',true)
         },
         [mutationTypes.ADD_REDO_ACTION](state, redoAction) {
+            if(state.redoActions.length >= state.maxRedoUndoActions) Vue.delete(state.redoActions,state.redoActions.length-1)
             state.redoActions.push(redoAction)
 
             editorNotification.newInternalInfo('New redo action has been added',true)
