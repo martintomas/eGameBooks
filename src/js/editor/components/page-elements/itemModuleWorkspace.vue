@@ -133,7 +133,7 @@
                                     </template>
                                     <td>{{model.name}}</td>
                                     <td>
-                                        <span class='editor-workspace-table-button'><i class="fa fa-edit" aria-hidden="true"></i></span>
+                                        <span class='editor-workspace-table-button' v-if="openedTabWorkspace === 'local'"><i class="fa fa-edit" aria-hidden="true"></i></span>
                                         <span class='editor-workspace-table-button'><i class="fa fa-search" aria-hidden="true"></i></span>
                                         <span class='editor-workspace-table-button'><i class="fa fa-trash" aria-hidden="true"></i></span>
                                     </td>
