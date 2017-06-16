@@ -53,7 +53,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class='text-center' ref='saveLoadWrapper' style='position:relative;'>
+                    <div class='text-center editor-save-load-wrapper' ref='saveLoadWrapper'>
                         <div class='whisperer-scroller'>
                             <table class='editor-save-table-items'>
                                 <tr><th>{{String.doTranslationEditor('save-name')}}</th><th>{{String.doTranslationEditor('save-time')}}</th><th>{{String.doTranslationEditor('action')}}</th></tr>
@@ -463,5 +463,10 @@ export default {
 }
 .editor-save-load-button:hover {
     background-color:gray;
+}
+.editor-save-load-wrapper {
+    position: relative;
+    max-height: 50vh;
+    overflow: hidden;
 }
 </style>
