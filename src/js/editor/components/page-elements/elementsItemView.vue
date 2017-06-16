@@ -11,7 +11,7 @@
                     <span slot='tooltipText'>{{String.doTranslationEditor('new-module-item')}}</span>
                 </dyn-tooltip>
                 <dyn-tooltip class='dyn-tooltip'>
-                    <i class="fa fa-gear unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click=''></i>
+                    <i class="fa fa-gear unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='openItemManager'></i>
                     <span slot='tooltipText'>{{String.doTranslationEditor('module-manager-open')}}</span>
                 </dyn-tooltip>
             </span>
@@ -37,7 +37,7 @@
                                             <span slot='tooltipText'>{{String.doTranslationEditor('edit-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
-                                            <i class="fa fa-question unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='infoItemModule(key,$event)'></i>
+                                            <i class="fa fa-search unactive-icon tooltip" aria-hidden="true" slot='tooltip' @click='infoItemModule(key,$event)'></i>
                                             <span slot='tooltipText'>{{String.doTranslationEditor('info-module-item')}}</span>
                                         </dyn-tooltip>
                                         <dyn-tooltip class='dyn-tooltip'>
@@ -184,6 +184,12 @@ export default {
                     type:'new-item'
                 })
             }
+        },
+        openItemManager(event) {
+            this.$emit('active-item-workspace',{
+                module:'item',
+                type:'item-workspace'
+            })
         },
         getKeyIndex(localId) {
             let index = 0

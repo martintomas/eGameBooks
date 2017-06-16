@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import * as api from 'editor/api'
 import * as mutationTypes from 'editor/store/mutationTypes'
 import {editorNotification,editorNotificationWrapper,editorConditionGraph} from 'editor/services/defaults.js'
 import {getUniqueId} from 'defaults'
@@ -11,12 +12,13 @@ export default {
         selectedItem: null,
         possibleItemActions: ['add','remove'],
         maxItemLimit: 0,
+        maxWorkspaceLimit: 0,
     },
     mutations: {
         [mutationTypes.ADD_WORKSPACES](state, modulesWorkspace) {
             if('item' in modulesWorkspace) {
                 for(let i=0;i<modulesWorkspace.item.length;i++) {
-                    if(!(modulesWorkspace.item[i] in state.workspace)) Vue.set(state.workspace,modulesWorkspace.item[i],{})
+                    if(!(modulesWorkspace.item[i] in state.workspace)) Vue.set(state.workspace,modulesWorkspace.item[i],null)
                 }
                 editorNotification.newInternalInfo('Workspace for item module have been actualized',true)
             }
@@ -29,6 +31,16 @@ export default {
                     editorConditionGraph.addCompexConnection(AllowedActions.ITEM,initData.modules.item[i].name) //actualize conditions
                 }
                 editorNotification.newInternalInfo('Initial data for item module have been processed',true)
+            }
+        },
+        [mutationTypes.MODULES_PROCESS_WORKSPACE_DATA](state,args) {
+            //args should contain moduleType, workspaceName and data
+            if('item' === args.moduleType && args.workspaceName in state.workspace) {
+                for(let i=0;i<args.data.length;i++) {
+                    if(state.workspace[args.workspaceName] === null) state.workspace[args.workspaceName] = {}
+                    Vue.set(state.workspace[args.workspaceName],args.data[i].id,args.data[i])
+                }
+                editorNotification.newInternalInfo('Data for workspace '+args.workspaceName+' has be updated.',true)
             }
         },
         [mutationTypes.MODULES_BUILD_REVERSE_INFO](state,pages) {
@@ -181,7 +193,8 @@ export default {
         },
         [mutationTypes.SET_UP_LIMITS](state,limits) {
             if(limits.item) state.maxItemLimit = limits.item
-
+            if(limits.workspace) state.maxWorkspaceLimit = limits.workspace
+            
             editorNotification.newInternalInfo('Item module limits have been set up.',true)
         }
     },
@@ -311,6 +324,19 @@ export default {
                 }
                 i++
             }
+        },
+        loadWorkspaceData({commit,dispatch,state},args) {
+            //args shoudl contain moduleType and workspaceName
+            return api.getWorkspaceItems().then((data) => {
+                commit(mutationTypes.MODULES_PROCESS_WORKSPACE_DATA, {
+                    moduleType:args.moduleType,
+                    workspaceName:args.workspaceName,
+                    data:data
+                })
+            }).catch((reason) => {
+                editorNotificationWrapper.newInternalInfo(commit,'Error during obtaing data of workspace. Text of the error is: '+reason,false)
+                throw reason
+            })
         }
     }
 }

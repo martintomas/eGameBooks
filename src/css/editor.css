@@ -366,6 +366,7 @@ body {
     overflow:hidden;
     max-height:15rem;
     max-width:25rem;
+    border-radius: 0.25rem;
 }
 
 .dropdown-toolbar-header-content a {
